@@ -1705,6 +1705,7 @@ class CustomProfileFieldValue(models.Model):
         unique_together = ('user_profile', 'field')
 
 GENERIC_INTERFACE = u'GenericService'
+ISITUP_INTERFACE = u'IsItUp'
 
 class Service(models.Model):
     name = models.CharField(max_length=UserProfile.MAX_NAME_LENGTH) # type: Text
@@ -1719,10 +1720,12 @@ class Service(models.Model):
 
     # Valid interfaces are {generic}
     GENERIC = 1
+    ISITUP = 2
 
     # N.B. If we used Django's choice=... we would get this for free (kinda)
     _interfaces = {
-        GENERIC: GENERIC_INTERFACE
+        GENERIC: GENERIC_INTERFACE,
+        ISITUP: ISITUP_INTERFACE
     } # type: Dict[int, Text]
 
     def interface_name(self):
