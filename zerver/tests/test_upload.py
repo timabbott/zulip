@@ -432,6 +432,19 @@ class AvatarTest(ZulipTestCase):
                 data = b"".join(response.streaming_content)
                 self.assertEquals(rfp.read(), data)
 
+            # Verify that the medium-size avatar was created
+            user_profile = get_user_profile_by_email('hamlet@zulip.com')
+            medium_avatar_url = avatar_url(user_profile, medium=True)
+            medium_avatar_disk_path = os.path.join(settings.LOCAL_UPLOADS_DIR, "avatars",
+                                                   medium_avatar_url.split("/")[-1].split("?")[0])
+            self.assertTrue(os.path.exists(medium_avatar_disk_path))
+
+            # Confirm that the avatar will be recreated from the original if needed
+            os.remove(medium_avatar_disk_path)
+            self.assertFalse(os.path.exists(medium_avatar_disk_path))
+            medium_avatar_url = avatar_url(user_profile, medium=True)
+            self.assertTrue(os.path.exists(medium_avatar_disk_path))
+
     def test_invalid_avatars(self):
         # type: () -> None
         """
