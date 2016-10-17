@@ -366,7 +366,7 @@ class LocalUploadBackend(ZulipUploadBackend):
             return
 
         image_path = os.path.join(settings.LOCAL_UPLOADS_DIR, "avatars", email_hash + ".original")
-        image_data = open(image_path).read()
+        image_data = open(image_path, "rb").read()
         resized_medium = resize_avatar(image_data, MEDIUM_AVATAR_SIZE)
         write_local_file('avatars', email_hash + '-medium.png', resized_medium)
 
