@@ -17,6 +17,8 @@ import sys
 import signal
 import tornado
 import tornado.autoreload
+import tornado.ioloop
+
 import random
 import traceback
 from zerver.models import UserProfile, Client
