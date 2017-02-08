@@ -448,6 +448,28 @@ class MirrorWorker(QueueProcessingWorker):
         mirror_email(email.message_from_string(message),
                      rcpt_to=event["rcpt_to"], pre_checked=True)
 
+# This special QueueProcessingWorker is used for manually draining a
+# queue that has leaked items to inspect them.
+class DrainQueue(QueueProcessingWorker):
+    def __init__(self, queue_name):
+        # type: (str) -> None
+        self.queue_name = queue_name
+        super(QueueProcessingWorker, self).__init__()
+
+    def consume(self, event):
+        # type: (Mapping[str, Any]) -> None
+        logging.warning("Drained event from %s queue!" % (self.queue_name,))
+        logging.warning(event)
+
+class DrainOnceQueue(DrainQueue):
+    def start(self):
+        # type: () -> None
+        events = self.q.drain_queue(self.queue_name, json=True)
+        logging.warning("Drained %s events from %s queue!" % (len(events), self.queue_name,))
+        for event in events:
+            logging.warning("Event: %s" % (event['event'],))
+            logging.warning("Full: %s" % (event))
+
 @assign_queue('test', queue_type="test")
 class TestWorker(QueueProcessingWorker):
     # This worker allows you to test the queue worker infrastructure without
