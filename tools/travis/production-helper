@@ -64,12 +64,6 @@ if supervisorctl status | grep -vq RUNNING || supervisorctl status | sed 's/^.*u
     exit 1
 fi
 
-rabbitmqctl status
-rabbitmqctl list_queues
-rabbitmqctl list_consumers
-cat /var/log/zulip/errors.log
-cat /var/log/rabbitmq/*
-
 # TODO: Ideally this would test actually logging in, but this is a start.
 echo; echo "Now testing that the newly installed server's homepage loads"; echo
 
@@ -125,6 +119,10 @@ for consumer in $consumer_list; do
     fi
 done
 
+rabbitmqctl status
+rabbitmqctl list_queues
+rabbitmqctl list_consumers
+
 echo; echo "Now running additional Nagios tests"; echo
 if ! /usr/lib/nagios/plugins/zulip_app_frontend/check_queue_worker_errors || \
    ! su zulip -c /usr/lib/nagios/plugins/zulip_postgres_appdb/check_fts_update_log || \
@@ -136,6 +134,9 @@ if ! /usr/lib/nagios/plugins/zulip_app_frontend/check_queue_worker_errors || \
     echo
     echo "DEBUG: printing Zulip server's error log:"
     cat /var/log/zulip/errors.log
+    rabbitmqctl status
+    rabbitmqctl list_queues
+    rabbitmqctl list_consumers
     exit 1
 fi
 echo "Production installation test successful!"
