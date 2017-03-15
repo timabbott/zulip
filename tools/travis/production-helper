@@ -64,6 +64,12 @@ if supervisorctl status | grep -vq RUNNING || supervisorctl status | sed 's/^.*u
     exit 1
 fi
 
+rabbitmqctl status
+rabbitmqctl list_queues
+rabbitmqctl list_consumers
+cat /var/log/zulip/errors.log
+cat /var/log/rabbitmq/*
+
 # TODO: Ideally this would test actually logging in, but this is a start.
 echo; echo "Now testing that the newly installed server's homepage loads"; echo
 
