@@ -137,6 +137,7 @@ if ! /usr/lib/nagios/plugins/zulip_app_frontend/check_queue_worker_errors || \
     rabbitmqctl status
     rabbitmqctl list_queues
     rabbitmqctl list_consumers
+    supervisorctl status
     exit 1
 fi
 echo "Production installation test successful!"
