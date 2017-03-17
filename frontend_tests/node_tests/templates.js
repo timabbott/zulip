@@ -1027,8 +1027,8 @@ function render(template_name, args) {
     var args = {
         users: [{
             full_name: 'Hamlet',
-            email: 'hamlet@zulip.com'
-        }]
+            email: 'hamlet@zulip.com',
+        }],
     };
 
     var html = '';
