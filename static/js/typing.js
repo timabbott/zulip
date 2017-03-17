@@ -13,6 +13,12 @@ var TYPING_STOPPED_WAIT_PERIOD = 5000; // 5s
 var current_recipient;
 var users_currently_typing = new Dict();
 
+// Our logic is a bit too complex to encapsulate in
+// _.throttle/_.debounce (since we need to cancel things), so we do it
+// manually.
+var stop_timer = undefined;
+var last_start_time = undefined;
+
 function send_typing_notification_ajax(recipients, operation) {
     channel.post({
         url: '/json/typing',
@@ -28,6 +34,8 @@ function send_typing_notification_ajax(recipients, operation) {
 }
 
 function check_and_send(operation) {
+    console.log(operation);
+    console.trace();
     if (operation === 'start') {
         if (compose.recipient() && compose.message_content()) {
             if (current_recipient !== undefined && current_recipient !== compose.recipient()) {
@@ -40,34 +48,42 @@ function check_and_send(operation) {
         }
     } else if (operation === 'stop' && current_recipient) {
         send_typing_notification_ajax(current_recipient, operation);
+        // clear the automatic stop notification timer and recipient.
+        clearTimeout(stop_timer);
+        stop_timer = undefined;
         current_recipient = undefined;
     }
 }
 
-function check_and_send_start() {
-    check_and_send('start');
-}
+// Start notifications
+$(document).on('input', '#new_message_content', function () {
+    // If our previous state was no typing notification, send a
+    // start-typing notice immediately.
+    var current_time = new Date();
+    if (current_recipient === undefined ||
+        current_time > last_start_time + TYPING_STARTED_SEND_FREQUENCY) {
+        last_start_time = current_time;
+        check_and_send("start");
+    }
 
-function get_throttled_function() {
-    return _.throttle(check_and_send_start,
-        TYPING_STARTED_SEND_FREQUENCY,
-        {trailing: false});
-}
+    // Then, regardless of whether we changed state, reset the
+    // stop-notification timeout to TYPING_STOPPED_WAIT_PERIOD from
+    // now, so that we'll send a stop notice exactly that long after
+    // stopping typing.
+    if (stop_timer !== undefined) {
+        // Clear an existing stop_timer, if any.
+        clearTimeout(stop_timer);
+    }
+    stop_timer = setTimeout(function () {
+        check_and_send('stop');
+    }, TYPING_STOPPED_WAIT_PERIOD);
+});
 
-function check_and_send_stop() {
+// We send a stop-typing notification immediately when compose is
+// closed/cancelled
+$(document).on('compose_canceled.zulip compose_finished.zulip', function () {
     check_and_send('stop');
-    exports.send_start_notification = get_throttled_function();
-    $(document).on('input', '#new_message_content', exports.send_start_notification);
-}
-
-exports.send_start_notification = get_throttled_function();
-exports.send_stop_notification = _.debounce(check_and_send_stop, TYPING_STOPPED_WAIT_PERIOD);
-
-$(document).on('compose_canceled.zulip', check_and_send_stop);
-$(document).on('compose_finished.zulip', check_and_send_stop);
-$(document).on('blur', '#new_message_content', check_and_send_stop);
-$(document).on('input', '#new_message_content', exports.send_start_notification);
-$(document).on('input', '#new_message_content', exports.send_stop_notification);
+});
 
 function full_name(email) {
     return people.get_by_email(email).full_name;
