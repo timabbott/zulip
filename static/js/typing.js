@@ -16,20 +16,20 @@ var users_currently_typing = new Dict();
 // Our logic is a bit too complex to encapsulate in
 // _.throttle/_.debounce (since we need to cancel things), so we do it
 // manually.
-var stop_timer = undefined;
-var last_start_time = undefined;
+var stop_timer;
+var last_start_time;
 
 function send_typing_notification_ajax(recipients, operation) {
     channel.post({
         url: '/json/typing',
         data: {
             to: recipients,
-            op: operation
+            op: operation,
         },
         success: function () {},
         error: function (xhr) {
             blueslip.warn("Failed to send typing event: " + xhr.responseText);
-        }
+        },
     });
 }
 
