@@ -34,24 +34,27 @@ function send_typing_notification_ajax(recipients, operation) {
 }
 
 function check_and_send(operation) {
-    console.log(operation);
-    console.trace();
-    if (operation === 'start') {
-        if (compose.recipient() && compose.message_content()) {
-            if (current_recipient !== undefined && current_recipient !== compose.recipient()) {
-                // When the recipient is changed, a stop message is sent to the old recipient
-                // before the start message is sent to the new recipient
-                send_typing_notification_ajax(current_recipient, 'stop');
-            }
-            current_recipient = compose.recipient();
-            send_typing_notification_ajax(compose.recipient(), operation);
-        }
-    } else if (operation === 'stop' && current_recipient) {
-        send_typing_notification_ajax(current_recipient, operation);
+    var compose_recipient = compose.recipient();
+    var compose_nonempty = compose.has_message_content();
+
+    // If we currently have an active typing notification out, and we
+    // want to send a stop notice, or the compose recipient changed
+    // (and implicitly we're sending a start notice), send a stop
+    // notice to the old recipient.
+    if (current_recipient !== undefined &&
+        (operation === 'stop' ||
+         current_recipient !== compose_recipient)) {
+        send_typing_notification_ajax(current_recipient, 'stop');
         // clear the automatic stop notification timer and recipient.
         clearTimeout(stop_timer);
         stop_timer = undefined;
         current_recipient = undefined;
+    }
+    if (operation === 'start') {
+        if (compose_recipient !== undefined && compose_nonempty) {
+            current_recipient = compose_recipient;
+            send_typing_notification_ajax(compose_recipient, operation);
+        }
     }
 }
 
