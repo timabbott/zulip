@@ -302,7 +302,7 @@ class S3UploadBackend(ZulipUploadBackend):
         bucket = settings.S3_AVATAR_BUCKET
         medium_suffix = "-medium" if medium else ""
         # ?x=x allows templates to append additional parameters with &s
-        return u"https://%s.s3.amazonaws.com/%s%s?x=x" % (bucket, medium_suffix, hash_key)
+        return u"https://%s.s3.amazonaws.com/%s%s?x=x" % (bucket, hash_key, medium_suffix)
 
     def upload_realm_icon_image(self, icon_file, user_profile):
         # type: (File, UserProfile) -> None
