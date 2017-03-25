@@ -813,6 +813,8 @@ def do_send_messages(messages_maybe_none):
 
                 if user_profile.id in mentioned_ids:
                     trigger = "mention"
+                elif message['message'].recipient.type != Recipient.STREAM:
+                    trigger = 'private_message'
 
                 if trigger is None:
                     continue
