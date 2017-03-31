@@ -1659,3 +1659,41 @@ input.new-organization-button {
     font-size: .85rem;
     color: #AAA;
 }
+
+#500_error_page {
+    background-color: #D5E4E9;
+}
+
+#error_page .row-fluid {
+    text-align: center;
+}
+
+#error_page .errorbox {
+    margin: auto;
+    border: 2px solid #44A98C;
+    max-width: 500px;
+    text-align: center;
+    background-color: white;
+}
+
+#error_page .errorname {
+    color: white;
+    background-color: #44A98C;
+    padding: 10px;
+    margin: 0px;
+}
+
+#error_page .errorcontent {
+    padding: 40px;
+}
+
+#error_page h1 {
+    font-size: 80px;
+    margin: 0px;
+}
+
+#error_page img {
+    max-width: 500px;
+    margin-bottom: -5px;
+}
+
