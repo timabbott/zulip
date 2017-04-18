@@ -3,6 +3,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.test import TestCase, override_settings
 from django_auth_ldap.backend import _LDAPUser
+from django.contrib.auth import authenticate
 from django.test.client import RequestFactory
 from typing import Any, Callable, Dict, List, Optional, Text
 from builtins import object
@@ -431,7 +432,7 @@ class GitHubAuthBackendTest(ZulipTestCase):
     def do_auth(self, *args, **kwargs):
         # type: (*Any, **Any) -> UserProfile
         with self.settings(AUTHENTICATION_BACKENDS=('zproject.backends.GitHubAuthBackend',)):
-            return self.backend.authenticate(**kwargs)
+            return authenticate(**kwargs)
 
     def test_github_auth_enabled(self):
         # type: () -> None
@@ -600,6 +601,8 @@ class GitHubAuthBackendTest(ZulipTestCase):
         request.session = {}
         request.user = self.user_profile
         self.backend.strategy.request = request
+        session_data = {'subdomain': False, 'is_signup': '1'}
+        self.backend.strategy.session_get = lambda k: session_data.get(k)
 
         def do_auth(*args, **kwargs):
             # type: (*Any, **Any) -> UserProfile
@@ -616,6 +619,59 @@ class GitHubAuthBackendTest(ZulipTestCase):
             self.assert_in_response('Your email address, {}, does not '
                                     'correspond to any existing '
                                     'organization.'.format(email), result)
+
+    def test_github_backend_existing_user(self):
+        # type: () -> None
+        rf = RequestFactory()
+        request = rf.get('/complete')
+        request.session = {}
+        request.user = self.user_profile
+        self.backend.strategy.request = request
+        session_data = {'subdomain': False, 'is_signup': '1'}
+        self.backend.strategy.session_get = lambda k: session_data.get(k)
+
+        def do_auth(*args, **kwargs):
+            # type: (*Any, **Any) -> UserProfile
+            return_data = kwargs['return_data']
+            return_data['valid_attestation'] = True
+            return None
+
+        with mock.patch('social_core.backends.github.GithubOAuth2.do_auth',
+                        side_effect=do_auth):
+            email = 'hamlet@zulip.com'
+            response = dict(email=email, name='Hamlet')
+            result = self.backend.do_auth(response=response)
+            self.assert_in_response('action="/register/"', result)
+            self.assert_in_response('hamlet@zulip.com is already active',
+                                    result)
+
+    def test_github_backend_new_user_when_is_signup_is_false(self):
+        # type: () -> None
+        rf = RequestFactory()
+        request = rf.get('/complete')
+        request.session = {}
+        request.user = self.user_profile
+        self.backend.strategy.request = request
+        session_data = {'subdomain': False, 'is_signup': '0'}
+        self.backend.strategy.session_get = lambda k: session_data.get(k)
+
+        def do_auth(*args, **kwargs):
+            # type: (*Any, **Any) -> UserProfile
+            return_data = kwargs['return_data']
+            return_data['valid_attestation'] = True
+            return None
+
+        with mock.patch('social_core.backends.github.GithubOAuth2.do_auth',
+                        side_effect=do_auth):
+            email = 'nonexisting@phantom.com'
+            response = dict(email=email, name='Ghost')
+            result = self.backend.do_auth(response=response)
+            self.assert_in_response(
+                'action="/accounts/confirm_continue_registration/"', result)
+            self.assert_in_response('You attempted to login using '
+                                    'nonexisting@phantom.com, but '
+                                    'nonexisting@phantom.com does',
+                                    result)
 
     def test_login_url(self):
         # type: () -> None
@@ -663,7 +719,8 @@ class GitHubAuthBackendTest(ZulipTestCase):
             result = self.client_get(reverse('social:complete', args=['github']),
                                      info={'state': 'state'})
             self.assertEqual(result.status_code, 200)
-            self.assertIn("Sign up for Zulip", result.content.decode('utf8'))
+            self.assert_in_response("Please click the following button "
+                                    "if you wish to register.", result)
             self.assertEqual(mock_get_email_address.call_count, 2)
 
         utils.BACKENDS = settings.AUTHENTICATION_BACKENDS
@@ -915,7 +972,8 @@ class GoogleSubdomainLoginTest(GoogleOAuthTest):
 
             result = self.client_get(result.url)
             self.assert_in_response(
-                "You are trying to login with newuser@zulip.com.", result)
+                "You attempted to login using newuser@zulip.com, "
+                "but newuser@zulip.com does", result)
             # Click confirm registraton button.
             url = '/accounts/confirm_continue_registration/'
             result = self.client_post(url, {'email': email,
