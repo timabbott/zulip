@@ -1793,7 +1793,8 @@ class LoginOrAskForRegistrationTestCase(ZulipTestCase):
             user_profile,
             full_name=full_name,
             invalid_subdomain=invalid_subdomain)
-        self.assert_in_response('You are trying to login with new@zulip.com.',
+        self.assert_in_response('You attempted to login using new@zulip.com, '
+                                'but new@zulip.com does',
                                 response)
 
     def test_invalid_subdomain(self):
