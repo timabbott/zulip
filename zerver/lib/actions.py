@@ -20,6 +20,7 @@ from zerver.lib.cache import (
     to_dict_cache_key_id,
 )
 from zerver.lib.context_managers import lockfile
+from zerver.lib.emoji import emoji_name_to_codepoint
 from zerver.lib.hotspots import get_next_hotspots
 from zerver.lib.message import (
     access_message,
@@ -934,7 +935,10 @@ def notify_reaction_update(user_profile, message, emoji_name, op):
 
 def do_add_reaction(user_profile, message, emoji_name):
     # type: (UserProfile, Message, Text) -> None
-    reaction = Reaction(user_profile=user_profile, message=message, emoji_name=emoji_name)
+    (codepoint, is_realm_emoji) = emoji_name_to_codepoint(emoji_name)
+    reaction = Reaction(user_profile=user_profile, message=message,
+                        emoji_name=emoji_name, codepoint=codepoint,
+                        is_realm_emoji=is_realm_emoji)
     reaction.save()
     notify_reaction_update(user_profile, message, emoji_name, "add")
 

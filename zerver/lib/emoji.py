@@ -4,21 +4,26 @@ import os
 import re
 
 from django.utils.translation import ugettext as _
-from typing import Text
+from typing import Text, Tuple
+
 from zerver.lib.bugdown import name_to_codepoint
 from zerver.lib.request import JsonableError
 from zerver.lib.upload import upload_backend
 from zerver.models import Realm, UserProfile
 
+def emoji_name_to_codepoint(realm, emoji_name):
+    # type: (Realm, Text) -> Tuple[Text, bool]
+    if emoji_name in set(realm.get_emoji().keys()):
+        return realm.get_emoji()[emoji_name], True
+    if emoji_name == 'zulip':
+        return emoji_name, True
+    if emoji_name in name_to_codepoint:
+        return name_to_codepoint[emoji_name], False
+    raise JsonableError(_("Emoji '%s' does not exist" % (emoji_name,)))
+
 def check_valid_emoji(realm, emoji_name):
     # type: (Realm, Text) -> None
-    if emoji_name in set(realm.get_emoji().keys()):
-        return
-    if emoji_name in name_to_codepoint:
-        return
-    if emoji_name == 'zulip':
-        return
-    raise JsonableError(_("Emoji '%s' does not exist" % (emoji_name,)))
+    emoji_name_to_codepoint(realm, emoji_name)
 
 def check_emoji_admin(user_profile):
     # type: (UserProfile) -> None

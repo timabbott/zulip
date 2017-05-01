@@ -1181,6 +1181,8 @@ class Reaction(ModelReprMixin, models.Model):
     user_profile = models.ForeignKey(UserProfile) # type: UserProfile
     message = models.ForeignKey(Message) # type: Message
     emoji_name = models.TextField() # type: Text
+    codepoint = models.TextField() # type: Text
+    is_realm_emoji = models.BooleanField(default=False)  # type: bool
 
     class Meta(object):
         unique_together = ("user_profile", "message", "emoji_name")
