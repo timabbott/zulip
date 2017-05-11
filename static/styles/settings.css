@@ -1162,3 +1162,15 @@ thead .actions {
 #settings_page .display-settings-form select {
     width: 245px;
 }
+
+#attachments_list:empty {
+    padding: 10px;
+}
+
+.required-text:empty::after {
+    content: attr(data-empty);
+    display: block;
+
+    font-style: italic;
+    color: #aaa;
+}
