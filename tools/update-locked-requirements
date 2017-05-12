@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -e
+
+# The python version checker pattern of this script is derived from
+# tools/travis/activate-venv
+
+py_version="$(python -c 'import sys; print(sys.version_info[0])')"
+if [ "$py_version" == 2 ]; then
+    pip-compile --output-file requirements/py2_common_lock.txt requirements/py2_common.txt
+    # Remove the editable flag in the lock file for safer build
+    sed -i 's/-e //' requirements/py2_common_lock.txt
+else
+    pip-compile --output-file requirements/py3_common_lock.txt requirements/py3_common.txt
+    # Remove the editable flag in the lock file for safer build
+    sed -i 's/-e //' requirements/py3_common_lock.txt
+fi
