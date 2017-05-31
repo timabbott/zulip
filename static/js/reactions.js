@@ -104,17 +104,20 @@ exports.render_reaction_show_list = function () {
 function filter_emojis() {
     var elt = $(".emoji-popover-filter").expectOne();
     var search_term = elt.val().trim().toLowerCase();
-    var reaction_list = $(".emoji-popover-emoji");
+    var $reaction_list = $(".emoji-popover-emoji");
+    var $heading_list = $(".emoji-popover-subheading");
     if (search_term !== '') {
-        reaction_list.each(function () {
+        $reaction_list.each(function () {
             if (this.title.indexOf(search_term) === -1) {
                 this.classList.add("hide");
             } else {
                 this.classList.remove("hide");
             }
         });
+        $heading_list.addClass("hide");
     } else {
-        reaction_list.removeClass("hide");
+        $reaction_list.removeClass("hide");
+        $heading_list.removeClass("hide");
     }
     exports.render_reaction_show_list();
 }
