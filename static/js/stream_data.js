@@ -182,12 +182,12 @@ exports.get_color = function (stream_name) {
 
 exports.in_home_view = function (stream_id) {
     var sub = exports.get_sub_by_id(stream_id);
-    return sub !== undefined && sub.in_home_view;
+    return sub === undefined || sub.in_home_view;
 };
 
 exports.name_in_home_view = function (stream_name) {
     var sub = exports.get_sub(stream_name);
-    return sub !== undefined && sub.in_home_view;
+    return sub === undefined || sub.in_home_view;
 };
 
 exports.notifications_in_home_view = function () {
