@@ -78,7 +78,7 @@
   "Compose a message to stream <b>__stream.name__</b>": "<b>__stream.name__</b>ストリームへのメッセージを作成", 
   "Configure regular expression patterns that will be automatically linkified when used in Zulip message bodies or topics.  For example to automatically linkify commit IDs and issue numbers (e.g. #123) to the corresponding items in a GitHub project, you could use the following:": "Configure regular expression patterns that will be automatically linkified when used in Zulip message bodies or topics.  For example to automatically linkify commit IDs and issue numbers (e.g. #123) to the corresponding items in a GitHub project, you could use the following:", 
   "Configure the authentication methods for your organization.": "Configure the authentication methods for your organization.", 
-  "Configure the default streams new users are subscribed to when joining your organization.": "Configure the default streams new users are subscribed to when joining your organization.", 
+  "Configure the default streams new users are subscribed to when joining your organization.": "組織に参加したときに新しいユーザーがデフォルトで購読するストリームを設定します。", 
   "Confirm password": "パスワードを確認", 
   "Cookie Bot": "Cookie Bot", 
   "Copied!": "Copied!", 

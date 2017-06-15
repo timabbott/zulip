@@ -6,14 +6,15 @@
 # Carlos Rey <darthmincho@gmail.com>, 2016
 # Enrique Maldonado, 2016
 # Enrique Maldonado, 2016
+# Greg Price <gnprice@gmail.com>, 2017
 # Yago González <yagogonzalezg@gmail.com>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: Zulip\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-06 18:39+0000\n"
-"PO-Revision-Date: 2017-06-06 19:15+0000\n"
-"Last-Translator: Yago González <yagogonzalezg@gmail.com>\n"
+"PO-Revision-Date: 2017-06-08 18:29+0000\n"
+"Last-Translator: Greg Price <gnprice@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/zulip/zulip/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -624,7 +625,7 @@ msgstr "Aplicaciones móviles"
 msgid ""
 "Check Zulip on the go with native <a href=\"%(apps_page_url)s\">iOS and\n"
 "                        Android apps</a>."
-msgstr ""
+msgstr "Ojea Zulip por el camino con las aplicaciones nativas para <a href=\"%(apps_page_url)s\">iOS y\n                        Android</a>."
 
 #: templates/zerver/features.html:302
 msgid "Desktop apps"
@@ -635,7 +636,7 @@ msgstr "Aplicaciones de escritorio"
 msgid ""
 "Prefer Zulip in its own window and rich, OS-level notifications?\n"
 "                          Enjoy <a href=\"%(apps_page_url)s\">Zulip on your desktop</a>."
-msgstr ""
+msgstr "¿Prefieres Zulip en su propia ventana y notificaciones ricas, a nivel de sistema operativo?\n                          Disfruta de <a href=\"%(apps_page_url)s\">Zulip en tu ordenador</a>."
 
 #: templates/zerver/find_my_team.html:9
 msgid "Find your team"

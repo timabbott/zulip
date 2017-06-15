@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Zulip\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-06 18:39+0000\n"
-"PO-Revision-Date: 2017-06-06 18:39+0000\n"
+"PO-Revision-Date: 2017-06-14 18:39+0000\n"
 "Last-Translator: Tim Abbott <tabbott@kandralabs.com>\n"
 "Language-Team: Hindi (http://www.transifex.com/zulip/zulip/language/hi/)\n"
 "MIME-Version: 1.0\n"
@@ -50,7 +50,7 @@ msgstr ""
 #: templates/zerver/register.html:33 templates/zerver/reset.html:25
 #: templates/zerver/reset_confirm.html:24
 msgid "Email"
-msgstr ""
+msgstr "ईमेल"
 
 #: templates/zerver/accounts_accept_terms.html:41
 #, python-format
@@ -59,7 +59,7 @@ msgstr ""
 
 #: templates/zerver/accounts_accept_terms.html:53
 msgid "Enter"
-msgstr ""
+msgstr "दर्ज करें"
 
 #: templates/zerver/accounts_home.html:17
 msgid "Sign up for Zulip"
@@ -241,7 +241,7 @@ msgstr ""
 
 #: templates/zerver/compose.html:63
 msgid "Topic"
-msgstr ""
+msgstr "विषय"
 
 #: templates/zerver/compose.html:72
 msgid "You and"
@@ -855,7 +855,7 @@ msgstr ""
 #: templates/zerver/keyboard_shortcuts.html:17
 #: templates/zerver/right_sidebar.html:15
 msgid "Search people"
-msgstr ""
+msgstr "लोगों की खोज"
 
 #: templates/zerver/keyboard_shortcuts.html:21
 #: templates/zerver/left_sidebar.html:68
@@ -1064,7 +1064,7 @@ msgstr ""
 
 #: templates/zerver/left_sidebar.html:61
 msgid "All streams"
-msgstr ""
+msgstr "सभी धारा"
 
 #: templates/zerver/left_sidebar.html:78
 msgid "SHARE THE LOVE"
@@ -1107,7 +1107,7 @@ msgstr ""
 #: templates/zerver/login.html:87 templates/zerver/register.html:69
 #: templates/zerver/reset_confirm.html:31
 msgid "Password"
-msgstr ""
+msgstr "पासवर्ड"
 
 #: templates/zerver/login.html:102
 msgid ""
@@ -1116,11 +1116,11 @@ msgstr ""
 
 #: templates/zerver/login.html:112
 msgid "Sign in"
-msgstr ""
+msgstr "साइन इन करें"
 
 #: templates/zerver/login.html:124
 msgid "Sign in with Google"
-msgstr ""
+msgstr "Google के साथ साइन इन करें"
 
 #: templates/zerver/login.html:133
 msgid "Sign in with GitHub"
@@ -1166,7 +1166,7 @@ msgstr ""
 
 #: templates/zerver/navbar.html:24 templates/zerver/navbar.html:25
 msgid "Search"
-msgstr ""
+msgstr "खोज"
 
 #: templates/zerver/navbar.html:52 templates/zerver/navbar.html:54
 msgid "Manage streams"
@@ -1176,7 +1176,7 @@ msgstr ""
 #: templates/zerver/settings_overlay.html:4
 #: templates/zerver/settings_overlay.html:105
 msgid "Settings"
-msgstr ""
+msgstr "सेटिंग्स"
 
 #: templates/zerver/navbar.html:62 templates/zerver/navbar.html:65
 msgid "Manage organization"
