@@ -25,7 +25,7 @@
 <!-- Automatically link to an external issue tracker (improve wording) -->
 <!-- Add a link preview -->
 * [Enable or disable Press Enter to send](/help/enable-or-disable-pressing-enter-to-send)
-* [Verify that your message has been successfully sent](/help/verify-that-your-message-has-been-successfully-sent)
+* [Verify your message has sent](/help/verify-that-your-message-has-been-successfully-sent)
 <!-- What to do if the server returns an error -->
 * [Send a status message](/help/format-your-message-using-markdown#status-messages)
 * [@-mention a team member](/help/at-mention-a-team-member)
@@ -34,8 +34,8 @@
 * [Reply to a message](/help/reply-to-a-message)
 
 ## Reading Messages
-* [View the Markdown source of a message](/help/view-the-markdown-source-of-a-message)
-* [View the exact time a message was sent](/help/view-the-exact-time-a-message-was-sent)
+* [View the original message formatting](/help/view-the-markdown-source-of-a-message)
+* [View the time a message was sent](/help/view-the-exact-time-a-message-was-sent)
 * [View an image at full size](/help/view-an-image-at-full-size)
 * [Collapse a message](/help/collapse-a-message)
 * [Star a message](/help/star-a-message)
@@ -49,7 +49,7 @@
 * [View a message's edit history](/help/view-a-messages-edit-history)
 
 ## People
-* [Check whether someone is here or away](/help/check-whether-someone-is-here-or-away)
+* [Check whether someone is online](/help/check-whether-someone-is-here-or-away)
 * [Invite a friend to Zulip](/help/invite-a-friend-to-zulip)
 * [Send someone a private message](/help/send-someone-a-private-message)
 * [Send a group of people a private message](/help/send-a-group-of-people-a-private-message)
@@ -110,17 +110,17 @@
 * [Change your organization's name](/help/change-your-organizations-name)
 * [Change your organization's description](/help/change-your-organizations-description)
 * [Change your organization's avatar](/help/change-your-organizations-avatar)
-* [Restrict user email addresses to certain domains](/help/restrict-user-email-addresses-to-certain-domains)
-* [Allow anyone to join without an invitation](/help/allow-anyone-to-join-without-an-invitation)
+* [Restrict emails to certain domains](/help/restrict-user-email-addresses-to-certain-domains)
+* [Allow joining without an invitation](/help/allow-anyone-to-join-without-an-invitation)
 * [Only allow admins to invite new users](/help/only-allow-admins-to-invite-new-users)
 * [Only allow admins to create new streams](/help/only-allow-admins-to-create-new-streams-feature)
 * [Only allow admins to add emoji](/help/only-allow-admins-to-add-emoji)
 * [Allow image/link previews](/help/allow-image-link-previews)
-* [Prevent users from changing their name](/help/prevent-users-from-changing-their-name)
-* [Prevent users from changing their email address](/help/prevent-users-from-changing-their-email-address)
-* [Restrict editing of old messages and topics](/help/restrict-editing-of-old-messages-and-topics)
+* [Prevent name change](/help/prevent-users-from-changing-their-name)
+* [Prevent email address change](/help/prevent-users-from-changing-their-email-address)
+* [Restrict old message and topic editing](/help/restrict-editing-of-old-messages-and-topics)
 * [Require users to include topics in stream messages](/help/require-users-to-include-topics-in-stream-messages)
-* [Change the default language for your organization](/help/change-the-default-language-for-your-organization)
+* [Change the default organization language](/help/change-the-default-language-for-your-organization)
 * [Add custom emoji](/help/add-custom-emoji)
 <!-- Configure authentication methods -->
 * [Add a custom linkification filter](/help/add-a-custom-linkification-filter)
