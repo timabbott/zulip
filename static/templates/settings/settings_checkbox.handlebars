@@ -1,0 +1,14 @@
+<div class="input-group">
+    <label class="checkbox">
+        <input type="checkbox" name="{{setting_name}}"
+                  id="{{setting_name}}"
+               {{#if is_checked}}
+               checked="checked"
+               {{/if}} />
+        <span></span>
+    </label>
+    <label for="{{setting_name}}" class="inline-block">
+        {{label}}
+    </label>
+</div>
+
