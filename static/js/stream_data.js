@@ -460,8 +460,14 @@ exports.initialize_from_page_params = function () {
     // Migrate the notifications stream from the new API structure to
     // what the frontend expects.
     if (page_params.realm_notifications_stream_id !== -1) {
-        page_params.notifications_stream =
-            exports.get_sub_by_id(page_params.realm_notifications_stream_id).name;
+        var notifications_stream = exports.get_sub_by_id(page_params.realm_notifications_stream_id);
+        if (notifications_stream !== undefined) {
+            page_params.notifications_stream = notifications_stream.name;
+        } else {
+            // This is what happens if the notifications stream is
+            // invite-only.
+            page_params.notifications_stream = "";
+        }
     } else {
         page_params.notifications_stream = "";
     }
