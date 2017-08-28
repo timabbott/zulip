@@ -553,6 +553,9 @@ S3_SECRET_KEY = get_secret("s3_secret_key")
 ANDROID_GCM_API_KEY = get_secret("android_gcm_api_key")
 
 GOOGLE_OAUTH2_CLIENT_SECRET = get_secret('google_oauth2_client_secret')
+if GOOGLE_OAUTH2_CLIENT_ID is None:
+    # Allow putting in the secrets file.
+    GOOGLE_OAUTH2_CLIENT_ID = get_secret('google_oauth2_client_id')
 
 DROPBOX_APP_KEY = get_secret("dropbox_app_key")
 
@@ -1217,6 +1220,8 @@ else:
 
 # SOCIAL_AUTH_GITHUB_KEY is set in /etc/zulip/settings.py
 SOCIAL_AUTH_GITHUB_SECRET = get_secret('social_auth_github_secret')
+if SOCIAL_AUTH_GITHUB_KEY is None:
+    SOCIAL_AUTH_GITHUB_KEY = get_secret('social_auth_github_key')
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/login/'
 SOCIAL_AUTH_GITHUB_SCOPE = ['user:email']
 SOCIAL_AUTH_GITHUB_ORG_KEY = SOCIAL_AUTH_GITHUB_KEY
