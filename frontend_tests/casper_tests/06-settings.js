@@ -57,6 +57,32 @@ casper.then(function () {
 casper.then(function () {
     casper.waitUntilVisible('#account-settings-status', function () {
         casper.test.assertSelectorHasText('#account-settings-status', 'Updated settings!');
+    });
+});
+
+common.then_log_out();
+
+common.then_log_in({
+    username: 'iago@zulip.com',
+    password: 'qwertyuiop',
+});
+
+casper.then(function () {
+    var menu_selector = '#settings-dropdown';
+    casper.waitUntilVisible(menu_selector, function () {
+        casper.click(menu_selector);
+    });
+});
+
+casper.then(function () {
+    casper.waitUntilVisible('a[href^="#settings"]', function () {
+        casper.test.info('Settings page');
+        casper.click('a[href^="#settings"]');
+    });
+});
+
+casper.then(function () {
+    casper.waitUntilVisible('#api_key_button', function () {
         casper.click('#api_key_button');
     });
 });
