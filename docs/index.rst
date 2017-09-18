@@ -40,6 +40,7 @@ Contents:
    readme-symlink
    architecture-overview
    directory-structure
+   dependencies
    roadmap
    changelog
 
