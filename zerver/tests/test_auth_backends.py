@@ -36,9 +36,9 @@ from zerver.lib.test_classes import (
 from zerver.lib.test_helpers import POSTRequestMock
 from zerver.models import \
     get_realm, email_to_username, UserProfile, \
-    PreregistrationUser, Realm, get_user
+    PreregistrationUser, Realm, get_user, MultiuseInvite
 
-from confirmation.models import Confirmation, confirmation_url
+from confirmation.models import Confirmation, confirmation_url, create_confirmation_link
 
 from zproject.backends import ZulipDummyBackend, EmailAuthBackend, \
     GoogleMobileOauth2Backend, ZulipRemoteUserBackend, ZulipLDAPAuthBackend, \
@@ -980,6 +980,52 @@ class GoogleSubdomainLoginTest(GoogleOAuthTest):
         result = self.client_get('/accounts/login/subdomain/', subdomain="zulip")
         self.assertEqual(result.status_code, 302)
         confirmation = Confirmation.objects.all().first()
+        confirmation_key = confirmation.confirmation_key
+        self.assertIn('do_confirm/' + confirmation_key, result.url)
+        result = self.client_get(result.url)
+        self.assert_in_response('action="/accounts/register/"', result)
+        data = {"from_confirmation": "1",
+                "full_name": data['name'],
+                "key": confirmation_key}
+        result = self.client_post('/accounts/register/', data, subdomain="zulip")
+        self.assert_in_response("You're almost there", result)
+
+        # Verify that the user is asked for name but not password
+        self.assert_not_in_success_response(['id_password'], result)
+        self.assert_in_success_response(['id_full_name'], result)
+
+    @override_settings(REALMS_HAVE_SUBDOMAINS=True)
+    def test_log_into_subdomain_when_using_invite_link(self):
+        # type: () -> None
+        data = {'name': 'New User Name',
+                'email': 'new@zulip.com',
+                'subdomain': 'zulip',
+                'is_signup': True}
+
+        realm = get_realm("zulip")
+        realm.invite_required = True
+        realm.save()
+
+        self.client.cookies = SimpleCookie(self.get_signed_subdomain_cookie(data))
+
+        # Without the invite link, we can't create an account due to invite_required
+        result = self.client_get('/accounts/login/subdomain/', subdomain="zulip")
+        self.assertEqual(result.status_code, 200)
+        self.assert_in_success_response(['Sign up for Zulip'], result)
+
+        # Now confirm an invitation link works
+        referrer = self.example_user("hamlet")
+        multiuse_obj = MultiuseInvite.objects.create(realm=realm, referred_by=referrer)
+        invite_link = create_confirmation_link(multiuse_obj, realm.host,
+                                               Confirmation.MULTIUSE_INVITE)
+
+        result = self.client_get(invite_link, subdomain="zulip")
+        self.assert_in_success_response(['Sign up for Zulip'], result)
+
+        result = self.client_get('/accounts/login/subdomain/', subdomain="zulip")
+        self.assertEqual(result.status_code, 302)
+
+        confirmation = Confirmation.objects.all().last()
         confirmation_key = confirmation.confirmation_key
         self.assertIn('do_confirm/' + confirmation_key, result.url)
         result = self.client_get(result.url)
