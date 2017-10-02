@@ -264,6 +264,7 @@ exports.system_initiated_animate_scroll = function (scroll_amount) {
     pointer.suppress_scroll_pointer_update = true; // Gets set to false in the scroll handler.
     var viewport_offset = exports.scrollTop();
     in_stoppable_autoscroll = true;
+    console.log("Scrolling automatically:", viewport_offset, scroll_amount);
     exports.message_pane.animate({
         scrollTop: viewport_offset + scroll_amount,
         always: function () {
