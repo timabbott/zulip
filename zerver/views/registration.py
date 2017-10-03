@@ -77,15 +77,18 @@ def accounts_register(request):
     password_required = prereg_user.password_required
 
     validators.validate_email(email)
-    if prereg_user.referred_by:
-        # If someone invited you, you are joining their realm regardless
-        # of your e-mail address.
-        realm = prereg_user.referred_by.realm
-    elif realm_creation:
+    subdomain = get_subdomain(request)
+
+    if realm_creation:
         # For creating a new realm, there is no existing realm or domain
         realm = None
     else:
-        realm = get_realm(get_subdomain(request))
+        realm = get_realm(subdomain)
+        if prereg_user.referred_by and realm != prereg_user.referred_by.realm:
+            # Invitations only work with the same realm
+            logging.error("Subdomain mismatch in registration %s: %s" % (
+                realm.subdomain, prereg_user.referred_by.realm.subdomain,))
+            return redirect('/')
 
     if realm and not email_allowed_for_realm(email, realm):
         return render(request, "zerver/closed_realm.html",
@@ -215,18 +218,11 @@ def accounts_register(request):
             # their new realm.
             return redirect_and_log_into_subdomain(realm, full_name, email)
 
-        # This dummy_backend check below confirms the user is
-        # authenticating to the correct subdomain.
         return_data = {}  # type: Dict[str, bool]
         auth_result = authenticate(username=user_profile.email,
                                    realm_subdomain=realm.subdomain,
                                    return_data=return_data,
                                    use_dummy_backend=True)
-        if return_data.get('invalid_subdomain'):
-            # By construction, this should never happen.
-            logging.error("Subdomain mismatch in registration %s: %s" % (
-                realm.subdomain, user_profile.email,))
-            return redirect('/')
 
         # Mark the user as having been just created, so no login email is sent
         auth_result.just_registered = True
