@@ -261,15 +261,16 @@ class ZulipDummyBackend(ZulipAuthMixin):
     Used when we want to log you in but we don't know which backend to use.
     """
 
-    def authenticate(self, username=None, realm_subdomain=None, use_dummy_backend=False,
+    def authenticate(self, username=None, realm=None, use_dummy_backend=False,
                      return_data=None):
-        # type: (Optional[Text], Optional[Text], bool, Optional[Dict[str, Any]]) -> Optional[UserProfile]
+        # type: (Optional[Text], Optional[Realm], bool, Optional[Dict[str, Any]]) -> Optional[UserProfile]
         assert username is not None
+        assert realm is not None
         if use_dummy_backend:
             user_profile = common_get_active_user_by_email(username)
             if user_profile is None:
                 return None
-            if not check_subdomain(realm_subdomain, user_profile.realm.subdomain):
+            if not check_subdomain(realm.subdomain, user_profile.realm.subdomain):
                 if return_data is not None:
                     return_data["invalid_subdomain"] = True
                 return None

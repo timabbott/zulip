@@ -223,7 +223,7 @@ def accounts_register(request):
 
         return_data = {}  # type: Dict[str, bool]
         auth_result = authenticate(username=user_profile.email,
-                                   realm_subdomain=realm.subdomain,
+                                   realm=realm,
                                    return_data=return_data,
                                    use_dummy_backend=True)
 
