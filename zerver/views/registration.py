@@ -59,15 +59,18 @@ def accounts_register(request):
     is_realm_admin = prereg_user.invited_as_admin or realm_creation
 
     validators.validate_email(email)
-    if prereg_user.referred_by:
-        # If someone invited you, you are joining their realm regardless
-        # of your e-mail address.
-        realm = prereg_user.referred_by.realm
-    elif realm_creation:
+    subdomain = get_subdomain(request)
+
+    if realm_creation:
         # For creating a new realm, there is no existing realm or domain
         realm = None
     else:
-        realm = get_realm(get_subdomain(request))
+        realm = get_realm(subdomain)
+        if prereg_user.referred_by and realm != prereg_user.referred_by.realm:
+            # Invitations only work with the same realm
+            logging.error("Subdomain mismatch in registration %s: %s" % (
+                realm.subdomain, prereg_user.referred_by.realm.subdomain,))
+            return redirect('/')
 
     if realm and not email_allowed_for_realm(email, realm):
         return render(request, "zerver/closed_realm.html",
@@ -235,11 +238,6 @@ def accounts_register(request):
                                    realm_subdomain=realm.subdomain,
                                    return_data=return_data,
                                    use_dummy_backend=True)
-        if return_data.get('invalid_subdomain'):
-            # By construction, this should never happen.
-            logging.error("Subdomain mismatch in registration %s: %s" % (
-                realm.subdomain, user_profile.email,))
-            return redirect('/')
 
         return login_and_go_to_home(request, auth_result)
 
