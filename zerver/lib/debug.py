@@ -1,8 +1,7 @@
 
 import code
-import traceback
 import signal
-
+import traceback
 from types import FrameType
 
 from typing import Optional
