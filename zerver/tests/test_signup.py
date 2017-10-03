@@ -1718,20 +1718,17 @@ class UserSignUpTest(ZulipTestCase):
         result = self.client_get(confirmation_url)
         self.assertEqual(result.status_code, 200)
 
-        def invalid_subdomain(**kwargs):
-            # type: (**Any) -> Any
-            return_data = kwargs.get('return_data', {})
-            return_data['invalid_subdomain'] = True
-
-        with patch('zerver.views.registration.authenticate', side_effect=invalid_subdomain):
-            with patch('logging.error') as mock_error:
-                result = self.client_post(
-                    '/accounts/register/',
-                    {'password': password,
-                     'full_name': 'New User',
-                     'key': find_key_by_email(email),
-                     'terms': True})
+        with patch('logging.error') as mock_error:
+            result = self.client_post(
+                '/accounts/register/',
+                {'password': password,
+                 'full_name': 'New User',
+                 'key': find_key_by_email(email),
+                 'terms': True},
+                subdomain="zephyr")
         mock_error.assert_called_once()
+        print(result)
+        print(result.content)
         self.assertEqual(result.status_code, 302)
 
     def test_failed_signup_due_to_restricted_domain(self):

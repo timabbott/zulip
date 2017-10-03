@@ -66,10 +66,13 @@ def accounts_register(request):
         realm = None
     else:
         realm = get_realm(subdomain)
+        if realm is None:
+            logging.error("Invalid subdomain in registration (%s)" % (subdomain,))
+            return redirect('/')
         if prereg_user.referred_by and realm != prereg_user.referred_by.realm:
             # Invitations only work with the same realm
-            logging.error("Subdomain mismatch in registration %s: %s" % (
-                realm.subdomain, prereg_user.referred_by.realm.subdomain,))
+            logging.error("Subdomain mismatch in invite ('%s' != '%s')" % (
+                subdomain, prereg_user.referred_by.realm.subdomain,))
             return redirect('/')
 
     if realm and not email_allowed_for_realm(email, realm):
