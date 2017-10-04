@@ -1,6 +1,7 @@
 
 import code
 from datetime import datetime
+import gc
 import logging
 import os.path
 import signal
@@ -48,6 +49,7 @@ def tracemalloc_dump(sig, frame):
     path = os.path.join(settings.TRACEMALLOC_DUMP_DIR, basename)
     os.makedirs(settings.TRACEMALLOC_DUMP_DIR, exist_ok=True)
 
+    gc.collect()
     tracemalloc.take_snapshot().dump(path)
 
     procstat = open('/proc/{}/stat'.format(os.getpid()), 'rb').read().split()
