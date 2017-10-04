@@ -1946,3 +1946,10 @@ def get_bot_services(user_profile_id):
 def get_service_profile(user_profile_id, service_name):
     # type: (str, str) -> Service
     return Service.objects.get(user_profile__id=user_profile_id, name=service_name)
+
+import os
+if os.environ.get('PYTHONTRACEMALLOC'):
+    # If the server was started with `tracemalloc` tracing on, then
+    # listen for a signal to dump `tracemalloc` snapshots.
+    from zerver.lib.debug import tracemalloc_listen
+    tracemalloc_listen()
