@@ -69,39 +69,13 @@ def tracemalloc_listen():
     See https://docs.python.org/3/library/tracemalloc .
     '''
     assert(signal.SIGRTMIN < signal.SIGRTMAX)
-    old_handler = signal.getsignal(signal.SIGRTMIN)
-    if old_handler is tracemalloc_dump:
-        logger.warn('pid {}: tracemalloc handler all set, allegedly'.format(os.getpid()))
-    else:
-        logger.warn('pid {}: tracemalloc handler was {}'.format(
-            os.getpid(), repr(old_handler)))
-
-    try:
-        signal.signal(signal.SIGRTMIN, signal.SIG_IGN)
-    except ValueError:
-        logger.warn('pid {}: not main thread, aborting listen'.format(os.getpid()))
-        return
-
-    handler = signal.getsignal(signal.SIGRTMIN)
-    if handler is tracemalloc_dump:
-        logger.warn('pid {}: tracemalloc handler set now??'.format(os.getpid()))
-    else:
-        logger.warn('pid {}: tracemalloc handler un-set: {}'.format(
-            os.getpid(), repr(handler)))
-
     signal.signal(signal.SIGRTMIN, tracemalloc_dump)
-
-    handler = signal.getsignal(signal.SIGRTMIN)
-    if handler is tracemalloc_dump:
-        logger.warn('pid {}: tracemalloc handler all set now'.format(os.getpid()))
-    else:
-        logger.warn('pid {}: tracemalloc handler still wrong: {}'.format(
-            os.getpid(), repr(handler)))
 
 def maybe_tracemalloc_listen():
     if os.environ.get('PYTHONTRACEMALLOC'):
         # If the server was started with `tracemalloc` tracing on, then
         # listen for a signal to dump `tracemalloc` snapshots.
+        logging.warn('pid {}: calling tracemalloc_listen()'.format(os.getpid()))
         tracemalloc_listen()
     else:
-        logger.warn('pid {}: no tracemalloc_listen()'.format(os.getpid()))
+        logging.warn('pid {}: no tracemalloc_listen()'.format(os.getpid()))
