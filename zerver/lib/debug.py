@@ -43,9 +43,9 @@ def interactive_debug_listen():
 
 def tracemalloc_dump():
     # type: () -> None
-    logger.warn("tracemalloc dump: called in pid {}".format(os.getpid()))
     if not tracemalloc.is_tracing():
-        logger.warn("tracemalloc dump: tracing off, nothing to dump")
+        logger.warn("pid {}: tracemalloc off, nothing to dump"
+                    .format(os.getpid()))
         return
     basename = "snap.{}.{}".format(os.getpid(),
                                    datetime.utcnow().strftime("%F-%T"))
@@ -66,7 +66,7 @@ def tracemalloc_dump():
 
 def tracemalloc_listen_sock(sock):
     # type: (socket.socket) -> None
-    logger.warn('pid {}: tracemalloc_listen_sock started!'.format(os.getpid()))
+    logger.debug('pid {}: tracemalloc_listen_sock started!'.format(os.getpid()))
     while True:
         _ = sock.recv(1)
         tracemalloc_dump()
@@ -86,9 +86,8 @@ def tracemalloc_listen():
     global listener_pid
     if listener_pid == os.getpid():
         # Already set up -- and in this process, not just its parent.
-        logger.warn('pid {}: tracemalloc_listen: already listening'.format(os.getpid()))
         return
-    logger.warn('pid {}: tracemalloc_listen working...'.format(os.getpid()))
+    logger.debug('pid {}: tracemalloc_listen working...'.format(os.getpid()))
     listener_pid = os.getpid()
 
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
@@ -97,7 +96,7 @@ def tracemalloc_listen():
     thread = threading.Thread(target=lambda: tracemalloc_listen_sock(sock),
                               daemon=True)
     thread.start()
-    logger.warn('pid {}: tracemalloc_listen done: {}'.format(
+    logger.debug('pid {}: tracemalloc_listen done: {}'.format(
         os.getpid(), path))
 
 def maybe_tracemalloc_listen():
@@ -105,5 +104,3 @@ def maybe_tracemalloc_listen():
         # If the server was started with `tracemalloc` tracing on, then
         # listen for a signal to dump `tracemalloc` snapshots.
         tracemalloc_listen()
-    else:
-        logger.warn('pid {}: no tracemalloc_listen()'.format(os.getpid()))
