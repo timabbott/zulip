@@ -47,8 +47,17 @@ def tracemalloc_dump(sig, frame):
                                    datetime.utcnow().strftime("%F-%T"))
     path = os.path.join(settings.TRACEMALLOC_DUMP_DIR, basename)
     os.makedirs(settings.TRACEMALLOC_DUMP_DIR, exist_ok=True)
+
     tracemalloc.take_snapshot().dump(path)
-    logger.info("tracemalloc dump: dumped {}".format(basename))
+
+    procstat = open('/proc/{}/stat'.format(os.getpid()), 'rb').read().split()
+    rss_pages = int(procstat[23])
+    logger.info("tracemalloc dump: tracing {} MiB ({} MiB peak), using {} MiB; rss {} MiB; dumped {}"
+                .format(tracemalloc.get_traced_memory()[0] // 1048576,
+                        tracemalloc.get_traced_memory()[1] // 1048576,
+                        tracemalloc.get_tracemalloc_memory() // 1048576,
+                        rss_pages // 256,
+                        basename))
 
 def tracemalloc_listen():
     # type: () -> None
