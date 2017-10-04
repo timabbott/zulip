@@ -5,6 +5,8 @@ import gc
 import logging
 import os.path
 import signal
+import socket
+import threading
 import traceback
 import tracemalloc
 from types import FrameType
@@ -39,8 +41,8 @@ def interactive_debug_listen():
     signal.signal(signal.SIGUSR1, lambda sig, stack: traceback.print_stack(stack))
     signal.signal(signal.SIGUSR2, interactive_debug)
 
-def tracemalloc_dump(sig, frame):
-    # type: (int, FrameType) -> None
+def tracemalloc_dump():
+    # type: () -> None
     logger.warn("tracemalloc dump: called in pid {}".format(os.getpid()))
     if not tracemalloc.is_tracing():
         logger.warn("tracemalloc dump: tracing off, nothing to dump")
@@ -62,20 +64,42 @@ def tracemalloc_dump(sig, frame):
                         rss_pages // 256,
                         basename))
 
+def tracemalloc_listen_sock(sock):
+    # type: (socket.socket) -> None
+    logger.warn('pid {}: tracemalloc_listen_sock started!'.format(os.getpid()))
+    while True:
+        _ = sock.recvfrom(1)
+        tracemalloc_dump()
+
+listener_pid = None  # Optional[int]
+
 def tracemalloc_listen():
     # type: () -> None
     '''Useful only when tracemalloc tracing enabled.
 
     See https://docs.python.org/3/library/tracemalloc .
     '''
-    assert(signal.SIGRTMIN < signal.SIGRTMAX)
-    signal.signal(signal.SIGRTMIN, tracemalloc_dump)
+    global listener_pid
+    if listener_pid == os.getpid():
+        # Already set up -- and in this process, not just its parent.
+        logger.warn('pid {}: tracemalloc_listen: already listening'.format(os.getpid()))
+        return
+    logger.warn('pid {}: tracemalloc_listen working...'.format(os.getpid()))
+    listener_pid = os.getpid()
+
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+    path = "/tmp/tracemalloc.{}".format(os.getpid())
+    sock.bind(path)
+    thread = threading.Thread(target=lambda: tracemalloc_listen_sock(sock),
+                              daemon=True)
+    thread.start()
+    logger.warn('pid {}: tracemalloc_listen done: {}'.format(
+        os.getpid(), path))
 
 def maybe_tracemalloc_listen():
     if os.environ.get('PYTHONTRACEMALLOC'):
         # If the server was started with `tracemalloc` tracing on, then
         # listen for a signal to dump `tracemalloc` snapshots.
-        logging.warn('pid {}: calling tracemalloc_listen()'.format(os.getpid()))
         tracemalloc_listen()
     else:
-        logging.warn('pid {}: no tracemalloc_listen()'.format(os.getpid()))
+        logger.warn('pid {}: no tracemalloc_listen()'.format(os.getpid()))
