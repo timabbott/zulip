@@ -68,16 +68,20 @@ def tracemalloc_listen_sock(sock):
     # type: (socket.socket) -> None
     logger.warn('pid {}: tracemalloc_listen_sock started!'.format(os.getpid()))
     while True:
-        _ = sock.recvfrom(1)
+        _ = sock.recv(1)
         tracemalloc_dump()
 
 listener_pid = None  # Optional[int]
 
 def tracemalloc_listen():
     # type: () -> None
-    '''Useful only when tracemalloc tracing enabled.
+    '''Spawn a thread to listen on a file socket and dump tracemalloc snapshots.
 
+    Useful only when tracemalloc tracing enabled.
     See https://docs.python.org/3/library/tracemalloc .
+
+    To trigger once this is listening:
+      echo | socat -u stdin unix-sendto:/tmp/tracemalloc.$pid
     '''
     global listener_pid
     if listener_pid == os.getpid():
