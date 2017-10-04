@@ -234,6 +234,8 @@ class LogRequests(MiddlewareMixin):
     # method here too
     def process_request(self, request):
         # type: (HttpRequest) -> None
+        from zerver.lib.debug import maybe_tracemalloc_listen
+        maybe_tracemalloc_listen()
         request._log_data = dict()
         record_request_start_data(request._log_data)
         if connection.connection is not None:

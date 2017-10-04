@@ -1947,14 +1947,5 @@ def get_service_profile(user_profile_id, service_name):
     # type: (str, str) -> Service
     return Service.objects.get(user_profile__id=user_profile_id, name=service_name)
 
-import os
-
-for v in ['LANG', 'PYTHONTRACEMALLOC']:
-    logging.warn('{}={}'.format(v, os.environ.get(v, '(unset)')))
-
-if os.environ.get('PYTHONTRACEMALLOC'):
-    # If the server was started with `tracemalloc` tracing on, then
-    # listen for a signal to dump `tracemalloc` snapshots.
-    from zerver.lib.debug import tracemalloc_listen
-    logging.warn('pid {}: calling tracemalloc_listen()'.format(os.getpid()))
-    tracemalloc_listen()
+from zerver.lib.debug import maybe_tracemalloc_listen
+maybe_tracemalloc_listen()

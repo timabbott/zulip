@@ -70,3 +70,12 @@ def tracemalloc_listen():
     '''
     assert(signal.SIGRTMIN < signal.SIGRTMAX)
     signal.signal(signal.SIGRTMIN, tracemalloc_dump)
+
+def maybe_tracemalloc_listen():
+    if os.environ.get('PYTHONTRACEMALLOC'):
+        # If the server was started with `tracemalloc` tracing on, then
+        # listen for a signal to dump `tracemalloc` snapshots.
+        logging.warn('pid {}: calling tracemalloc_listen()'.format(os.getpid()))
+        tracemalloc_listen()
+    else:
+        logging.warn('pid {}: no tracemalloc_listen()'.format(os.getpid()))
