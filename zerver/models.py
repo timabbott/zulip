@@ -1956,4 +1956,5 @@ if os.environ.get('PYTHONTRACEMALLOC'):
     # If the server was started with `tracemalloc` tracing on, then
     # listen for a signal to dump `tracemalloc` snapshots.
     from zerver.lib.debug import tracemalloc_listen
+    logging.warn('pid {}: calling tracemalloc_listen()'.format(os.getpid()))
     tracemalloc_listen()

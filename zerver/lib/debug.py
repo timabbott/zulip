@@ -41,6 +41,7 @@ def interactive_debug_listen():
 
 def tracemalloc_dump(sig, frame):
     # type: (int, FrameType) -> None
+    logger.warn("tracemalloc dump: called in pid {}".format(os.getpid()))
     if not tracemalloc.is_tracing():
         logger.warn("tracemalloc dump: tracing off, nothing to dump")
         return
