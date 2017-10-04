@@ -8,6 +8,6 @@ chown-socket=zulip:zulip
 processes=<%= @uwsgi_processes %>
 harakiri=20
 post-buffering=4096
-env= LANG=en_US.UTF-8
+env= LANG=en_US.UTF-8 PYTHONTRACEMALLOC=5
 uid=zulip
 gid=zulip
