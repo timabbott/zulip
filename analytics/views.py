@@ -45,12 +45,35 @@ def stats(request):
                   'analytics/stats.html',
                   context=dict(realm_name = request.user.realm.name))
 
+@zulip_login_required
+@require_server_admin
+@has_request_variables
+def stats_for_realm(request, realm_id=REQ('realm')):
+    realm = Realm.objects.get(id=realm_id)
+    return render(request,
+                  'analytics/stats.html',
+                  context=dict(realm_name=realm.name,
+                               realm_id=realm.id))
+
+# TODO: Write a variant of require_server_admin for JSON views (should
+# throw a JsonableError not redirect to `/` on error), with tests.
+@require_server_admin
+@has_request_variables
+def get_chart_data_for_realm(request, realm_id=None):
+    # TODO: Add error handling for unknown ID
+    realm = Realm.objects.get(id=realm_id)
+    return get_chart_data(request, realm=realm)
+
 @has_request_variables
 def get_chart_data(request, user_profile, chart_name=REQ(),
                    min_length=REQ(converter=to_non_negative_int, default=None),
                    start=REQ(converter=to_utc_datetime, default=None),
-                   end=REQ(converter=to_utc_datetime, default=None)):
+                   end=REQ(converter=to_utc_datetime, default=None),
+                   realm=None):
     # type: (HttpRequest, UserProfile, Text, Optional[int], Optional[datetime], Optional[datetime]) -> HttpResponse
+    if realm is None:
+        realm = user_profile.realm
+
     if chart_name == 'number_of_humans':
         stat = COUNT_STATS['realm_active_humans::day']
         tables = [RealmCount]
@@ -92,7 +115,6 @@ def get_chart_data(request, user_profile, chart_name=REQ(),
         raise JsonableError(_("Start time is later than end time. Start: %(start)s, End: %(end)s") %
                             {'start': start, 'end': end})
 
-    realm = user_profile.realm
     if start is None:
         start = realm.date_created
     if end is None:

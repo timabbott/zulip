@@ -15,6 +15,9 @@ i18n_urlpatterns = [
     # User-visible stats page
     url(r'^stats$', analytics.views.stats,
         name='analytics.views.stats'),
+    # Server admin visible stats page
+    url(r'^stats_for_realm/(?P<realm_id>[\d]+)$', analytics.views.stats_for_realm,
+        name='analytics.views.stats_for_realm'),
 ]
 
 # These endpoints are a part of the API (V1), which uses:
@@ -29,6 +32,9 @@ v1_api_and_json_patterns = [
     # get data for the graphs at /stats
     url(r'^analytics/chart_data$', rest_dispatch,
         {'GET': 'analytics.views.get_chart_data'}),
+    # Server admin version of this (where you specify the realm)
+    url(r'^analytics/chart_data_for_realm/(?P<realm_id>[\d]+)$', rest_dispatch,
+        {'GET': 'analytics.views.get_chart_data_for_realm'}),
 ]
 
 i18n_urlpatterns += [
