@@ -4,6 +4,8 @@ All notable changes to the Zulip server are documented in this file.
 
 ### Unreleased
 
+### 1.7.0 -- 2017-10-24
+
 This section lists notable unreleased changes; it is generally updated
 in bursts.
 
