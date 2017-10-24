@@ -563,7 +563,7 @@ function validate_stream_message() {
 // The function checks whether the recipients are users of the realm or cross realm users (bots
 // for now)
 function validate_private_message() {
-    if (compose_state.recipient() === "") {
+    if (compose_state.recipient().length === 0) {
         compose_error(i18n.t("Please specify at least one recipient"), $("#private_message_recipient"));
         return false;
     } else if (page_params.realm_is_zephyr_mirror_realm) {
@@ -672,6 +672,44 @@ exports.handle_keydown = function (event) {
         compose_ui.autosize_textarea();
         return;
     }
+};
+
+var initialize_pills = function () {
+    var realm_people = people.get_all_persons();
+
+    exports.pills.private_message_recipient.validate(function (value, key, reject) {
+        if (exports.pills.private_message_recipient.keys().indexOf(key) > -1) {
+            reject();
+        }
+    });
+
+    exports.pills.private_message_recipient.onPillCreate(function (value, reject) {
+        var match = _.find(realm_people, function (person) {
+            /* this is because Zulip does not care about the case sensitivity of emails. */
+            return person.email.toLowerCase() === value.toLowerCase();
+        });
+
+        // If there is no matching user with that email in
+        // `realm_people`, reject, unless this is a zephyr mirror
+        // realm.  Zulip/Zephyr mirroring system means that you can
+        // message users who don't have an account in the Zulip side
+        // of the Zephyr mirroring system (yet; one will be
+        // automatically created if you actually send your message).
+        if (!match && !page_params.realm_is_zephyr_mirror_realm) {
+            reject();
+            return;
+        }
+
+        if (match) {
+            return { key: match.user_id, value: match.full_name };
+        } else {
+            return { key: value, value: value };
+        }
+    });
+
+    exports.pills.private_message_recipient.onCopyReturn(function (data) {
+      return people.get_person_from_user_id(data.key).email;
+    });
 };
 
 exports.initialize = function () {
@@ -981,6 +1019,12 @@ exports.initialize = function () {
             compose_actions.start("stream", {});
         }
     }
+
+    initialize_pills();
+};
+
+exports.pills = {
+    private_message_recipient: null,
 };
 
 return exports;

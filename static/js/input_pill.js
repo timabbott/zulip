@@ -39,6 +39,10 @@ var input_pill = function ($parent) {
             input_elem.innerText = "";
         },
 
+        clear_text: function () {
+            store.$input.text("");
+        },
+
         // create the object that will represent the data associated with a pill.
         // each can have a value and an optional key value.
         // the value is a human readable value that is shown, whereas the key
@@ -101,6 +105,9 @@ var input_pill = function ($parent) {
         // this appends a pill to the end of the container but before the
         // input block.
         appendPill: function (value, optionalKey) {
+            if (value.length === 0) {
+              return;
+            }
             if (value.match(",")) {
                 funcs.insertManyPills(value);
                 return false;
@@ -427,6 +434,7 @@ var input_pill = function ($parent) {
         },
 
         clear: funcs.removeAllPills.bind(funcs),
+        clear_text: funcs.clear_text,
     };
 
     return prototype;
