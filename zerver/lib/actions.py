@@ -3916,18 +3916,17 @@ def email_not_system_bot(email: Text) -> None:
     if email.lower() in settings.CROSS_REALM_BOT_EMAILS:
         raise ValidationError('%s is an email address reserved for system bots' % (email,))
 
-def validate_email_for_realm(target_realm, email):
-    # type: (Optional[Realm], Text) -> None
+def validate_email_for_realm(target_realm: Realm, email: Text) -> None:
     try:
-        existing_user_profile = get_user_profile_by_email(email)
+        existing_user_profile = get_user(email, target_realm)
     except UserProfile.DoesNotExist:
-        existing_user_profile = None
+        return
 
-    if existing_user_profile is not None and existing_user_profile.is_mirror_dummy:
+    if existing_user_profile.is_mirror_dummy:
         # Mirror dummy users to be activated must be inactive
         if existing_user_profile.is_active:
             raise AssertionError("Mirror dummy user is already active!")
-    elif existing_user_profile:
+    else:
         # Other users should not already exist at all.
         raise ValidationError('%s already has an account' % (email,))
 

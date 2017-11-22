@@ -318,7 +318,7 @@ class LoginTest(ZulipTestCase):
     def test_login_nonexist_user(self) -> None:
         result = self.login_with_return("xxx@zulip.com", "xxx")
         self.assertEqual(result.status_code, 200)
-        self.assert_in_response("Please enter a correct email and password", result)
+        self.assert_in_response("Please enter a correct ID and password", result)
         self.assertIsNone(get_session_dict_user(self.client.session))
 
     def test_login_wrong_subdomain(self) -> None:
@@ -1213,14 +1213,7 @@ class RealmCreationTest(ZulipTestCase):
         self.check_able_to_create_realm("user1@test.com")
 
     def test_create_realm_existing_email(self) -> None:
-        """
-        Trying to create a realm with an existing email should succeed.
-        """
-        with self.settings(OPEN_REALM_CREATION=True):
-            email = self.example_email("hamlet")
-            result = self.client_post('/create_realm/', {'email': email})
-            result = self.client_get(result["Location"])
-            self.assert_in_response("Check your email so we can get started.", result)
+        self.check_able_to_create_realm("hamlet@zulip.com")
 
     def test_create_realm_as_system_bot(self) -> None:
         result = self.client_post('/create_realm/', {'email': 'notification-bot@zulip.com'})
