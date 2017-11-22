@@ -14,12 +14,12 @@ from django.core import validators
 from zerver.context_processors import get_realm_from_request
 from zerver.models import UserProfile, Realm, Stream, MultiuseInvite, \
     name_changes_disabled, email_to_username, email_allowed_for_realm, \
-    get_realm, get_user_profile_by_email, get_default_stream_groups
+    get_realm, get_user, get_default_stream_groups
 from zerver.lib.send_email import send_email, FromAddress
 from zerver.lib.events import do_events_register
 from zerver.lib.actions import do_change_password, do_change_full_name, do_change_is_admin, \
     do_activate_user, do_create_user, do_create_realm, \
-    user_email_is_unique, compute_mit_user_fullname, validate_email_for_realm, \
+    email_not_system_bot, compute_mit_user_fullname, validate_email_for_realm, \
     do_set_user_display_setting, lookup_default_stream_groups, bulk_add_subscriptions
 from zerver.forms import RegistrationForm, HomepageForm, RealmCreationForm, \
     CreateUserForm, FindMyTeamForm
@@ -169,10 +169,12 @@ def accounts_register(request):
         if 'timezone' in request.POST and request.POST['timezone'] in get_all_timezones():
             timezone = request.POST['timezone']
 
-        try:
-            existing_user_profile = get_user_profile_by_email(email)
-        except UserProfile.DoesNotExist:
-            existing_user_profile = None
+        existing_user_profile = None
+        if not realm_creation:
+            try:
+                existing_user_profile = get_user(email, realm)
+            except UserProfile.DoesNotExist:
+                pass
 
         return_data = {}  # type: Dict[str, bool]
         if ldap_auth_enabled(realm):
@@ -326,12 +328,6 @@ def create_realm(request, creation_key=None):
             if (creation_key is not None and check_key_is_valid(creation_key)):
                 RealmCreationKey.objects.get(creation_key=creation_key).delete()
             return HttpResponseRedirect(reverse('send_confirm', kwargs={'email': email}))
-        try:
-            email = request.POST['email']
-            user_email_is_unique(email)
-        except ValidationError:
-            # Maybe the user is trying to log in
-            return redirect_to_email_login_url(email)
     else:
         form = RealmCreationForm()
     return render(request,

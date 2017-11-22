@@ -182,6 +182,7 @@ class TestCrossRealmPMs(ZulipTestCase):
 
     @slow("Sends a large number of messages")
     @override_settings(CROSS_REALM_BOT_EMAILS=['feedback@zulip.com',
+                                               'welcome-bot@zulip.com',
                                                'support@3.example.com'])
     def test_realm_scenarios(self) -> None:
         self.make_realm('1.example.com')
@@ -203,13 +204,13 @@ class TestCrossRealmPMs(ZulipTestCase):
         user3_email = 'user3@3.example.com'
         feedback_email = 'feedback@zulip.com'
         support_email = 'support@3.example.com'  # note: not zulip.com
-
+        welcome_bot_email = "welcome-bot@zulip.com"
         user1 = self.create_user(user1_email)
         user1a = self.create_user(user1a_email)
         user2 = self.create_user(user2_email)
         self.create_user(user3_email)
         feedback_bot = get_system_bot(feedback_email)
-        support_bot = self.create_user(support_email)
+        welcome_bot = get_system_bot(welcome_bot_email)
 
         # Users can PM themselves
         self.send_personal_message(user1_email, user1_email, sender_realm="1.example.com")
@@ -233,21 +234,21 @@ class TestCrossRealmPMs(ZulipTestCase):
         self.send_personal_message(user1_email, feedback_email, sender_realm="1.example.com")
         assert_message_received(feedback_bot, user1)
 
-        # Users can PM cross-realm bots on non-zulip realms.
+        # Users cannot PM cross-realm users on non-zulip realms currently.
         # (The support bot represents some theoretical bot that we may
         # create in the future that does not have zulip.com as its realm.)
-        self.send_personal_message(user1_email, support_email, sender_realm="1.example.com")
-        assert_message_received(support_bot, user1)
+        with assert_invalid_email():
+            self.send_personal_message(user1_email, support_email, sender_realm="1.example.com")
 
         # Allow sending PMs to two different cross-realm bots simultaneously.
         # (We don't particularly need this feature, but since users can
         # already individually send PMs to cross-realm bots, we shouldn't
         # prevent them from sending multiple bots at once.  We may revisit
         # this if it's a nuisance for huddles.)
-        self.send_huddle_message(user1_email, [feedback_email, support_email],
+        self.send_huddle_message(user1_email, [feedback_email, welcome_bot_email],
                                  sender_realm="1.example.com")
         assert_message_received(feedback_bot, user1)
-        assert_message_received(support_bot, user1)
+        assert_message_received(welcome_bot, user1)
 
         # Prevent old loophole where I could send PMs to other users as long
         # as I copied a cross-realm bot from the same realm.
