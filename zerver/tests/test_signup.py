@@ -1467,6 +1467,38 @@ class UserSignUpTest(ZulipTestCase):
         result = self.client_get(result.url)
         self.assert_in_response("You've already registered", result)
 
+    def test_signup_with_used_email(self) -> None:
+        """
+        Check if signing up with an email used in another realm succeeds.
+        """
+        email = self.example_email('hamlet')
+        password = "newpassword"
+        realm = get_realm('lear')
+        do_set_realm_property(realm, 'default_language', u"de")
+
+        result = self.client_post('/accounts/home/', {'email': email}, subdomain="lear")
+        self.assertEqual(result.status_code, 302)
+        self.assertTrue(result["Location"].endswith(
+            "/accounts/send_confirm/%s" % (email,)))
+        result = self.client_get(result["Location"], subdomain="lear")
+        self.assert_in_response("Check your email so we can get started.", result)
+
+        # Visit the confirmation link.
+        confirmation_url = self.get_confirmation_url_from_outbox(email)
+        result = self.client_get(confirmation_url, subdomain="lear")
+        self.assertEqual(result.status_code, 200)
+
+        # Pick a password and agree to the ToS.
+        result = self.submit_reg_form_for_user(email, password, subdomain="lear")
+        self.assertEqual(result.status_code, 302)
+
+        user_profile = get_user(self.example_email("hamlet"), realm)
+        self.assertEqual(user_profile.default_language, realm.default_language)
+        from django.core.mail import outbox
+        outbox.pop()
+
+        self.assertEqual(UserProfile.objects.filter(email=email).count(), 2)
+
     def test_signup_invalid_name(self) -> None:
         """
         Check if an invalid name during signup is handled properly.
