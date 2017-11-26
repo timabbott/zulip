@@ -327,11 +327,11 @@ class TestDigestEmailMessages(ZulipTestCase):
                     count=0,
                     client=get_client('test_client'))
                 # When there are only two users left who have not been set to active,
-                # check the full enqueue-digest flow for them.
-                if realm == realms.last() and user_profiles.count() - counter == 2:
+                # check the full enqueue-digest flow for realm zephyr.
+                if realm == get_realm("zephyr") and user_profiles.count() - counter == 2:
                     with mock.patch('zerver.models.ScheduledEmail.objects.create') as mock_email_create:
                         enqueue_emails(cutoff)
-                        self.assert_length(mock_email_create.call_args_list, 2)
+                        self.assert_length(mock_email_create.call_args_list, 4)
                         for call_args in mock_email_create.call_args_list:
                             email_data = ujson.loads(call_args[1]['data'])
                             self.assertEqual(email_data['template_prefix'], 'zerver/emails/digest')

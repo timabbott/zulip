@@ -2242,7 +2242,7 @@ class TestFindMyTeam(ZulipTestCase):
         self.assertIn(self.example_email("iago"), content)
         self.assertIn(self.example_email("cordelia"), content)
         from django.core.mail import outbox
-        self.assertEqual(len(outbox), 2)
+        self.assertEqual(len(outbox), 3)
 
     def test_find_team_ignore_invalid_email(self) -> None:
         result = self.client_post('/accounts/find/',
