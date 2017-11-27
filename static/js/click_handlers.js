@@ -208,7 +208,7 @@ $(function () {
         var row_id = rows.id(row);
         current_msg_list.select_id(row_id);
         message_edit.start(row);
-        $('#message_edit_content_' + row_id).filedrop(
+        $('#message_edit_content_' + row_id).closest('#message_edit_form').filedrop(
             upload.upload_options({
                 mode: 'edit',
                 row: row_id,
@@ -265,6 +265,12 @@ $(function () {
         if (document.activeElement === this) {
             ui_util.blur_active_element();
         }
+    });
+    $("body").on("click", "#message_edit_form [id^='attach_files_']", function (e) {
+        e.preventDefault();
+
+        var row_id = rows.id($(this).closest(".message_row"));
+        $("#message_edit_file_input_" + row_id).trigger("click");
     });
 
     // MUTING
