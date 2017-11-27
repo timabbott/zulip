@@ -209,7 +209,7 @@ $(function () {
         current_msg_list.select_id(row_id);
         message_edit.start(row);
         $('#message_edit_content_' + row_id).closest('#message_edit_form').filedrop(
-            upload.upload_options({
+            upload.options({
                 mode: 'edit',
                 row: row_id,
             })

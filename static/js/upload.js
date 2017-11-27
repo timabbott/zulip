@@ -17,7 +17,7 @@ exports.feature_check = function (upload_button) {
     }
 }
 
-exports.upload_options = function (config) {
+exports.options = function (config) {
     var textarea;
     var send_button;
     var send_status;
@@ -164,7 +164,7 @@ exports.upload_options = function (config) {
 // since the linux/windows QtWebkit based apps upload images
 // directly to the server
 if (window.bridge) {
-    var opts = exports.upload_options({ mode: "compose" });
+    var opts = exports.options({ mode: "compose" });
 
     exports.uploadStarted = opts.drop;
     exports.progressUpdated = opts.progressUpdated;
