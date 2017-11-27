@@ -15,7 +15,7 @@ exports.feature_check = function (upload_button) {
     if (window.XMLHttpRequest && (new XMLHttpRequest()).upload) {
         upload_button.removeClass("notdisplayed");
     }
-}
+};
 
 exports.options = function (config) {
     var textarea;
@@ -24,6 +24,7 @@ exports.options = function (config) {
     var send_status_close;
     var error_msg;
     var upload_bar;
+    var file_input;
 
     switch (config.mode) {
         case 'compose':
