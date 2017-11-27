@@ -227,6 +227,7 @@ table.compose_table {
 }
 
 /* Like .nav-tabs > li > a */
+div[id^="message-edit-send-status"],
 #compose-send-status {
     width: calc(100% - 28px);
     padding: 8px 14px 8px 14px;
@@ -236,6 +237,7 @@ table.compose_table {
 }
 
 /* Like .alert .close */
+.send-status-close,
 .compose-send-status-close {
     font-size: 17px;
     font-weight: bold;
@@ -246,6 +248,7 @@ table.compose_table {
     float: right;
 }
 
+.send-status-close:hover,
 .compose-send-status-close:hover {
     cursor: pointer;
     opacity: .4;

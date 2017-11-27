@@ -272,6 +272,11 @@ $(function () {
         var row_id = rows.id($(this).closest(".message_row"));
         $("#message_edit_file_input_" + row_id).trigger("click");
     });
+    $('#message_edit_form .send-status-close').click(function () {
+        var row_id = rows.id($(this).closest(".message_row"));
+        var send_status = $('#message-edit-send-status-' + row_id);
+        $(send_status).stop(true).fadeOut(200);
+    });
 
     // MUTING
 
@@ -434,10 +439,9 @@ $(function () {
 
     // NB: This just binds to current elements, and won't bind to elements
     // created after ready() is called.
-    $('#compose-send-status .compose-send-status-close').click(
-        function () { $('#compose-send-status').stop(true).fadeOut(500); }
-    );
-
+    $('#compose-send-status .compose-send-status-close').click(function () {
+        $('#compose-send-status').stop(true).fadeOut(200);
+    });
 
     $('.compose_stream_button').click(function () {
         compose_actions.start('stream', {trigger: 'new topic button'});
