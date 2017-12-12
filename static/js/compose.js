@@ -674,7 +674,7 @@ exports.handle_keydown = function (event) {
     }
 };
 
-var initialize_pills = function () {
+exports.initialize_pills = function () {
     var realm_people = people.get_all_persons();
 
     exports.pills.private_message_recipient.validate(function (value, key, reject) {
@@ -1020,7 +1020,7 @@ exports.initialize = function () {
         }
     }
 
-    initialize_pills();
+    exports.initialize_pills();
 };
 
 exports.pills = {
