@@ -141,8 +141,6 @@ body.night-mode .compose_table .recipient_box:focus {
     border-color: hsla(0, 0%, 0%, 0.9);
 }
 
-body.night-mode .message-header-contents,
-body.night-mode .message_header_private_message .message-header-contents,
 body.night-mode #tab_list li.active {
     background: hsla(0, 0%, 0%, 0.2);
 }
