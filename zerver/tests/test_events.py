@@ -75,6 +75,7 @@ from zerver.lib.actions import (
     do_update_message_flags,
     do_update_outgoing_webhook_service,
     do_update_pointer,
+    do_update_user_custom_profile_data,
     do_update_user_presence,
     log_event,
     lookup_default_stream_groups,
@@ -1220,6 +1221,22 @@ class EventsRegisterTest(ZulipTestCase):
             ])),
         ])
         events = self.do_test(lambda: do_change_full_name(self.user_profile, 'Sir Hamlet', self.user_profile))
+        error = schema_checker('events[0]', events[0])
+        self.assert_on_error(error)
+
+    def test_change_user_custom_profile_fields(self) -> None:
+        schema_checker = self.check_events_dict([
+            ('type', equals('realm_user')),
+            ('op', equals('update')),
+            ('person', check_dict_only([
+                ('user_id', check_int),
+                ('profile_data', check_dict_only([
+                    (3, 'New value')])),
+            ])),
+        ])
+        events = self.do_test(lambda: do_update_user_custom_profile_data(
+            self.user_profile,
+            [{'value': 'New value', 'id': 3}]))
         error = schema_checker('events[0]', events[0])
         self.assert_on_error(error)
 

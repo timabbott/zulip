@@ -4483,6 +4483,11 @@ def do_update_user_custom_profile_data(user_profile: UserProfile,
             update_or_create(user_profile=user_profile,
                              field_id=field['id'],
                              defaults={'value': field['value']})
+        payload = dict(user_id=user_profile.id,
+                       profile_data=dict(
+                           (field['id'], field['value']) for field in data))
+        event = dict(type="realm_user", op="update", person=payload)
+        send_event(event, active_user_ids(user_profile.realm.id))
 
 def do_send_create_user_group_event(user_group: UserGroup, members: List[UserProfile]) -> None:
     event = dict(type="user_group",
