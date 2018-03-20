@@ -146,6 +146,10 @@ exports.try_deliver_locally = function try_deliver_locally(message_request) {
         return;
     }
 
+    if (!current_msg_list.fetch_status.can_append()) {
+        return;
+    }
+
     var next_local_id = get_next_local_id();
 
     if (!next_local_id) {
