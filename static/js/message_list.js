@@ -42,6 +42,10 @@ exports.MessageList.prototype = {
         var bottom_messages = [];
         var interior_messages = [];
 
+        if (opts.messages_are_new && !self.fetch_status.can_append()) {
+            blueslip.info('We are adding messages before we really want to append.');
+        }
+
         // If we're initially populating the list, save the messages in
         // bottom_messages regardless
         if (self.selected_id() === -1 && self.empty()) {
