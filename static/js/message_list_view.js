@@ -493,6 +493,7 @@ MessageListView.prototype = {
 
         function restore_scroll_position() {
             if (list === current_msg_list && orig_scrolltop_offset !== undefined) {
+                console.log("Actually restoring");
                 message_viewport.set_message_offset(orig_scrolltop_offset);
                 list.reselect_selected_id();
             }
@@ -513,6 +514,7 @@ MessageListView.prototype = {
         var last_message_row;
         var last_group_row;
 
+        console.log("Start", message_viewport.scrollTop());
         _.each(message_containers, function (message_container) {
             self.message_containers[message_container.msg.id] = message_container;
         });
@@ -538,7 +540,7 @@ MessageListView.prototype = {
             table.prepend(rendered_groups);
             condense.condense_and_collapse(dom_messages);
         }
-
+        console.log("Block 2", message_viewport.scrollTop());
         // Rerender message groups
         if (message_actions.rerender_groups.length > 0) {
             save_scroll_position();
@@ -562,6 +564,7 @@ MessageListView.prototype = {
                 condense.condense_and_collapse(dom_messages);
             });
         }
+        console.log("Block 3", message_viewport.scrollTop());
 
         // Rerender message rows
         if (message_actions.rerender_messages.length > 0) {
@@ -574,6 +577,7 @@ MessageListView.prototype = {
                 list.reselect_selected_id();
             });
         }
+        console.log("Block 4", message_viewport.scrollTop());
 
         // Insert new messages in to the last message group
         if (message_actions.append_messages.length > 0) {
@@ -589,6 +593,7 @@ MessageListView.prototype = {
             condense.condense_and_collapse(dom_messages);
             new_dom_elements = new_dom_elements.concat(dom_messages);
         }
+        console.log("Block 5", message_viewport.scrollTop());
 
         // Add new message groups to the end
         if (message_actions.append_groups.length > 0) {
@@ -609,7 +614,10 @@ MessageListView.prototype = {
             condense.condense_and_collapse(dom_messages);
         }
 
+        console.log("Block 6", message_viewport.scrollTop());
+        console.log("Restoring scroll position");
         restore_scroll_position();
+        console.log("Done!");
 
         var last_message_group = _.last(self._message_groups);
         if (last_message_group !== undefined) {
@@ -626,6 +634,7 @@ MessageListView.prototype = {
                 list.update_trailing_bookend();
             }
         }
+        console.log("Block 7", message_viewport.scrollTop());
 
         if (list === current_msg_list) {
             // Update the fade.
@@ -642,7 +651,9 @@ MessageListView.prototype = {
             compose_fade.update_rendered_message_groups(new_message_groups, get_element);
         }
 
+        console.log("Block 8", message_viewport.scrollTop());
         if (list === current_msg_list && messages_are_new) {
+            console.log("Autoscorlling?");
             self._maybe_autoscroll(new_dom_elements);
         }
     },
@@ -736,6 +747,8 @@ MessageListView.prototype = {
             return;
         }
 
+        console.log("Trying to scroll");
+
         // Ok, we are finally ready to actually scroll.
         message_viewport.system_initiated_animate_scroll(scroll_amount);
     },
@@ -766,6 +779,7 @@ MessageListView.prototype = {
 
 
     maybe_rerender: function MessageListView__maybe_rerender() {
+        console.log("maybe_rerender", message_viewport.scrollTop());
         if (this.table_name === undefined) {
             return false;
         }
@@ -785,13 +799,17 @@ MessageListView.prototype = {
                 && (this._render_win_start !== 0)) ||
                ((this._render_win_end - selected_idx <= this._RENDER_THRESHOLD)
                 && (this._render_win_end !== this.list.num_items())))) {
+            console.log("no need to rerender", selected_idx, this._render_win_start,
+                        this._render_win_end, this.list.num_items());
             return false;
         }
 
         if (!this.update_render_window(selected_idx, true)) {
+            console.log("No update to render window");
             return false;
         }
 
+        console.log("Actually rerendering");
         this.rerender_preserving_scrolltop();
         return true;
     },
@@ -799,6 +817,7 @@ MessageListView.prototype = {
     rerender_preserving_scrolltop: function MessageListView__rerender_preserving_scrolltop() {
         // old_offset is the number of pixels between the top of the
         // viewable window and the selected message
+        console.log("Starting rerender!");
         var old_offset;
         var selected_row = this.selected_row();
         var selected_in_view = (selected_row.length > 0);
@@ -818,8 +837,10 @@ MessageListView.prototype = {
                 this.list.select_id(this.list.selected_id(), {use_closest: true});
             }
 
+            console.log("Setting scrolltop");
             message_viewport.set_message_offset(old_offset);
         }
+        console.log("Exiting rerender!");
     },
 
     _rerender_header: function MessageListView__maybe_rerender_header(message_containers) {
@@ -906,17 +927,21 @@ MessageListView.prototype = {
 
     append: function MessageListView__append(messages, messages_are_new) {
         var cur_window_size = this._render_win_end - this._render_win_start;
+        console.log("Appending messages", this.list.table_name, this.list.muting_enabled,
+                    messages.length, message_viewport.scrollTop());
         if (cur_window_size < this._RENDER_WINDOW_SIZE) {
             var slice_to_render = messages.slice(0, this._RENDER_WINDOW_SIZE - cur_window_size);
             this.render(slice_to_render, 'bottom', messages_are_new);
             this._render_win_end += slice_to_render.length;
         }
+        console.log("Done Appending messages", message_viewport.scrollTop());
 
         // If the pointer is high on the page such that there is a
         // lot of empty space below and the render window is full, a
         // newly received message should trigger a rerender so that
         // the new message, which will appear in the viewable area,
         // is rendered.
+        pointer.suppress_scroll_pointer_update = true;
         this.maybe_rerender();
     },
 

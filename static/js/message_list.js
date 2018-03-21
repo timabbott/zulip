@@ -210,6 +210,7 @@ exports.MessageList.prototype = {
         opts.id = id;
         this._selected_id = id;
 
+        console.log("Selecting", opts);
         if (opts.force_rerender) {
             this.rerender();
         } else if (!opts.from_rendering) {
@@ -442,6 +443,7 @@ exports.MessageList.prototype = {
 
         this._add_to_hash(messages);
 
+        console.log(opts);
         if (!opts.delay_render) {
             this.view.append(viewable_messages, opts.messages_are_new);
         }

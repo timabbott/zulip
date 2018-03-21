@@ -35,6 +35,7 @@ exports.scroll_finished = function () {
     if (!$('#home').hasClass('active')) {
         return;
     }
+    console.log("Calling scroll_finished!", pointer.suppress_scroll_pointer_update);
 
     if (!pointer.suppress_scroll_pointer_update) {
         message_viewport.keep_pointer_in_view();
@@ -53,6 +54,7 @@ exports.scroll_finished = function () {
     }
 
     if (message_viewport.at_bottom()) {
+        console.log("Noticed we're at the bottom!", message_viewport.scrollTop());
         message_fetch.maybe_load_newer_messages({
             msg_list: current_msg_list,
         });
@@ -67,6 +69,7 @@ exports.scroll_finished = function () {
 
 var scroll_timer;
 function scroll_finish() {
+    console.log("Finished a scroll!", message_viewport.scrollTop());
     actively_scrolling = true;
     clearTimeout(scroll_timer);
     scroll_timer = setTimeout(exports.scroll_finished, 100);

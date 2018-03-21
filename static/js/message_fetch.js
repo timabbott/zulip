@@ -234,6 +234,7 @@ exports.maybe_load_newer_messages = function (opts) {
     // This function gets called when you scroll to the top
     // of your window, and you want to get messages newer
     // than what the browers originally fetched.
+    console.log("Loading newer messages", opts);
     var msg_list = opts.msg_list;
 
     if (!msg_list.fetch_status.can_load_newer_messages()) {

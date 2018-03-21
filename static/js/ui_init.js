@@ -186,6 +186,7 @@ $(function () {
                     found_in_dom: row_from_dom.length,
                 });
             }
+            console.log("Doing our then_scroll!", event);
             if (event.target_scroll_offset !== undefined) {
                 message_viewport.set_message_offset(event.target_scroll_offset);
             } else {

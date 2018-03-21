@@ -42,6 +42,7 @@ exports.message_viewport_info = function () {
 exports.at_bottom = function () {
     var bottom = exports.scrollTop() + exports.height();
     var full_height = exports.message_pane.prop('scrollHeight');
+    console.log(bottom, full_height);
 
     // We only know within a pixel or two if we're
     // exactly at the bottom, due to browser quirkiness,
@@ -198,6 +199,7 @@ exports.scrollTop = function viewport_scrollTop(target_scrollTop) {
     if (target_scrollTop === undefined) {
         return orig_scrollTop;
     }
+    console.log("Doing a scroll", orig_scrollTop, target_scrollTop);
     var ret = exports.message_pane.scrollTop(target_scrollTop);
     var new_scrollTop = exports.message_pane.scrollTop();
     var space_to_scroll = $("#bottom_whitespace").offset().top - message_viewport.height();
