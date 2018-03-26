@@ -19,6 +19,10 @@ body.night-mode #settings_page .right {
     background-color: hsl(212, 28%, 18%);
 }
 
+body.night-mode .column-middle.column-overlay.recipient-bar-main {
+    background-color: hsl(212, 28%, 18%) !important;
+}
+
 body.night-mode .message_embed .data-container::after {
     background: linear-gradient(0deg, hsl(212, 28%, 18%), transparent 10%);
 }
