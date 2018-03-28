@@ -583,6 +583,10 @@ class ZulipTestCase(TestCase):
 
         # Check the correct message was sent
         msg = self.get_last_message()
+
+        # Temporary debugging output while we debug a flake
+        print(msg)
+
         self.assertEqual(msg.sender.email, user_profile.email)
         if stream_name is not None:
             self.assertEqual(get_display_recipient(msg.recipient), stream_name)
