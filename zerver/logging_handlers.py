@@ -117,6 +117,13 @@ class AdminNotifyHandler(logging.Handler):
             if hasattr(record, "request"):
                 add_request_metadata(report, record.request)  # type: ignore  # record.request is added dynamically
 
+            # Suppress certain exceptions in third-party libraries
+            # don't seem to be user-facing and we don't have an easy
+            # way to debug
+            if (record.name == "tornado.application" and
+                    message == "AttributeError: 'NoneType' object has no attribute 'setsockopt'"):
+                return
+
         except Exception:
             report['message'] = "Exception in preparing exception report!"
             logging.warning(report['message'], exc_info=True)
