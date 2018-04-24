@@ -131,6 +131,7 @@ function do_hashchange(from_reload) {
             return false;
         }
         var narrow_opts = {
+            select_first_unread: true,
             change_hash:    false,  // already set
             trigger: 'hash change',
         };

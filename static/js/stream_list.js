@@ -467,6 +467,8 @@ function keydown_enter_key() {
         ui_util.change_tab_to('#home');
     }
     exports.clear_and_hide_search();
+    narrow.by('stream', sub.name,
+              {select_first_unread: true, trigger: 'sidebar enter key'});
     narrow.by('stream', sub.name, {trigger: 'sidebar enter key'});
 }
 
@@ -508,7 +510,7 @@ exports.initialize = function () {
         var stream_id = $(e.target).parents('li').attr('data-stream-id');
         var sub = stream_data.get_sub_by_id(stream_id);
         popovers.hide_all();
-        narrow.by('stream', sub.name, {trigger: 'sidebar'});
+        narrow.by('stream', sub.name, {select_first_unread: true, trigger: 'sidebar'});
 
         exports.clear_and_hide_search();
 

@@ -413,7 +413,13 @@ exports.narrow_for_user_id = function (opts) {
     var person = people.get_person_from_user_id(opts.user_id);
     var email = person.email;
 
-    narrow.by('pm-with', email, {trigger: 'sidebar'});
+    var narrow_opts = {
+        select_first_unread: true,
+        trigger: 'sidebar',
+    };
+
+    narrow.by('pm-with', email, narrow_opts);
+
     exports.user_filter.clear_and_hide_search();
 };
 
