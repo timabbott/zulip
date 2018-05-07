@@ -290,7 +290,8 @@ def home_real(request: HttpRequest) -> HttpResponse:
         maxfilesize           = settings.MAX_FILE_UPLOAD_SIZE,
         max_avatar_file_size  = settings.MAX_AVATAR_FILE_SIZE,
         server_generation     = settings.SERVER_GENERATION,
-        use_websockets        = settings.USE_WEBSOCKETS,
+        # We disable websockets since we can't send anyway
+        use_websockets        = False,
         save_stacktraces      = settings.SAVE_FRONTEND_STACKTRACES,
         warn_no_email         = settings.WARN_NO_EMAIL,
         server_inline_image_preview = settings.INLINE_IMAGE_PREVIEW,
@@ -310,7 +311,8 @@ def home_real(request: HttpRequest) -> HttpResponse:
         prompt_for_invites    = False,
         furthest_read_time    = time.time(),
         has_mobile_devices    = False,
-        bot_types             = []
+        bot_types             = [],
+        is_web_public_guest   = True,
     )
 
     undesired_register_ret_fields = [
