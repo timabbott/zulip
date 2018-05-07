@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse, HttpRequest
 from django.shortcuts import redirect, render
 from django.utils import translation
 from django.utils.cache import patch_cache_control
+from django.utils.timezone import now as timezone_now
 from itertools import zip_longest
 
 from zerver.decorator import zulip_login_required, process_client
@@ -93,7 +94,7 @@ def home(request: HttpRequest) -> HttpResponse:
     return render(request, 'zerver/hello.html')
 
 @zulip_login_required
-def home_real(request: HttpRequest) -> HttpResponse:
+def home_old(request: HttpRequest) -> HttpResponse:
     # We need to modify the session object every two weeks or it will expire.
     # This line makes reloading the page a sufficient action to keep the
     # session alive.
@@ -254,6 +255,85 @@ def home_real(request: HttpRequest) -> HttpResponse:
                                'enable_feedback': settings.ENABLE_FEEDBACK,
                                'embedded': narrow_stream is not None,
                                },)
+    patch_cache_control(response, no_cache=True, no_store=True, must_revalidate=True)
+    return response
+
+def home_real(request: HttpRequest) -> HttpResponse:
+    from zerver.models import get_user_profile_by_email, get_client
+    user_profile = get_user_profile_by_email("hamlet@zulip.com")
+    register_ret = do_events_register(user_profile, get_client("archive"),
+                                      apply_markdown=True, client_gravatar=True)
+    user_has_messages = (register_ret['max_message_id'] != -1)
+
+    # Set default language and make it persist
+    default_language = register_ret['default_language']
+    url_lang = '/{}'.format(request.LANGUAGE_CODE)
+    if not request.path.startswith(url_lang):
+        translation.activate(default_language)
+        request.session[translation.LANGUAGE_SESSION_KEY] = translation.get_language()
+
+    # Pass parameters to the client-side JavaScript code.
+    # These end up in a global JavaScript Object named 'page_params'.
+    page_params = dict(
+        # Server settings.
+        development_environment = settings.DEVELOPMENT,
+        debug_mode            = settings.DEBUG,
+        test_suite            = settings.TEST_SUITE,
+        poll_timeout          = settings.POLL_TIMEOUT,
+        login_page            = settings.HOME_NOT_LOGGED_IN,
+        root_domain_uri       = settings.ROOT_DOMAIN_URI,
+        maxfilesize           = settings.MAX_FILE_UPLOAD_SIZE,
+        max_avatar_file_size  = settings.MAX_AVATAR_FILE_SIZE,
+        server_generation     = settings.SERVER_GENERATION,
+        use_websockets        = settings.USE_WEBSOCKETS,
+        save_stacktraces      = settings.SAVE_FRONTEND_STACKTRACES,
+        warn_no_email         = settings.WARN_NO_EMAIL,
+        server_inline_image_preview = settings.INLINE_IMAGE_PREVIEW,
+        server_inline_url_embed_preview = settings.INLINE_URL_EMBED_PREVIEW,
+        password_min_length = settings.PASSWORD_MIN_LENGTH,
+        password_min_guesses  = settings.PASSWORD_MIN_GUESSES,
+        jitsi_server_url      = settings.JITSI_SERVER_URL,
+
+        # Misc. extra data.
+        have_initial_messages = user_has_messages,
+        initial_servertime    = time.time(),  # Used for calculating relative presence age
+        default_language_name = get_language_name(register_ret['default_language']),
+        language_list_dbl_col = get_language_list_for_templates(register_ret['default_language']),
+        language_list         = get_language_list(),
+        needs_tutorial        = False,
+        first_in_realm        = False,
+        prompt_for_invites    = False,
+        furthest_read_time    = time.time(),
+        has_mobile_devices    = False,
+        bot_types             = []
+    )
+
+    undesired_register_ret_fields = [
+        'streams',
+    ]
+    for field_name in set(register_ret.keys()) - set(undesired_register_ret_fields):
+        page_params[field_name] = register_ret[field_name]
+
+    statsd.incr('views.home')
+    show_invites = False
+
+    request._log_data['extra'] = "[%s]" % (register_ret["queue_id"],)
+
+    csp_nonce = generate_random_token(48)
+    response = render(request, 'zerver/app/index.html',
+                      context={
+                          'emojiset': 'google',
+                          'page_params': JSONEncoderForHTML().encode(page_params),
+                          'csp_nonce': csp_nonce,
+                          'show_debug':
+                          settings.DEBUG and ('show_debug' in request.GET),
+                          'pipeline': settings.PIPELINE_ENABLED,
+                          'show_invites': show_invites,
+                          'is_admin': False,
+                          'show_webathena': False,
+                          'enable_feedback': settings.ENABLE_FEEDBACK,
+                          'embedded': False,
+                      },)
     patch_cache_control(response, no_cache=True, no_store=True, must_revalidate=True)
     return response
 
