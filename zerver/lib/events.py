@@ -107,6 +107,175 @@ def always_want(msg_type: str) -> bool:
 # all event types.  Whenever you add new code to this function, you
 # should also add corresponding events for changes in the data
 # structures and new code to apply_events (and add a test in EventsRegisterTest).
+def fetch_archive_state_data(realm: Realm, user_profile: UserProfile,
+                             event_types: Optional[Iterable[str]],
+                             queue_id: str, client_gravatar: bool,
+                             include_subscribers: bool = True) -> Dict[str, Any]:
+    state = {'queue_id': queue_id}  # type: Dict[str, Any]
+
+    if event_types is None:
+        # return True always
+        want = always_want  # type: Callable[[str], bool]
+    else:
+        want = set(event_types).__contains__
+
+    if want('alert_words'):
+        state['alert_words'] = []
+
+    if want('custom_profile_fields'):
+        state['custom_profile_fields'] = []
+        state['custom_profile_field_types'] = CustomProfileField.FIELD_TYPE_CHOICES
+
+    if want('hotspots'):
+        state['hotspots'] = []
+
+    if want('message'):
+        # TODO: Make this the latest message.
+        state['max_message_id'] = -1
+
+    if want('muted_topics'):
+        state['muted_topics'] = []
+
+    if want('pointer'):
+        state['pointer'] = -1
+
+    if want('presence'):
+        state['presences'] = {}
+
+    if want('realm'):
+        for property_name in Realm.property_types:
+            state['realm_' + property_name] = getattr(realm, property_name)
+
+        # Most state is handled via the property_types framework;
+        # these manual entries are for those realm settings that don't
+        # fit into that framework.
+        state['realm_authentication_methods'] = realm.authentication_methods_dict()
+        state['realm_allow_message_editing'] = realm.allow_message_editing
+        state['realm_allow_community_topic_editing'] = realm.allow_community_topic_editing
+        state['realm_allow_message_deleting'] = realm.allow_message_deleting
+        state['realm_message_content_edit_limit_seconds'] = realm.message_content_edit_limit_seconds
+        state['realm_message_content_delete_limit_seconds'] = realm.message_content_delete_limit_seconds
+        state['realm_icon_url'] = realm_icon_url(realm)
+        state['realm_icon_source'] = realm.icon_source
+        state['max_icon_file_size'] = settings.MAX_ICON_FILE_SIZE
+        state['realm_bot_domain'] = realm.get_bot_domain()
+        state['realm_uri'] = realm.uri
+        state['realm_available_video_chat_providers'] = realm.VIDEO_CHAT_PROVIDERS
+        state['realm_presence_disabled'] = realm.presence_disabled
+        state['realm_show_digest_email'] = realm.show_digest_email and settings.SEND_DIGEST_EMAILS
+        state['realm_is_zephyr_mirror_realm'] = realm.is_zephyr_mirror_realm
+        state['realm_email_auth_enabled'] = email_auth_enabled(realm)
+        state['realm_password_auth_enabled'] = password_auth_enabled(realm)
+        if realm.notifications_stream and not realm.notifications_stream.deactivated:
+            notifications_stream = realm.notifications_stream
+            state['realm_notifications_stream_id'] = notifications_stream.id
+        else:
+            state['realm_notifications_stream_id'] = -1
+
+        if realm.get_signup_notifications_stream():
+            signup_notifications_stream = realm.get_signup_notifications_stream()
+            state['realm_signup_notifications_stream_id'] = signup_notifications_stream.id
+        else:
+            state['realm_signup_notifications_stream_id'] = -1
+
+    if want('realm_domains'):
+        state['realm_domains'] = get_realm_domains(realm)
+
+    if want('realm_emoji'):
+        state['realm_emoji'] = realm.get_emoji()
+
+    if want('realm_filters'):
+        state['realm_filters'] = realm_filters_for_realm(realm.id)
+
+    if want('realm_user_groups'):
+        state['realm_user_groups'] = user_groups_in_realm_serialized(realm)
+
+    if want('realm_user'):
+        state['raw_users'] = get_raw_user_data(
+            realm_id=realm.id,
+            client_gravatar=client_gravatar,
+        )
+
+        # For the user's own avatar URL, we force
+        # client_gravatar=False, since that saves some unnecessary
+        # client-side code for handing medium-size avatars.  See #8253
+        # for details.
+        state['avatar_source'] = user_profile.avatar_source
+        state['avatar_url_medium'] = avatar_url(
+            user_profile,
+            medium=True,
+            client_gravatar=False,
+        )
+        state['avatar_url'] = avatar_url(
+            user_profile,
+            medium=False,
+            client_gravatar=False,
+        )
+
+        state['can_create_streams'] = user_profile.can_create_streams()
+        state['cross_realm_bots'] = list(get_cross_realm_dicts())
+        state['is_admin'] = user_profile.is_realm_admin
+        state['user_id'] = user_profile.id
+        state['enter_sends'] = user_profile.enter_sends
+        state['email'] = user_profile.email
+        state['full_name'] = user_profile.full_name
+
+    if want('realm_bot'):
+        state['realm_bots'] = get_owned_bot_dicts(user_profile)
+
+    # This does not yet have an apply_event counterpart, since currently,
+    # new entries for EMBEDDED_BOTS can only be added directly in the codebase.
+    if want('realm_embedded_bots'):
+        realm_embedded_bots = []
+        for bot in EMBEDDED_BOTS:
+            realm_embedded_bots.append({'name': bot.name,
+                                        'config': load_bot_config_template(bot.name)})
+        state['realm_embedded_bots'] = realm_embedded_bots
+
+    if want('subscription'):
+        subscriptions, unsubscribed, never_subscribed = gather_subscriptions_helper(
+            user_profile, include_subscribers=include_subscribers)
+        state['subscriptions'] = subscriptions
+        state['unsubscribed'] = unsubscribed
+        state['never_subscribed'] = never_subscribed
+
+    if want('update_message_flags') and want('message'):
+        # Keeping unread_msgs updated requires both message flag updates and
+        # message updates. This is due to the fact that new messages will not
+        # generate a flag update so we need to use the flags field in the
+        # message event.
+        state['raw_unread_msgs'] = get_raw_unread_data(user_profile)
+
+    if want('stream'):
+        state['streams'] = do_get_streams(user_profile)
+        state['stream_name_max_length'] = Stream.MAX_NAME_LENGTH
+        state['stream_description_max_length'] = Stream.MAX_DESCRIPTION_LENGTH
+    if want('default_streams'):
+        state['realm_default_streams'] = streams_to_dicts_sorted(
+            get_default_streams_for_realm(realm.id))
+    if want('default_stream_groups'):
+        state['realm_default_stream_groups'] = default_stream_groups_to_dicts_sorted(
+            get_default_stream_groups(realm))
+
+    if want('update_display_settings'):
+        for prop in UserProfile.property_types:
+            state[prop] = getattr(user_profile, prop)
+        state['emojiset_choices'] = user_profile.emojiset_choices()
+
+    if want('update_global_notifications'):
+        for notification in UserProfile.notification_setting_types:
+            state[notification] = getattr(user_profile, notification)
+
+    if want('zulip_version'):
+        state['zulip_version'] = ZULIP_VERSION
+
+    return state
+
+
+# Fetch initial data.  When event_types is not specified, clients want
+# all event types.  Whenever you add new code to this function, you
+# should also add corresponding events for changes in the data
+# structures and new code to apply_events (and add a test in EventsRegisterTest).
 def fetch_initial_state_data(user_profile: UserProfile,
                              event_types: Optional[Iterable[str]],
                              queue_id: str, client_gravatar: bool,
