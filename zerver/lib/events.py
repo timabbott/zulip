@@ -161,7 +161,7 @@ def fetch_archive_state_data(realm: Realm, user_profile: UserProfile,
         state['realm_bot_domain'] = realm.get_bot_domain()
         state['realm_uri'] = realm.uri
         state['realm_available_video_chat_providers'] = realm.VIDEO_CHAT_PROVIDERS
-        state['realm_presence_disabled'] = realm.presence_disabled
+        state['realm_presence_disabled'] = True
         state['realm_show_digest_email'] = realm.show_digest_email and settings.SEND_DIGEST_EMAILS
         state['realm_is_zephyr_mirror_realm'] = realm.is_zephyr_mirror_realm
         state['realm_email_auth_enabled'] = email_auth_enabled(realm)
@@ -200,71 +200,53 @@ def fetch_archive_state_data(realm: Realm, user_profile: UserProfile,
         # client_gravatar=False, since that saves some unnecessary
         # client-side code for handing medium-size avatars.  See #8253
         # for details.
-        state['avatar_source'] = user_profile.avatar_source
-        state['avatar_url_medium'] = avatar_url(
-            user_profile,
-            medium=True,
-            client_gravatar=False,
-        )
-        state['avatar_url'] = avatar_url(
-            user_profile,
-            medium=False,
-            client_gravatar=False,
-        )
+        state['avatar_source'] = 'G'
+        # TODO: Fix avatars
 
-        state['can_create_streams'] = user_profile.can_create_streams()
-        state['cross_realm_bots'] = list(get_cross_realm_dicts())
-        state['is_admin'] = user_profile.is_realm_admin
-        state['user_id'] = user_profile.id
-        state['enter_sends'] = user_profile.enter_sends
-        state['email'] = user_profile.email
-        state['full_name'] = user_profile.full_name
+        state['can_create_streams'] = False
+        state['cross_realm_bots'] = []
+        state['is_admin'] = False
+        state['user_id'] = 1 # TODO FIX
+        state['enter_sends'] = True
+        state['email'] = 'anonymous@example.com'
+        state['full_name'] = 'Anonymous user'
 
     if want('realm_bot'):
-        state['realm_bots'] = get_owned_bot_dicts(user_profile)
+        state['realm_bots'] = []
 
-    # This does not yet have an apply_event counterpart, since currently,
-    # new entries for EMBEDDED_BOTS can only be added directly in the codebase.
     if want('realm_embedded_bots'):
-        realm_embedded_bots = []
-        for bot in EMBEDDED_BOTS:
-            realm_embedded_bots.append({'name': bot.name,
-                                        'config': load_bot_config_template(bot.name)})
-        state['realm_embedded_bots'] = realm_embedded_bots
+        state['realm_embedded_bots'] = []
 
     if want('subscription'):
-        subscriptions, unsubscribed, never_subscribed = gather_subscriptions_helper(
-            user_profile, include_subscribers=include_subscribers)
+        from zerver.lib.actions import get_web_public_subs
+        subscriptions, unsubscribed, never_subscribed = get_web_public_subs(realm)
         state['subscriptions'] = subscriptions
         state['unsubscribed'] = unsubscribed
         state['never_subscribed'] = never_subscribed
 
     if want('update_message_flags') and want('message'):
-        # Keeping unread_msgs updated requires both message flag updates and
-        # message updates. This is due to the fact that new messages will not
-        # generate a flag update so we need to use the flags field in the
-        # message event.
+        # TODO: Make this not something weird based on hamlet
         state['raw_unread_msgs'] = get_raw_unread_data(user_profile)
 
     if want('stream'):
-        state['streams'] = do_get_streams(user_profile)
+        from zerver.lib.actions import get_web_public_streams
+        state['streams'] = get_web_public_streams(realm)
         state['stream_name_max_length'] = Stream.MAX_NAME_LENGTH
         state['stream_description_max_length'] = Stream.MAX_DESCRIPTION_LENGTH
     if want('default_streams'):
-        state['realm_default_streams'] = streams_to_dicts_sorted(
-            get_default_streams_for_realm(realm.id))
+        state['realm_default_streams'] = []
     if want('default_stream_groups'):
-        state['realm_default_stream_groups'] = default_stream_groups_to_dicts_sorted(
-            get_default_stream_groups(realm))
+        state['realm_default_stream_groups'] = []
 
+    fake_user = UserProfile()
     if want('update_display_settings'):
         for prop in UserProfile.property_types:
-            state[prop] = getattr(user_profile, prop)
-        state['emojiset_choices'] = user_profile.emojiset_choices()
+            state[prop] = getattr(fake_user, prop)
+        state['emojiset_choices'] = UserProfile.emojiset_choices()
 
     if want('update_global_notifications'):
         for notification in UserProfile.notification_setting_types:
-            state[notification] = getattr(user_profile, notification)
+            state[notification] = getattr(fake_user, notification)
 
     if want('zulip_version'):
         state['zulip_version'] = ZULIP_VERSION
