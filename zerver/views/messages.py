@@ -690,9 +690,14 @@ def get_messages_backend(request: HttpRequest, user_profile: UserProfile,
                          use_first_unread_anchor: bool=REQ(validator=check_bool, default=False),
                          client_gravatar: bool=REQ(validator=check_bool, default=False),
                          apply_markdown: bool=REQ(validator=check_bool, default=True)) -> HttpResponse:
+    is_web_public_query = True
     include_history = ok_to_include_history(narrow, user_profile)
 
-    if include_history:
+    if is_web_public_query:
+        # This is correct for web-public
+        need_message = True
+        need_user_message = False
+    elif include_history:
         # The initial query in this case doesn't use `zerver_usermessage`,
         # and isn't yet limited to messages the user is entitled to see!
         #
@@ -709,6 +714,19 @@ def get_messages_backend(request: HttpRequest, user_profile: UserProfile,
     else:
         need_message = True
         need_user_message = True
+
+    from zerver.lib.narrow import is_web_public_compatible
+    if narrow is not None and not is_web_public_compatible(narrow):
+        ret = dict(
+            messages=[],
+            result='success',
+            msg='',
+            found_anchor=False,
+            found_oldest=True,
+            found_newest=True,
+            anchor=anchor,
+        )
+        return json_success(ret)
 
     query, inner_msg_id_col = get_base_query_for_search(
         user_profile=user_profile,
@@ -733,6 +751,22 @@ def get_messages_backend(request: HttpRequest, user_profile: UserProfile,
                 verbose_operators.append(term['operator'])
         request._log_data['extra'] = "[%s]" % (",".join(verbose_operators),)
 
+    return get_messages_helper(query, anchor, num_before, num_after, narrow, use_first_unread_anchor,
+                               client_gravatar, apply_markdown,
+                               include_history, inner_msg_id_col, is_search, user_profile=user_profile)
+
+def get_messages_helper(query,
+                        anchor: int,
+                        num_before: int,
+                        num_after: int,
+                        narrow: Optional[List[Dict[str, Any]]],
+                        use_first_unread_anchor: bool,
+                        client_gravatar: bool,
+                        apply_markdown: bool,
+                        include_history: bool,
+                        inner_msg_id_col: str,
+                        is_search: bool,
+                        user_profile: Optional[UserProfile]=None) -> HttpResponse:
     sa_conn = get_sqlalchemy_connection()
 
     if use_first_unread_anchor:
