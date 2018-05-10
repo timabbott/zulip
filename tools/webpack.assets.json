@@ -26,6 +26,22 @@
                "./static/third/bootstrap/css/bootstrap-responsive.css",
                "./node_modules/perfect-scrollbar/css/perfect-scrollbar.css"
               ],
+    "porticocommon": [
+               "string.prototype.endswith",
+               "string.prototype.startswith",
+               "string.prototype.codepointat",
+               "./node_modules/jquery/dist/jquery.js",
+               "./node_modules/underscore/underscore.js",
+               "./static/js/blueslip.js",
+               "./static/third/bootstrap-2.3.2/js/bootstrap.js",
+               "./static/js/common.js",
+               "./node_modules/moment/min/moment.min.js",
+               "./node_modules/moment-timezone/builds/moment-timezone-with-data.min.js",
+               "./static/third/bootstrap-2.3.2/css/bootstrap.css",
+               "./static/third/bootstrap-2.3.2/css/bootstrap-btn.css",
+               "./static/third/bootstrap-2.3.2/css/bootstrap-responsive.css",
+               "./node_modules/perfect-scrollbar/css/perfect-scrollbar.css"
+              ],
     "help": [
             "./node_modules/perfect-scrollbar/dist/perfect-scrollbar.js",
             "./static/js/portico/help.js"
