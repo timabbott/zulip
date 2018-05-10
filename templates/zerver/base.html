@@ -24,7 +24,11 @@
         var page_params = {debug_mode: false};
         </script>
         {% endblock %}
+
+        {% block commonhead %}
         {{ render_bundle('common', attrs='nonce="%s"' % (csp_nonce)) }}
+        {% endblock %}
+
         {% block customhead %}
         {% endblock %}
 
