@@ -11,6 +11,10 @@ from builtins import object
 from oauth2client.crypt import AppIdentityError
 from django.core import signing
 from django.urls import reverse
+from httpretty import HTTPretty
+import os
+import sys
+from social_core.tests.backends.oauth import OAuth2Test
 
 import jwt
 import mock
@@ -60,6 +64,7 @@ from social_django.storage import BaseDjangoStorage
 from social_core.backends.github import GithubOrganizationOAuth2, GithubTeamOAuth2, \
     GithubOAuth2
 
+import json
 import urllib
 from http.cookies import SimpleCookie
 import ujson
@@ -352,6 +357,9 @@ class ResponseMock:
     def text(self) -> str:
         return "Response text"
 
+    def raise_for_status(self) -> None:
+        pass
+
 class SocialAuthMixinTest(ZulipTestCase):
     def test_social_auth_mixing(self) -> None:
         mixin = SocialAuthMixin()
@@ -360,7 +368,103 @@ class SocialAuthMixinTest(ZulipTestCase):
         with self.assertRaises(NotImplementedError):
             mixin.get_full_name()
 
-class GitHubAuthBackendTest(ZulipTestCase):
+class GitHubAuthBackendTest(ZulipTestCase, OAuth2Test):
+    def setUp(self) -> None:
+        self.user_profile = self.example_user('hamlet')
+        self.email = self.user_profile.email
+        self.name = 'Hamlet'
+        self.backend = GitHubAuthBackend()
+        self.backend.strategy = DjangoStrategy(storage=BaseDjangoStorage())
+        self.user_profile.backend = self.backend
+
+        rf = RequestFactory()
+        request = rf.get('/complete')
+        request.session = {}
+        request.get_host = lambda: 'zulip.testserver'
+        request.user = self.user_profile
+        self.backend.strategy.request = request
+
+    def github_oauth2_test(self, token_response: ResponseMock, account_response: ResponseMock,
+                           *, subdomain: Optional[str]=None,
+                           mobile_flow_otp: Optional[str]=None,
+                           is_signup: Optional[str]=None,
+                           next: str='') -> HttpResponse:
+        url = "/accounts/login/social/github"
+        params = {}
+        headers = {}
+        if subdomain is not None:
+            headers['HTTP_HOST'] = subdomain + ".testserver"
+        if mobile_flow_otp is not None:
+            params['mobile_flow_otp'] = mobile_flow_otp
+            headers['HTTP_USER_AGENT'] = "ZulipAndroid"
+        if is_signup is not None:
+            params['is_signup'] = is_signup
+        params['next'] = next
+        if len(params) > 0:
+            url += "?%s" % (urllib.parse.urlencode(params))
+
+        result = self.client_get(url, **headers)
+        if result.status_code != 302 or '/login/github/' not in result.url:
+            return result
+
+        result = self.client_get(result.url, **headers)
+        self.assertEqual(result.status_code, 302)
+        if 'https://github.com/login/oauth/authorize' not in result.url:
+            return result
+
+        # Next, the browser requests this URL, and gets redirected back to /complete/github
+        print(result)
+
+        self.client.cookies = result.cookies
+        # Now extract the CSRF token from the redirect URL
+        parsed_url = urllib.parse.urlparse(result.url)
+        csrf_state = urllib.parse.parse_qs(parsed_url.query)['state']
+
+        HTTPretty.enable()
+        HTTPretty.register_uri(self._method(self.backend.ACCESS_TOKEN_METHOD),
+                               uri=self.backend.access_token_url(),
+                               status=self.access_token_status,
+                               body=self.access_token_body or '',
+                               content_type='text/json')
+
+        print(self.backend.access_token_url())
+        start_url = "/accounts/login/social"
+        target_url = self.handle_state(start_url,
+                                       self.backend.strategy.build_absolute_uri(
+                                           self.complete_url
+                                       ))
+        print("target:", target_url)
+        refresh_url = self.backend.refresh_token_url(),
+
+        result = self.client_get("/complete/github/", 
+                                 dict(state=csrf_state), **headers)
+        print(result)
+        return result
+
+    def _method(self, method):
+        return {'GET': HTTPretty.GET,
+                'POST': HTTPretty.POST}[method]
+
+    def test_github_oauth2_success(self) -> None:
+        token_response = ResponseMock(200, {
+            'access_token': 'foobar',
+            'token_type': 'bearer'
+        })
+        account_response = ResponseMock(200, dict(email=self.email, name=self.name))
+        result = self.github_oauth2_test(token_response, account_response,
+                                         subdomain='zulip', next='/user_uploads/image')
+        data = load_subdomain_token(result)
+        self.assertEqual(data['email'], self.example_email("hamlet"))
+        self.assertEqual(data['name'], 'Full Name')
+        self.assertEqual(data['subdomain'], 'zulip')
+        self.assertEqual(data['next'], '/user_uploads/image')
+        self.assertEqual(result.status_code, 302)
+        parsed_url = urllib.parse.urlparse(result.url)
+        uri = "{}://{}{}".format(parsed_url.scheme, parsed_url.netloc,
+                                 parsed_url.path)
+        self.assertTrue(uri.startswith('http://zulip.testserver/accounts/login/subdomain/'))
+
+class GitHubAuthBackendLegacyTest(ZulipTestCase):
     def setUp(self) -> None:
         self.user_profile = self.example_user('hamlet')
         self.email = self.user_profile.email
