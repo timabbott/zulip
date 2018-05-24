@@ -57,6 +57,9 @@ django-auth-ldap==1.5.0
 # Django extension providing bitfield support
 django-bitfield==1.9.3
 
+# Django extension to provide a much better manage.py dbshell
+django-pgcli==0.0.3
+
 # Django extension for sending data to statsd
 django-statsd-mozilla==0.4.0
 
