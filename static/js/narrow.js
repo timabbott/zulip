@@ -778,3 +778,4 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = narrow;
 }
+window.narrow = narrow;

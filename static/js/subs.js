@@ -869,3 +869,4 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = subs;
 }
+window.subs = subs;

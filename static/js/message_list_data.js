@@ -575,3 +575,5 @@ MessageListData.prototype = {
 if (typeof module !== 'undefined') {
     module.exports = MessageListData;
 }
+
+window.MessageListData = MessageListData;

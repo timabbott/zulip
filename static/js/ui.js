@@ -206,3 +206,4 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = ui;
 }
+window.ui = ui;

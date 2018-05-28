@@ -411,3 +411,4 @@ return Socket;
 if (typeof module !== 'undefined') {
     module.exports = Socket;
 }
+window.Socket = Socket;
