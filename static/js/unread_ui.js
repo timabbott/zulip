@@ -120,3 +120,4 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = unread_ui;
 }
+window.unread_ui = unread_ui;

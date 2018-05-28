@@ -178,3 +178,5 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = voting_widget;
 }
+
+window.voting_widget = voting_widget;

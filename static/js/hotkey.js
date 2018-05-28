@@ -792,3 +792,4 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = hotkeys;
 }
+window.hotkey = hotkeys;

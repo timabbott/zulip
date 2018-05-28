@@ -149,3 +149,4 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = search;
 }
+window.search = search;

@@ -1038,3 +1038,4 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = settings_org;
 }
+window.settings_org = settings_org;

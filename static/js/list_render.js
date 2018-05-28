@@ -399,3 +399,4 @@ $(function () {
         $this.addClass("active");
     });
 });
+window.list_render = list_render;

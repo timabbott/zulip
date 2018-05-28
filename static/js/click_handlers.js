@@ -769,3 +769,4 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = click_handlers;
 }
+window.click_handlers = click_handlers;

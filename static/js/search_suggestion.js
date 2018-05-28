@@ -677,3 +677,4 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = search_suggestion;
 }
+window.search_suggestion = search_suggestion;

@@ -479,3 +479,4 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = settings_bots;
 }
+window.settings_bots = settings_bots;

@@ -43,3 +43,4 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = settings_toggle;
 }
+window.settings_toggle = settings_toggle;

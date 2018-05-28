@@ -159,3 +159,5 @@ return exports;
 if (typeof module !== 'undefined') {
     module.exports = tictactoe_widget;
 }
+
+window.tictactoe_widget = tictactoe_widget;
