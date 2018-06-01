@@ -78,6 +78,15 @@ class RemoveUnminifiedFilesMixin:
 
         return []
 
+class IgnoreBundlesManifestStaticFilesStorage(ManifestStaticFilesStorage):
+    def hashed_name(self, name: str, content=None, filename=None) -> str:
+        if (name.startswith("webpack-bundles") and
+                os.path.splitext(name)[1] in ['.js', '.css', '.map']):
+            # Hack to avoid renaming already-hashnamed webpack bundles
+            # when minifying; this causes .
+            return name
+        return super().hashed_name(name, content, filename)
+
 if settings.PRODUCTION:
     # This is a hack to use staticfiles.json from within the
     # deployment, rather than a directory under STATIC_ROOT.  By doing
@@ -96,5 +105,5 @@ if settings.PRODUCTION:
 
 class ZulipStorage(PipelineMixin,
                    AddHeaderMixin, RemoveUnminifiedFilesMixin,
-                   ManifestStaticFilesStorage):
+                   IgnoreBundlesManifestStaticFilesStorage):
     pass
