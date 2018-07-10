@@ -8,7 +8,7 @@ from django.contrib.auth.backends import RemoteUserBackend
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from oauth2client.crypt import AppIdentityError
 from requests import HTTPError
 from social_core.backends.github import GithubOAuth2, GithubOrganizationOAuth2, \
@@ -368,6 +368,10 @@ def social_associate_user_helper(backend: BaseAuth, return_data: Dict[str, Any],
     methods in most other auth backends in this file).
     """
     subdomain = backend.strategy.session_get('subdomain')
+    from zerver.lib.subdomains import get_subdomain
+    social_auth_host = backend.strategy.request.get_host().lower()
+    if settings.EXTERNAL_URI_SCHEME + social_auth_host != settings.SOCIAL_AUTH_DOMAIN_URI:
+        return HttpResponseRedirect("/config-error/github")
     realm = get_realm(subdomain)
     if realm is None:
         return_data["invalid_realm"] = True
@@ -430,6 +434,9 @@ def social_auth_associate_user(
     return_data = {}  # type: Dict[str, Any]
     user_profile = social_associate_user_helper(
         backend, return_data, *args, **kwargs)
+    if isinstance(user_profile, HttpResponseRedirect):
+        print("Got here!")
+        return user_profile
 
     return {'user_profile': user_profile,
             'return_data': return_data}

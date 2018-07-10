@@ -84,7 +84,7 @@ TWO_FACTOR_SMS_GATEWAY = 'two_factor.gateways.fake.Fake'
 
 # Set SOCIAL_AUTH_SUBDOMAIN so that developers don't encounter the
 # GitHub auth cookie issue in development.
-SOCIAL_AUTH_SUBDOMAIN = 'auth'
+SOCIAL_AUTH_SUBDOMAIN = 'www'
 
 # Make sendfile use django to serve files in development
 SENDFILE_BACKEND = 'sendfile.backends.development'
