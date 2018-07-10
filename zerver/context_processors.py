@@ -100,6 +100,7 @@ def zulip_default_context(request: HttpRequest) -> Dict[str, Any]:
 
     return {
         'root_domain_landing_page': settings.ROOT_DOMAIN_LANDING_PAGE,
+        'social_auth_domain_uri': settings.SOCIAL_AUTH_DOMAIN_URI,
         'custom_logo_url': settings.CUSTOM_LOGO_URL,
         'register_link_disabled': register_link_disabled,
         'login_link_disabled': login_link_disabled,

@@ -279,10 +279,7 @@ def oauth_redirect_to_root(request: HttpRequest, url: str,
                            sso_type: str, is_signup: bool=False) -> HttpResponse:
     main_site_uri = settings.ROOT_DOMAIN_URI + url
     if settings.SOCIAL_AUTH_SUBDOMAIN is not None and sso_type == 'social':
-        main_site_uri = (settings.EXTERNAL_URI_SCHEME +
-                         settings.SOCIAL_AUTH_SUBDOMAIN +
-                         "." +
-                         settings.EXTERNAL_HOST) + url
+        main_site_uri = settings.SOCIAL_AUTH_DOMAIN_URI + url
 
     params = {
         'subdomain': get_subdomain(request),
