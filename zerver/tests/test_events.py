@@ -127,7 +127,7 @@ from zerver.tornado.event_queue import (
     process_message_event,
     EventQueue,
 )
-from zerver.tornado.views import get_events_backend
+from zerver.tornado.views import get_events
 
 from collections import OrderedDict
 import mock
@@ -275,7 +275,7 @@ class GetEventsTest(ZulipTestCase):
         recipient_email = recipient_user_profile.email
         self.login(email)
 
-        result = self.tornado_call(get_events_backend, user_profile,
+        result = self.tornado_call(get_events, user_profile,
                                    {"apply_markdown": ujson.dumps(True),
                                     "client_gravatar": ujson.dumps(True),
                                     "event_types": ujson.dumps(["message"]),
@@ -285,7 +285,7 @@ class GetEventsTest(ZulipTestCase):
         self.assert_json_success(result)
         queue_id = ujson.loads(result.content)["queue_id"]
 
-        recipient_result = self.tornado_call(get_events_backend, recipient_user_profile,
+        recipient_result = self.tornado_call(get_events, recipient_user_profile,
                                              {"apply_markdown": ujson.dumps(True),
                                               "client_gravatar": ujson.dumps(True),
                                               "event_types": ujson.dumps(["message"]),
@@ -295,7 +295,7 @@ class GetEventsTest(ZulipTestCase):
         self.assert_json_success(recipient_result)
         recipient_queue_id = ujson.loads(recipient_result.content)["queue_id"]
 
-        result = self.tornado_call(get_events_backend, user_profile,
+        result = self.tornado_call(get_events, user_profile,
                                    {"queue_id": queue_id,
                                     "user_client": "website",
                                     "last_event_id": -1,
@@ -317,7 +317,7 @@ class GetEventsTest(ZulipTestCase):
             sender_queue_id=queue_id,
         )
 
-        result = self.tornado_call(get_events_backend, user_profile,
+        result = self.tornado_call(get_events, user_profile,
                                    {"queue_id": queue_id,
                                     "user_client": "website",
                                     "last_event_id": -1,
@@ -346,7 +346,7 @@ class GetEventsTest(ZulipTestCase):
             sender_queue_id=queue_id,
         )
 
-        result = self.tornado_call(get_events_backend, user_profile,
+        result = self.tornado_call(get_events, user_profile,
                                    {"queue_id": queue_id,
                                     "user_client": "website",
                                     "last_event_id": last_event_id,
@@ -361,7 +361,7 @@ class GetEventsTest(ZulipTestCase):
 
         # Test that the received message in the receiver's event queue
         # exists and does not contain a local id
-        recipient_result = self.tornado_call(get_events_backend, recipient_user_profile,
+        recipient_result = self.tornado_call(get_events, recipient_user_profile,
                                              {"queue_id": recipient_queue_id,
                                               "user_client": "website",
                                               "last_event_id": -1,
@@ -384,7 +384,7 @@ class GetEventsTest(ZulipTestCase):
 
         def get_message(apply_markdown: bool, client_gravatar: bool) -> Dict[str, Any]:
             result = self.tornado_call(
-                get_events_backend,
+                get_events,
                 user_profile,
                 dict(
                     apply_markdown=ujson.dumps(apply_markdown),
@@ -399,7 +399,7 @@ class GetEventsTest(ZulipTestCase):
             self.assert_json_success(result)
             queue_id = ujson.loads(result.content)["queue_id"]
 
-            result = self.tornado_call(get_events_backend, user_profile,
+            result = self.tornado_call(get_events, user_profile,
                                        {"queue_id": queue_id,
                                         "user_client": "website",
                                         "last_event_id": -1,
@@ -412,7 +412,7 @@ class GetEventsTest(ZulipTestCase):
             self.send_personal_message(email, self.example_email("othello"), "hello")
             self.send_stream_message(email, "Denmark", "**hello**")
 
-            result = self.tornado_call(get_events_backend, user_profile,
+            result = self.tornado_call(get_events, user_profile,
                                        {"queue_id": queue_id,
                                         "user_client": "website",
                                         "last_event_id": -1,
