@@ -211,6 +211,7 @@ exports.update_calculated_fields = function (sub) {
     // User can add other users to stream if stream is public or user is subscribed to stream.
     sub.can_access_subscribers = !sub.invite_only || sub.subscribed || page_params.is_admin;
     sub.preview_url = narrow.by_stream_uri(sub.name);
+    sub.is_old_stream = sub.stream_weekly_traffic !== null;
     exports.render_stream_description(sub);
     exports.update_subscribers_count(sub);
 };

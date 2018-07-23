@@ -2077,7 +2077,6 @@ class EventsRegisterTest(ZulipTestCase):
             ('history_public_to_subscribers', check_bool),
             ('pin_to_top', check_bool),
             ('stream_weekly_traffic', check_none_or(check_int)),
-            ('is_old_stream', check_bool),
         ]
         if include_subscribers:
             subscription_fields.append(('subscribers', check_list(check_int)))  # type: ignore

@@ -2432,7 +2432,6 @@ def notify_subscriptions_added(user_profile: UserProfile,
                     email_notifications=subscription.email_notifications,
                     description=stream.description,
                     pin_to_top=subscription.pin_to_top,
-                    is_old_stream=is_old_stream(stream.date_created),
                     stream_weekly_traffic=get_average_weekly_stream_traffic(
                         stream.id, stream.date_created, recent_traffic),
                     subscribers=stream_user_ids(stream),
@@ -3985,10 +3984,6 @@ def get_average_weekly_stream_traffic(stream_id: int, stream_date_created: datet
 
     return round_to_2_significant_digits(average_weekly_traffic)
 
-def is_old_stream(stream_date_created: datetime.datetime) -> bool:
-    return (timezone_now() - stream_date_created).days \
-        >= STREAM_TRAFFIC_CALCULATION_MIN_AGE_DAYS
-
 def encode_email_address(stream: Stream) -> str:
     return encode_email_address_helper(stream.name, stream.email_token)
 
@@ -4062,7 +4057,6 @@ def get_web_public_subs(realm: Realm) -> SubHelperT:
          'pin_to_top': False,
          'stream_id': stream.id,
          'description': stream.description,
-         'is_old_stream': is_old_stream(stream.date_created),
          'stream_weekly_traffic': get_average_weekly_stream_traffic(stream.id,
                                                                     stream.date_created,
                                                                     {}),
@@ -4163,7 +4157,6 @@ def gather_subscriptions_helper(user_profile: UserProfile,
                        'pin_to_top': sub["pin_to_top"],
                        'stream_id': stream["id"],
                        'description': stream["description"],
-                       'is_old_stream': is_old_stream(stream["date_created"]),
                        'stream_weekly_traffic': get_average_weekly_stream_traffic(stream["id"],
                                                                                   stream["date_created"],
                                                                                   recent_traffic),
@@ -4191,7 +4184,6 @@ def gather_subscriptions_helper(user_profile: UserProfile,
                            'invite_only': stream['invite_only'],
                            'is_announcement_only': stream['is_announcement_only'],
                            'stream_id': stream['id'],
-                           'is_old_stream': is_old_stream(stream["date_created"]),
                            'stream_weekly_traffic': get_average_weekly_stream_traffic(stream["id"],
                                                                                       stream["date_created"],
                                                                                       recent_traffic),
