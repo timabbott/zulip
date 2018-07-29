@@ -2310,6 +2310,17 @@ class SubscriptionAPITest(ZulipTestCase):
         invite_streams = self.make_random_stream_names(current_streams)
         self.assert_adding_subscriptions_for_principal(invitee_email, invitee_realm, invite_streams)
 
+    def test_subscriptions_add_for_principal_waiting_period(self) -> None:
+        """
+        You can subscribe other people to streams.
+        """
+        realm = get_realm('zulip')
+        do_set_realm_property(user_profile.realm, 'waiting_period_threshold', 1000)
+        invitee_email = self.example_email("cordelia")
+        current_streams = self.get_streams(invitee_email, invitee_realm)
+        invite_streams = self.make_random_stream_names(current_streams)
+        self.assert_adding_subscriptions_for_principal(invitee_email, invitee_realm, invite_streams)
+
     def test_subscriptions_add_for_principal_deactivated(self) -> None:
         """
         You can't subscribe deactivated people to streams.
