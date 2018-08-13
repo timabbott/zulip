@@ -94,10 +94,6 @@ def update_user_backend(request: HttpRequest, user_profile: UserProfile, user_id
 
     return json_success()
 
-# TODO: Since eventually we want to support using the same email with
-# different organizations, we'll eventually want this to be a
-# logged-in endpoint so that we can access the realm_id.
-@zulip_login_required
 def avatar(request: HttpRequest, email_or_id: str, medium: bool=False) -> HttpResponse:
     """Accepts an email address or user ID and returns the avatar"""
     is_email = False
