@@ -11,6 +11,7 @@
 
 git+https://github.com/zulip/django-bitfield@0d2b15cdb5af5ddec88d41cac19c0f2ce1b1ad38#egg=django-bitfield==1.9.3+dev.0d2b15cdb5af5ddec88d41cac19c0f2ce1b1ad38
 git+https://github.com/zulip/libthumbor.git@60ed2431c07686a12f2770b2d852c5650f3ccfc6#egg=libthumbor==1.3.2zulip
+git+https://github.com/timabbott/pika.git@24e2994f79c853cb65115f99f395670a33a5a083#egg=pika==1.0zulip1
 git+https://github.com/zulip/talon.git@7d8bdc4dbcfcc5a73298747293b99fe53da55315#egg=talon==1.2.10.zulip1
 git+https://github.com/zulip/ultrajson@70ac02bec#egg=ujson==1.35+git
 git+https://github.com/zulip/python-zulip-api.git@0.5.5#egg=zulip==0.5.5_git&subdirectory=zulip
@@ -78,7 +79,6 @@ pbr==3.1.1                # via mock
 pexpect==4.3.0            # via ipython
 phonenumberslite==8.8.6   # via django-phonenumber-field
 pickleshare==0.7.4        # via ipython
-pika==0.11.0
 pillow==5.2.0
 polib==1.1.0
 premailer==3.2.0
