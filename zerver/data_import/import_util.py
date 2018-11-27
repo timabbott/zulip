@@ -458,6 +458,7 @@ def write_avatar_png(avatar_folder: str,
         s3_path=image_path,
         realm_id=realm_id,
         user_profile_id=user_id,
+        importer_should_thumbnail=True,
     )
 
     return metadata

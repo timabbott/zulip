@@ -577,6 +577,8 @@ def import_uploads_local(import_dir: Path, processing_avatars: bool=False,
                     # same realm ID from a previous iteration).
                     os.remove(medium_file_path)
                 upload_backend.ensure_medium_avatar_image(user_profile=user_profile)
+                if record.get("importer_should_thumbnail"):
+                    upload_backend.ensure_basic_avatar_image(user_profile=user_profile)
 
 def import_uploads_s3(bucket_name: str, import_dir: Path, processing_avatars: bool=False,
                       processing_emojis: bool=False) -> None:
@@ -655,6 +657,8 @@ def import_uploads_s3(bucket_name: str, import_dir: Path, processing_avatars: bo
             if record['s3_path'].endswith('.original'):
                 user_profile = get_user_profile_by_id(record['user_profile_id'])
                 upload_backend.ensure_medium_avatar_image(user_profile=user_profile)
+                if record.get("importer_should_thumbnail"):
+                    upload_backend.ensure_basic_avatar_image(user_profile=user_profile)
 
 def import_uploads(import_dir: Path, processing_avatars: bool=False,
                    processing_emojis: bool=False) -> None:

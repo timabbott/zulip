@@ -443,6 +443,26 @@ class S3UploadBackend(ZulipUploadBackend):
             resized_medium
         )
 
+    def ensure_basic_avatar_image(self, user_profile: UserProfile) -> None:
+        # TODO: Refactor this to share code with ensure_medium_avatar_image
+        file_path = user_avatar_path(user_profile)
+        s3_file_name = file_path
+
+        bucket_name = settings.S3_AVATAR_BUCKET
+        conn = S3Connection(settings.S3_KEY, settings.S3_SECRET_KEY)
+        bucket = get_bucket(conn, bucket_name)
+        key = bucket.get_key(file_path + ".original")
+        image_data = key.get_contents_as_string()
+
+        resized_avatar = resize_avatar(image_data)  # type: ignore # image_data is `bytes`, boto subs are wrong
+        upload_image_to_s3(
+            bucket_name,
+            s3_file_name + ".png",
+            "image/png",
+            user_profile,
+            resized_avatar
+        )
+
     def upload_emoji_image(self, emoji_file: File, emoji_file_name: str,
                            user_profile: UserProfile) -> None:
         content_type = guess_type(emoji_file.name)[0]
@@ -588,6 +608,18 @@ class LocalUploadBackend(ZulipUploadBackend):
         image_data = open(image_path, "rb").read()
         resized_medium = resize_avatar(image_data, MEDIUM_AVATAR_SIZE)
         write_local_file('avatars', file_path + '-medium.png', resized_medium)
+
+    def ensure_basic_avatar_image(self, user_profile: UserProfile) -> None:
+        file_path = user_avatar_path(user_profile)
+
+        output_path = os.path.join(settings.LOCAL_UPLOADS_DIR, "avatars", file_path + ".png")
+        if os.path.isfile(output_path):
+            return
+
+        image_path = os.path.join(settings.LOCAL_UPLOADS_DIR, "avatars", file_path + ".original")
+        image_data = open(image_path, "rb").read()
+        resized_avatar = resize_avatar(image_data)
+        write_local_file('avatars', file_path + '.png', resized_avatar)
 
     def upload_emoji_image(self, emoji_file: File, emoji_file_name: str,
                            user_profile: UserProfile) -> None:
