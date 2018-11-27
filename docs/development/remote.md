@@ -248,14 +248,14 @@ different.
       --email=username@example.com --method=standalone
     ```
 
-1. Install nginx configuration:
+1. Install the `nginx` configuration (the following takes advantage of Zulip's
+    production `nginx` configuration, installing just the pieces relevant
+    for this purpose).
 
     ```
-    apt install -y nginx-full
-    cp -a /home/zulipdev/zulip/tools/nginx/zulipdev /etc/nginx/sites-available/
-    ln -nsf /etc/nginx/sites-available/zulipdev /etc/nginx/sites-enabled/
-    nginx -t  # Verifies your nginx configuration
-    service nginx reload  # Actually enabled your nginx configuration
+    mkdir -p /etc/zulip/
+    cp -a /home/zulipdev/zulip/tools/droplets/zulip.conf /etc/zulip/zulip.conf
+    /home/zulipdev/zulip/scripts/zulip-puppet-apply -f
     ```
 
 1. Edit `zproject/dev_settings.py` to set `EXTERNAL_URI_SCHEME =
@@ -266,3 +266,22 @@ different.
    ```
    env EXTERNAL_HOST="hostname.example.com" ./tools/run-dev.py --interface=''
    ```
+||||||| parent of 731f31c... v2
+[our certbot wrapper script used for production](../productions/ssl-certificates.html#certbot-recommended)
+by running the following commands as root:
+```
+# apt install -y crudini
+mkdir -p /var/lib/zulip/certbot-webroot/
+# if nginx running this will fail and you need to run `service nginx stop`
+/home/zulipdev/zulip/scripts/setup/setup-certbot \
+  --hostname=hostname.example.com --no-zulip-conf \
+  --email=username@example.com --method=standalone
+```
+
+Install nginx configuration
+
+```
+apt install -y nginx
+cp -a /home/zulipdev/zulip/tools/nginx/zulipdev /etc/nginx/sites-available/
+ln -nsf /etc/nginx/sites-available/zulipdev /etc/nginx/sites-enabled/
+```
