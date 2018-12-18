@@ -27,11 +27,6 @@ class zulip::voyager {
   include zulip::memcached
   include zulip::rabbit
   include zulip::redis
-  if $::osfamily == debian {
-    # camo is only required on Debian-based systems as part of
-    # our migration towards not including camo at all.
-    include zulip::localhost_camo
-  }
   include zulip::static_asset_compiler
   include zulip::thumbor
 }
