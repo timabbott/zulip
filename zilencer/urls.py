@@ -18,6 +18,12 @@ v1_api_and_json_patterns = [
 
     # Push signup doesn't use the REST API, since there's no auth.
     url('^remotes/server/register$', zilencer.views.register_remote_server),
+
+    # For sending RealmCount analytics to an aggreation server
+    url('^remotes/server/analytics$', rest_dispatch,
+        {'POST': 'zilencer.views.remote_server_post_analytics'}),
+    url('^remotes/server/analytics/status$', rest_dispatch,
+        {'GET': 'zilencer.views.remote_server_check_analytics'}),
 ]
 
 urlpatterns = [
