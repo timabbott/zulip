@@ -130,6 +130,22 @@ and privacy in mind:
 If you have any questions about the security model, contact
 support@zulipchat.com.
 
+## Submitting statistics
+
+Systems using the Mobile Push Notifications Service will by default
+submit basic statistics (e.g. Zulip version, number of users, number
+of messages sent) to the service.
+
+These aggregated statistics are incredibly helpful to the Zulip core
+team, allowing us to talk publicly about Zulip's popularity and
+prioritize features that are primarily for self-hosted installations.
+
+Our use of these usage statistics are governed by the same ToS and
+Privacy Policy that covers the Mobile Push Notifications Service
+itself.  If your organization does not want to submit these
+statistics, you can simply disable this feature by simply setting
+`SUBMIT_USAGE_STATISTICS=False` in `/etc/zulip/settings.py`.
+
 ## Legacy signup
 
 Here are legacy instructions for signing a server up for push
