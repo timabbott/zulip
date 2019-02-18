@@ -107,7 +107,12 @@ class zulip::base {
   }
 
   file { '/etc/zulip':
-    ensure => 'directory',
+    # Ideally, this would be ensure => 'symlink or directory', but
+    # there's no way to express that in Puppet.  Since our installer
+    # creates /etc/zulip as a directory, just declaring "present" is
+    # reasonably safe, as the potential failure mode of creating an
+    # empty file rather than a directory is unlikely to come up.
+    ensure => 'present',
     mode   => '0644',
     owner  => 'zulip',
     group  => 'zulip',
