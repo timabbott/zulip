@@ -1371,7 +1371,6 @@ div.focused_table {
     letter-spacing: normal;
     height: 40px;
     width: 100%;
-
     #tab_list {
         list-style: none;
         margin: 0px 0px 0px 0px;
@@ -1380,7 +1379,11 @@ div.focused_table {
         font-size: 16px;
         border: none;
         white-space: nowrap;
-        width: 100%;
+        width: calc(100% - 1px);
+        cursor: pointer;
+        .hidden {
+            display: none;
+        }
 
         li {
             white-space: nowrap;
@@ -1395,21 +1398,23 @@ div.focused_table {
             margin: 0 -4px 0 0;
             text-overflow: ellipsis;
             padding: 12px 5px;
-            background: 0 !important; // Hack to override bg color that's set inline via js
+            background: 0;
             @media (max-width: 500px) {
                 padding: 8px 5px;
             }
             .hash {
                 font-size: 1.2rem;
             }
-            .hash,
             i {
                 margin-right: 3px;
             }
-        }
-
-        li.private_message a {
-            color: hsl(0, 0%, 100%);
+            .hash,
+            .fa {
+                margin: 0px 5px 0px 5px;
+            }
+            .fa.fa-envelope {
+                font-size: 14px;
+            }
         }
 
         a {
@@ -1425,35 +1430,23 @@ div.focused_table {
             text-overflow: ellipsis;
         }
 
-        li.active {
-            background-color: hsl(0, 0%, 88%);
-            max-width: 150px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
         li.private_message {
-            border-top-color: hsla(0, 0%, 0%, 0.0);
-            border-right-color: hsla(0, 0%, 0%, 0.0);
-            border-bottom-color: hsla(0, 0%, 0%, 0.0);
-            background-color: hsl(0, 0%, 27%);
-            border-left-color: hsl(0, 0%, 27%);
-            color: hsl(0, 0%, 100%);
             border-width: 0px;
         }
 
-        li.number_of_users,
-        li.stream_description {
+        li.sub_count,
+        li.narrow_description {
             background: none;
             font-size: 14px;
             color: hsl(0, 0%, 40%);
             font-weight: 400;
             line-height: 20px;
             margin-left: 10px;
+            .fa.fa-user-o {
+                margin-left: 0px;
+            }
         }
-
-        li.number_of_users {
+        li.sub_count {
             &::before {
                 content: "";
                 position: absolute;
@@ -1480,8 +1473,8 @@ div.focused_table {
             }
         }
 
-        li.stream_description {
-            max-width: calc(100% - 170px);
+        li.narrow_description {
+            max-width: calc(100% - 170px - 55px);
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -1491,8 +1484,6 @@ div.focused_table {
         }
 
         .root {
-            border-color: hsl(0, 0%, 88%);
-            background-color: hsl(0, 0%, 88%);
             margin: 0px;
             a {
                 color: hsl(0, 0%, 52%);
@@ -1752,7 +1743,7 @@ nav a .no-style {
         visibility: hidden;
     }
 
-    a.search_icon {
+    .search_icon {
         display: table;
         height: 100%;
         color: hsl(0, 0%, 80%);
@@ -1769,7 +1760,7 @@ nav a .no-style {
         }
     }
 
-    a.search_icon:hover {
+    .search_icon:hover {
         color: hsl(0, 0%, 0%);
         text-decoration: none;
     }
@@ -1798,31 +1789,57 @@ nav a .no-style {
     }
 }
 
+.search_closed {
+    height: 40px !important;
+    vertical-align: text-bottom;
+    display: table;
+    color: hsl(0, 0%, 80%);
+    float: right;
+    border-right: 1px solid hsl(0, 0%, 87.8%);
+    // so that icon is same size as when nav bar is expaneded
+    letter-spacing: -.236em;
+    i {
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    .fa-search {
+        padding: 0px;
+        font-size: 20px;
+        position: absolute;
+        right: 19px;
+        top: 10px;
+        z-index: 5;
+    }
+}
+
+.search_closed:hover {
+    color: hsl(0, 0%, 0%);
+    text-decoration: none;
+}
+
 #searchbox_legacy {
     width: 100%;
     height: 40px;
     border-left: 1px solid hsl(0, 0%, 88%);
 
-    .navbar-search {
-        position: absolute;
-        right: 0;
-        margin-top: 0px;
-        width: 40px;
-        overflow: hidden;
-        border-right: 1px solid hsl(0, 0%, 87.8%);
-        .search_button {
-            display: none;
-        }
+    .navbar-search:not(.expanded) {
+        display: none;
     }
 
     .navbar-search.expanded {
-        width: 100%;
+        border-right: 1px solid hsl(0, 0%, 87.8%);
+        overflow: hidden;
+        margin-top: 0px;
+        right: 0;
+        width: calc(100% - 2px);
         position: absolute;
         border-left: 1px solid hsl(0, 0%, 87.8%);
         .search_button {
             display: inline;
+            margin-right: 5px;
         }
-        @media (max-width: 1025px) {
+        @media (max-width: 1165px) {
             width: calc(100% - 85px);
         }
     }
@@ -1885,7 +1902,7 @@ nav a .no-style {
         visibility: hidden;
     }
 
-    a.search_icon {
+    .search_icon {
         color: hsl(0, 0%, 80%);
         text-decoration: none;
         display: block;
@@ -1893,7 +1910,7 @@ nav a .no-style {
         height: 1px;
     }
 
-    a.search_icon:hover {
+    .search_icon:hover {
         color: hsl(0, 0%, 0%);
         text-decoration: none;
     }
@@ -2532,6 +2549,9 @@ div.topic_edit_spinner .loading_indicator_spinner {
 
 /* This max-width must be synced with message_viewport.is_narrow */
 @media (max-width: 1165px) {
+    .search_closed .fa-search {
+        right: 99px;
+    }
     .app-main,
     .header-main {
         min-width: 750px;
@@ -2679,6 +2699,10 @@ div.topic_edit_spinner .loading_indicator_spinner {
 
     .column-left.expanded .narrows_panel {
         margin-top: 10px;
+    }
+
+    .search_closed .fa-search {
+        top: 5px;
     }
 
     #streamlist-toggle,

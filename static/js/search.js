@@ -204,6 +204,10 @@ exports.initiate_search = function () {
     if (page_params.search_pills_enabled) {
         $('#search_query').focus();
     } else {
+        if (!$(".navbar-search").hasClass("expanded")) {
+            $(".navbar-search").addClass("expanded");
+            $("#tab_list").addClass("hidden");
+        }
         $('#search_query').select();
     }
 };

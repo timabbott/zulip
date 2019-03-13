@@ -79,9 +79,8 @@ body.night-mode {
 
     /* do not turn the .message_header .stream_label text dark on hover because they're
 on a dark background, and don't change the dark labels dark either. */
-    .message_header:not(.dark_background) a.stream_label:not(.dark_background):hover,
-    #tab_list li.stream:not(.dark_background) {
-        color: hsl(212, 28%, 18%) !important;
+    .message_header:not(.dark_background) a.stream_label:not(.dark_background):hover {
+        color: hsl(212, 28%, 18%);
     }
 
     /* these are converting grey things to "new grey" */
@@ -200,7 +199,7 @@ on a dark background, and don't change the dark labels dark either. */
 
     .message-header-contents,
     .message_header_private_message .message-header-contents,
-    #tab_bar #tab_list li.active {
+    #tab_list {
         background-color: hsla(0, 0%, 0%, 0.2);
     }
 
@@ -218,8 +217,16 @@ on a dark background, and don't change the dark labels dark either. */
         border-color: hsla(0, 0%, 0%, 0.2);
     }
 
+    .search_closed {
+        border-right-style: none;
+    }
+
     #searchbox_legacy {
         border-color: hsla(0, 0%, 0%, 0.6);
+        .navbar-search {
+            border-left-style: none;
+            border-right-style: none;
+        }
     }
 
     .overlay,
@@ -277,9 +284,9 @@ on a dark background, and don't change the dark labels dark either. */
     .clear_search_button:active,
     .clear_search_button[disabled]:hover,
     #user-groups .save-instructions,
-    #searchbox_legacy a.search_icon,
+    #searchbox_legacy .search_icon,
     #searchbox_legacy .search_button,
-    #searchbox a.search_icon,
+    #searchbox .search_icon,
     #searchbox .search_button,
     .close,
     #user_presences li:hover .user-list-arrow,
@@ -292,9 +299,9 @@ on a dark background, and don't change the dark labels dark either. */
 
     #message_edit_tooltip:hover,
     .clear_search_button:hover,
-    #searchbox_legacy a.search_icon:hover,
+    #searchbox_legacy .search_icon:hover,
     #searchbox_legacy .search_button:hover,
-    #searchbox a.search_icon:hover,
+    #searchbox .search_icon:hover,
     #searchbox .search_button:hover,
     .close:hover {
         color: hsl(0, 0%, 100%);
@@ -663,5 +670,21 @@ on a dark background, and don't change the dark labels dark either. */
 @-moz-document url-prefix() {
     body.night-mode #settings_page select {
         background-color: hsla(0, 0%, 0%, 0.2);
+    }
+}
+
+@media (max-width: 775px) {
+    body.night-mode {
+        #searchbox,
+        #searchbox_legacy {
+            // prevents overlap with streamlist toggle button.
+            position: relative;
+        }
+        .search_closed {
+            .fa-search {
+                // prevents overlap of search icon with gear icon caused  by position:relative of search_box
+                right: 129px;
+            }
+        }
     }
 }

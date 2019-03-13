@@ -1,21 +1,18 @@
 <ul id="tab_list">
-    {{#each tabs}}
-    <li class="{{active}} {{cls}}" {{#if data}}data-name="{{data}}"{{/if}}>
+    <li class="{{cls}}" {{#if data}}data-name="{{data}}"{{/if}}>
         {{#if icon}}
-        <i class="fa fa-angle-right" aria-hidden="true"></i>
+        <i class="fa fa-{{icon}}" aria-hidden="true"></i>
+        {{else}}
+        <span class="hash">#</span>
         {{/if}}
         {{! Most tabs are links, but some are not since we don't have a narrow for them (e.g. Search) }}
-        {{#if hash}}
-            <a href="{{hash}}"><span class="hash">#</span> <i class="fa fa-lock"></i> {{title}}</a>
-        {{else}}
-            {{#if home}}
-            <i class="fa fa-home" aria-hidden="true"></i>
-            {{else}}
-            <span class="hash">#</span> <i class="fa fa-lock"></i> {{title}}
-            {{/if}}
-        {{/if}}
+        {{#if private_stream}}<i class="fa fa-lock navbar-lock"></i>{{/if}} {{title}}
     </li>
-    {{/each}}
-    <li class="number_of_users"><i class="fa fa-user-o"></i> 50</li>
-    <li class="stream_description">This is the stream description.</li>
+    {{#if sub_count}}
+    <li class="sub_count" data-toggle="tooltip" title="{{sub_count}} users are subscribed to #{{title}}"><i class="fa fa-user-o"></i>{{sub_count}}</li>
+    {{/if}}
+    {{#if narrow_description}}
+    <li class="narrow_description">{{narrow_description}}</li>
+    {{/if}}
+    <span class="search_icon search_closed" ><i class="fa fa-search" aria-hidden="true"></i></span>
 </ul>
