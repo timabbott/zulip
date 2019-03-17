@@ -55,6 +55,10 @@ def pad_method_dict(method_dict: Dict[str, bool]) -> Dict[str, bool]:
             method_dict[key] = False
     return method_dict
 
+import line_profiler
+profile = line_profiler.LineProfiler()
+
+@profile
 def auth_enabled_helper(backends_to_check: List[str], realm: Optional[Realm]) -> bool:
     if realm is not None:
         # Here we do in-process caching of the enabled backends on the Realm object.

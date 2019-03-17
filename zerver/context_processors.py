@@ -47,6 +47,8 @@ def get_realm_from_request(request: HttpRequest) -> Optional[Realm]:
         request.realm = get_realm(subdomain)
     return request.realm
 
+from zproject.backends import profile
+@profile
 def zulip_default_context(request: HttpRequest) -> Dict[str, Any]:
     """Context available to all Zulip Jinja2 templates that have a request
     passed in.  Designed to provide the long list of variables at the
@@ -177,4 +179,5 @@ def zulip_default_context(request: HttpRequest) -> Dict[str, Any]:
     context['social_backends'] = sorted(social_backends, key=lambda x: x['sort_order'], reverse=True)
     context["no_auth_enabled"] = no_auth_enabled
 
+    profile.print_stats()
     return context
