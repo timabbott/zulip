@@ -1434,6 +1434,12 @@ div.focused_table {
             border-width: 0px;
         }
 
+        li.stream {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
         li.sub_count,
         li.narrow_description {
             background: none;

@@ -84,6 +84,52 @@ exports.colorize_tab_bar = function () {
     }
 };
 
+// this is a hacky way to prevent the description from running onto the search icon
+exports.set_max_width_of_descriptions = function ()  {
+    // do nothing at init
+    const filter = narrow_state.filter();
+    if (filter === undefined) {
+        return;
+    }
+
+    if (filter.has_operator("stream")) {
+        const sub_count = $(".sub_count");
+        const stream = $(".stream");
+        if (stream.css("width") === undefined || sub_count.css("width") === undefined) {
+            return;
+        }
+        const sub_count_width = sub_count.css("width").slice(0, -2);
+        const stream_width = stream.css("width").slice(0, -2);
+        const tab_width = $("#tab_list").css("width").slice(0, -2);
+        $(".narrow_description").css("display", "");
+        sub_count.show();
+        let view_specific_offset = 85;
+        if (message_viewport.is_narrow()) {
+            if (window.innerWidth <= 775) {
+                view_specific_offset =  190;
+            } else {
+                view_specific_offset = 165;
+            }
+        }
+        const narrow_description_max_width = tab_width
+                                            - stream_width - sub_count_width - view_specific_offset;
+        if (narrow_description_max_width <= 16) {
+            // hide narrow when elipses can no longer be displayed correctly
+            $(".narrow_description").hide();
+        }
+        if (narrow_description_max_width <= -7) {
+            // hide sub_count and vertical bars when they no longer fit
+            sub_count.hide();
+        }
+        // set max width of narrow_description
+        $(".narrow_description").css("max-width",
+                                     narrow_description_max_width + "px");
+        // if the stream name is too long and sub count and description are closed
+        const stream_max_width = tab_width - view_specific_offset + 40;
+        stream.css("max-width", stream_max_width + "px");
+    }
+};
+
 function toggle_search_and_select() {
     if (!$(".navbar-search").hasClass("expanded")) {
         search.initiate_search();
@@ -127,6 +173,7 @@ function build_tab_bar() {
     tab_bar.empty();
     const rendered =  render_tab_bar(make_tab_data());
     tab_bar.append(rendered);
+    exports.set_max_width_of_descriptions();
     exports.colorize_tab_bar();
     reset_nav_bar();
     lock_search_bar_as_open();
