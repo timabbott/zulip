@@ -149,6 +149,7 @@ function reset_nav_bar() {
     $(".navbar-search").removeClass("expanded");
     $(".search_icon").off();
     $(".search_icon").on("click", toggle_search_and_select);
+    $("#searchbox_legacy .input-append .fa-search").removeClass('deactivated');
 }
 
 function lock_search_bar_as_open() {
@@ -164,6 +165,7 @@ function lock_search_bar_as_open() {
         // the next line acts as a call to open the search bar as it is intitially styled as hidden.
         toggle_search_or_nav();
         $(".search_icon").off();
+        $("#searchbox_legacy .input-append .fa-search").addClass('deactivated');
     }
     return;
 }

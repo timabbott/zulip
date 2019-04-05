@@ -1380,7 +1380,7 @@ div.focused_table {
         border: none;
         white-space: nowrap;
         width: calc(100% - 1px);
-        cursor: pointer;
+        cursor: default;
         .hidden {
             display: none;
         }
@@ -1796,6 +1796,7 @@ nav a .no-style {
 }
 
 .search_closed {
+    cursor: pointer;
     height: 40px !important;
     vertical-align: text-bottom;
     display: table;
@@ -1861,6 +1862,10 @@ nav a .no-style {
             left: 10px;
             top: 10px;
             z-index: 5;
+        }
+
+        .fa-search:not(.deactivated) {
+            cursor: pointer;
         }
     }
 
