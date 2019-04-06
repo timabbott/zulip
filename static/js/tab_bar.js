@@ -130,6 +130,13 @@ exports.set_max_width_of_descriptions = function ()  {
     }
 };
 
+exports.update_stream_description = function (new_description) {
+    const stream_description = $(".narrow_description");
+    if (stream_description !== undefined) {
+        stream_description.html("");
+        stream_description.append(new_description);
+    }
+};
 function toggle_search_and_select() {
     if (!$(".navbar-search").hasClass("expanded")) {
         search.initiate_search();
@@ -170,17 +177,27 @@ function lock_search_bar_as_open() {
     return;
 }
 
-function build_tab_bar() {
+function display_tab_bar(tab_bar_data) {
     const tab_bar = $("#tab_bar");
     tab_bar.empty();
-    const rendered =  render_tab_bar(make_tab_data());
+    const rendered =  render_tab_bar(tab_bar_data);
     tab_bar.append(rendered);
     exports.set_max_width_of_descriptions();
     exports.colorize_tab_bar();
-    reset_nav_bar();
-    lock_search_bar_as_open();
     tab_bar.removeClass('notdisplayed');
 }
+
+function build_tab_bar() {
+    display_tab_bar(make_tab_data());
+    reset_nav_bar();
+    lock_search_bar_as_open();
+}
+
+exports.update_stream_name = function (new_name) {
+    const tab_bar_data = make_tab_data();
+    tab_bar_data.title = new_name;
+    display_tab_bar(tab_bar_data);
+};
 
 exports.initialize = function () {
     build_tab_bar();
