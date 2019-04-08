@@ -38,7 +38,7 @@ class EmojiName2IdTestCase(MigrationsTestCase):
                                           recipient = recipient,
                                           subject = subject,
                                           content = message_content,
-                                          pub_date = timezone_now(),
+                                          timestamp = timezone_now(),
                                           sending_client = sending_client)
         message = send_fake_message('Test 1', stream)
 
