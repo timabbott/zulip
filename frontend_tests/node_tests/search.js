@@ -6,6 +6,7 @@ zrequire('search_pill');
 zrequire('util');
 zrequire('Filter', 'js/filter');
 zrequire('search_pill_widget');
+zrequire('tab_bar');
 
 const noop = () => {};
 const return_true = () => true;
@@ -285,17 +286,7 @@ run_test('initizalize', () => {
         }
     };
 
-    let is_deactivated;
-    narrow.deactivate = () => {
-        is_deactivated = true;
-    };
-
     search.initialize();
-
-    const search_exit_callback = $('#search_exit').get_on_handler('click');
-
-    search_exit_callback();
-    assert(is_deactivated);
 });
 
 run_test('initiate_search', () => {

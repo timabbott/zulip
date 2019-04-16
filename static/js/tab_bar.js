@@ -146,10 +146,10 @@ function toggle_search_and_select() {
     }
 }
 
-function toggle_search_or_nav() {
+exports.toggle_search_or_nav = function () {
     $(".navbar-search").toggleClass("expanded");
     $("#tab_list").toggleClass("hidden");
-}
+};
 
 function reset_nav_bar() {
     $("#tab_list").removeClass("hidden");
@@ -170,7 +170,7 @@ function lock_search_bar_as_open() {
         filter.has_operator("is") && (filter.operands("is")[0] === "alerted" || filter.operands("is")[0] === "unread") ||
         operator_terms.length > 1 &&  !(operator_terms.length === 2 && filter.has_operator("stream") && filter.has_operator("topic"))) {
         // the next line acts as a call to open the search bar as it is intitially styled as hidden.
-        toggle_search_or_nav();
+        exports.toggle_search_or_nav();
         $(".search_icon").off();
         $("#searchbox_legacy .input-append .fa-search").addClass('deactivated');
     }
