@@ -27,8 +27,13 @@ function make_tab_data() {
                 if (current_stream.invite_only) {
                     icon = "lock";
                 }
+                let formated_sub_count = current_stream.subscriber_count;
+                if (formated_sub_count >= 1000) {
+                // parseInt() is used to floor the value of divison to an integer
+                    formated_sub_count = parseInt(formated_sub_count / 1000, 10) + "k";
+                }
                 return make_tab(stream, icon, stream, 'stream',
-                                current_stream.subscriber_count, current_stream.description);
+                                formated_sub_count, current_stream.description);
             } else if (filter.has_operand("is", "private")) {
                 return make_tab("Private Messages", "envelope", undefined, 'private_message ');
             } else if (filter.has_operator("pm-with")) {
