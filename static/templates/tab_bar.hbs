@@ -11,8 +11,8 @@
     {{#if sub_count}}
     <li class="sub_count" data-toggle="tooltip" title="{{sub_count}} users are subscribed to #{{title}}"><i class="fa fa-user-o"></i>{{sub_count}}</li>
     {{/if}}
-    {{#if narrow_description}}
-    <li class="narrow_description">{{narrow_description}}</li>
+    {{#if rendered_narrow_description}}
+    <li class="narrow_description">{{{rendered_narrow_description}}}</li>
     {{/if}}
     <span class="search_icon search_closed" ><i class="fa fa-search" aria-hidden="true"></i></span>
 </ul>

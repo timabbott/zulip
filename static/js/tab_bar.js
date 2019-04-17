@@ -1,12 +1,13 @@
 const render_tab_bar = require('../templates/tab_bar.hbs');
 
-function make_tab(title, icon, data, extra_class, sub_count, narrow_description) {
+function make_tab(title, icon, data, extra_class, sub_count, rendered_narrow_description) {
     return {cls: extra_class || "",
             title: title,
             data: data,
             icon: icon,
             sub_count: sub_count,
-            narrow_description: narrow_description,
+            // todo: Should we be worried about html escaping when called from non-stream narrow?
+            rendered_narrow_description: rendered_narrow_description,
     };
 }
 
@@ -33,7 +34,7 @@ function make_tab_data() {
                     formated_sub_count = parseInt(formated_sub_count / 1000, 10) + "k";
                 }
                 return make_tab(stream, icon, stream, 'stream',
-                                formated_sub_count, current_stream.description);
+                                formated_sub_count, current_stream.rendered_description);
             } else if (filter.has_operand("is", "private")) {
                 return make_tab("Private Messages", "envelope", undefined, 'private_message ');
             } else if (filter.has_operator("pm-with")) {
