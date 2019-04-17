@@ -1404,16 +1404,18 @@ div.focused_table {
             }
             .hash {
                 font-size: 1.2rem;
+                font-weight: 800;
+                margin: 0px 2px 0px 5px;
             }
             i {
                 margin-right: 3px;
             }
-            .hash,
             .fa {
-                margin: 0px 5px 0px 5px;
+                margin: 0px 3px 0px 5px;
             }
             .fa.fa-envelope {
                 font-size: 14px;
+                margin: 0px 5px 0px 5px;
             }
         }
 
