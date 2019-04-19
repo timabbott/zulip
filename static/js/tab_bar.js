@@ -8,6 +8,7 @@ function make_tab(title, icon, data, extra_class, sub_count, rendered_narrow_des
             sub_count: sub_count,
             // todo: Should we be worried about html escaping when called from non-stream narrow?
             rendered_narrow_description: rendered_narrow_description,
+            left_side_userlist: page_params.left_side_userlist,
     };
 }
 

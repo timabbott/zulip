@@ -2562,8 +2562,22 @@ div.topic_edit_spinner .loading_indicator_spinner {
 
 /* This max-width must be synced with message_viewport.is_narrow */
 @media (max-width: 1165px) {
+    #navbar-buttons ul.nav li.active .dropdown-toggle.user-list-off {
+        right: 18px;
+    }
     .search_closed .fa-search {
         right: 99px;
+    }
+    #searchbox_legacy.user-list-off .navbar-search.expanded {
+        right: auto;
+        width: calc(100% - 65px);
+    }
+    body:not(.night-mode) #searchbox_legacy.user-list-off .navbar-search.expanded {
+        border-left: none;
+        border-right: 1px solid hsl(0, 0%, 88%);
+    }
+    .search_closed.user-list-off .fa-search {
+        right: 81px;
     }
     .app-main,
     .header-main {
@@ -2628,6 +2642,18 @@ div.topic_edit_spinner .loading_indicator_spinner {
         padding: 0px;
     }
 
+    body:not(.night-mode) #searchbox_legacy.user-list-off .navbar-search.expanded {
+        right: 0;
+        border-left: 1px solid hsl(0, 0%, 88%);
+        width: calc(100% - 70px);
+        margin-right: 66px;
+    }
+    body:not(.night-mode) .search_closed.user-list-off .fa-search {
+        right: 83px;
+    }
+    body.night-mode .search_closed.user-list-off .fa-search {
+        right: 113px;
+    }
     .column-left {
         display: none;
     }
