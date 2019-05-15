@@ -1,6 +1,12 @@
 const render_tab_bar = require('../templates/tab_bar.hbs');
 
-function make_tab(title, icon, data, extra_class, sub_count, rendered_narrow_description) {
+function make_tab(title,
+                  icon,
+                  data,
+                  extra_class,
+                  sub_count,
+                  rendered_narrow_description,
+                  formated_sub_count) {
     return {cls: extra_class || "",
             title: title,
             data: data,
@@ -9,6 +15,7 @@ function make_tab(title, icon, data, extra_class, sub_count, rendered_narrow_des
             // todo: Should we be worried about html escaping when called from non-stream narrow?
             rendered_narrow_description: rendered_narrow_description,
             left_side_userlist: page_params.left_side_userlist,
+            formated_sub_count: formated_sub_count,
     };
 }
 
@@ -29,13 +36,14 @@ function make_tab_data() {
                 if (current_stream.invite_only) {
                     icon = "lock";
                 }
-                let formated_sub_count = current_stream.subscriber_count;
-                if (formated_sub_count >= 1000) {
+                const sub_count = current_stream.subscriber_count;
+                let formated_sub_count = sub_count;
+                if (sub_count >= 1000) {
                 // parseInt() is used to floor the value of divison to an integer
                     formated_sub_count = parseInt(formated_sub_count / 1000, 10) + "k";
                 }
                 return make_tab(stream, icon, stream, 'stream',
-                                formated_sub_count, current_stream.rendered_description);
+                                sub_count, current_stream.rendered_description, formated_sub_count);
             } else if (filter.has_operator("topic")) {
                 const topic = filter.operands("topic")[0];
                 return make_tab("Topic results for " + topic, undefined);

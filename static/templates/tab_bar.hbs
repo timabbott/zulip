@@ -9,7 +9,7 @@
         {{#if private_stream}}<i class="fa fa-lock navbar-lock"></i>{{/if}} {{title}}
     </li>
     {{#if sub_count}}
-    <li class="sub_count" data-toggle="tooltip" title="{{sub_count}} users are subscribed to #{{title}}"><i class="fa fa-user-o"></i>{{sub_count}}</li>
+    <li class="sub_count" data-toggle="tooltip" title="{{sub_count}} users are subscribed to #{{title}}"><i class="fa fa-user-o"></i>{{formated_sub_count}}</li>
     {{/if}}
     {{#if rendered_narrow_description}}
     <li class="narrow_description">{{{rendered_narrow_description}}}</li>
