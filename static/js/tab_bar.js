@@ -36,6 +36,9 @@ function make_tab_data() {
                 }
                 return make_tab(stream, icon, stream, 'stream',
                                 formated_sub_count, current_stream.rendered_description);
+            } else if (filter.has_operator("topic")) {
+                const topic = filter.operands("topic")[0];
+                return make_tab("Topic results for " + topic, undefined);
             } else if (filter.has_operand("is", "private")) {
                 return make_tab("Private Messages", "envelope", undefined, 'private_message ');
             } else if (filter.has_operator("pm-with")) {
@@ -179,6 +182,7 @@ function lock_search_bar_as_open() {
         // the next line acts as a call to open the search bar as it is intitially styled as hidden.
         exports.toggle_search_or_nav();
         $(".search_icon").off();
+        $(".search_exit").off();
         $("#searchbox_legacy .input-append .fa-search").addClass('deactivated');
     }
     return;
