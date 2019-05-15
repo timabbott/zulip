@@ -221,6 +221,10 @@ on a dark background, and don't change the dark labels dark either. */
     }
 
     #searchbox_legacy {
+        #tab_bar #tab_list li.sub_count,
+        #tab_bar #tab_list li.narrow_description {
+            color: hsla(0, 0%, 100%, 0.7);
+        }
         border-color: hsla(0, 0%, 0%, 0.6);
         .navbar-search {
             border-left-style: none;
