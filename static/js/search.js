@@ -45,8 +45,6 @@ function update_buttons_with_focus(focused) {
         || search_query_box.val()
         || narrow_state.active()) {
         $('.search_button').prop('disabled', false);
-    } else {
-        $('.search_button').prop('disabled', true);
     }
 }
 

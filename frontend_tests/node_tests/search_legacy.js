@@ -27,8 +27,6 @@ run_test('update_button_visibility', () => {
     search_query.val('');
     narrow_state.active = return_false;
     search_button.prop('disabled', false);
-    search.update_button_visibility();
-    assert(search_button.prop('disabled'));
 
     search_query.is = return_true;
     search_query.val('');
@@ -214,7 +212,6 @@ run_test('initialize', () => {
         search_query_box.is = return_true;
         func(ev);
         assert(is_blurred);
-        assert(search_button.prop('disabled'));
 
 
         _setup('ver');
