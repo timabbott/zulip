@@ -296,4 +296,22 @@ run_test('initiate_search', () => {
     };
     search.initiate_search();
     assert(is_searchbox_focused);
+
+    // testing the typeahead lookup
+    page_params.search_pills_enabled = false;
+    let typeahead_forced_open = false;
+    $('#search_query').select = noop;
+    $('#search_query').typeahead = (lookup) => {
+        if (lookup === "lookup") {
+            return {
+                focus: () => {
+                    typeahead_forced_open = true;
+                },
+            };
+        }
+    };
+    // open typeahead when navbar is open
+    $(".navbar-search").hasClass = () => true;
+    search.initiate_search();
+    assert(typeahead_forced_open);
 });

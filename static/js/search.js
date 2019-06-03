@@ -156,7 +156,6 @@ exports.initialize = function () {
     // Some of these functions don't actually need to be exported,
     // but the code was moved here from elsewhere, and it would be
     // more work to re-order everything and make them private.
-    $('#search_exit').on('click', tab_bar.toggle_search_or_nav);
 
     search_query_box.on('focus', exports.focus_search);
     search_query_box.on('blur', function () {
@@ -207,6 +206,8 @@ exports.initiate_search = function () {
         if (!$(".navbar-search").hasClass("expanded")) {
             $(".navbar-search").addClass("expanded");
             $("#tab_list").addClass("hidden");
+        } else {
+            $('#search_query').typeahead('lookup').focus();
         }
         $('#search_query').select();
     }

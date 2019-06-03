@@ -540,16 +540,6 @@ exports.initialize = function () {
         e.preventDefault();
     });
 
-    $(".search_icon").on('click', function () {
-        if (!$(".navbar-search").hasClass("expanded")) {
-            search.initiate_search();
-        } else {
-            $("#tab_list").removeClass("hidden");
-            $(".navbar-search").removeClass("expanded");
-        }
-    });
-
-
     $(".brand").on('click', function (e) {
         if (overlays.is_active()) {
             overlays.close_active();

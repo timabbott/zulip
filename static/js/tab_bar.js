@@ -155,14 +155,6 @@ exports.update_stream_description = function (new_description) {
         stream_description.append(new_description);
     }
 };
-function toggle_search_and_select() {
-    if (!$(".navbar-search").hasClass("expanded")) {
-        search.initiate_search();
-    } else {
-        $("#tab_list").removeClass("hidden");
-        $(".navbar-search").removeClass("expanded");
-    }
-}
 
 exports.toggle_search_or_nav = function () {
     $(".navbar-search").toggleClass("expanded");
@@ -172,8 +164,8 @@ exports.toggle_search_or_nav = function () {
 function reset_nav_bar() {
     $("#tab_list").removeClass("hidden");
     $(".navbar-search").removeClass("expanded");
-    $(".search_icon").off();
-    $(".search_icon").on("click", toggle_search_and_select);
+    $("#search_exit").off();
+    $('#search_exit').on("click", exports.toggle_search_or_nav);
     $("#searchbox_legacy .input-append .fa-search").removeClass('deactivated');
 }
 
@@ -189,8 +181,8 @@ function lock_search_bar_as_open() {
         operator_terms.length > 1 &&  !(operator_terms.length === 2 && filter.has_operator("stream") && filter.has_operator("topic"))) {
         // the next line acts as a call to open the search bar as it is intitially styled as hidden.
         exports.toggle_search_or_nav();
-        $(".search_icon").off();
-        $(".search_exit").off();
+        // todo: replace next line with renarrowing logic.
+        $("#search_exit").off();
         $("#searchbox_legacy .input-append .fa-search").addClass('deactivated');
     }
     return;
@@ -210,6 +202,11 @@ function build_tab_bar() {
     display_tab_bar(make_tab_data());
     reset_nav_bar();
     lock_search_bar_as_open();
+    $(".search_icon").on("click", function (e) {
+        search.initiate_search();
+        e.preventDefault();
+        e.stopPropagation();
+    });
 }
 
 exports.update_stream_name = function (new_name) {
