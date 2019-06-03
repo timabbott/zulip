@@ -1,5 +1,8 @@
 const render_tab_bar = require('../templates/tab_bar.hbs');
 
+let slug = "";
+let should_redirect = false;
+
 function make_tab(title,
                   icon,
                   data,
@@ -161,31 +164,113 @@ exports.toggle_search_or_nav = function () {
     $("#tab_list").toggleClass("hidden");
 };
 
+function set_redirect_slug() {
+    // By default we want to force a redirect to "all messages"
+    should_redirect = true;
+    slug = "";
+
+    const filter = narrow_state.filter();
+
+    // do nothing at init and just close the search bar ui on home narrow
+    if (filter === undefined) {
+        should_redirect = false;
+        return;
+    }
+
+    const stream = filter.operands("stream");
+    if (stream[0]) {
+        const topic = filter.operands("topic");
+        // if the current narrow is "stream: ~" (and nothing else)
+        if (filter.operators().length === 1 ||
+            // or if the current narrow is "stream: ~ topic: ~" (and nothing else)
+            filter.operators().length === 2 && topic[0]) {
+            // then when closing the search, we can just change the ui
+            should_redirect = false;
+            return;
+        }
+
+        slug = "stream/" + stream_data.name_to_slug(stream[0]);
+
+        if (topic[0]) {
+            slug = slug + "/topic/" + topic[0];
+            return;
+        }
+        return;
+    }
+
+    const is_operands = filter.operands("is");
+    const pm_with = filter.operands("pm-with");
+
+    if (pm_with[0] || is_operands.length === 1) {
+        if (pm_with[0]) {
+            slug = people.emails_to_slug(pm_with[0]);
+            // if the current narrow is "pm-with: ~" (and nothing else)
+            if (filter.operators().length === 1) {
+                // then when closing the search, we can just change the ui
+                should_redirect = false;
+                return;
+            }
+        }
+
+        if (is_operands[0] === "private") {
+            slug = "is/private";
+            // if the current narrow is "is: private" (and nothing else)
+            if (filter.operators().length === 1) {
+                // then when closing the search, we can just change the ui
+                should_redirect = false;
+                return;
+            }
+        }
+
+        if (is_operands[0] === "mentioned") {
+            slug = "is/mentioned";
+            // if the current narrow is "is: mentioned" (and nothing else)
+            if (filter.operators().length === 1) {
+                // then when closing the search, we can just change the ui
+                should_redirect = false;
+                return;
+            }
+        }
+
+        if (is_operands[0] === "starred") {
+            slug = "is/starred";
+            // if the current narrow is "is: starred" (and nothing else)
+            if (filter.operators().length === 1) {
+                // then when closing the search, we can just change the ui
+                should_redirect = false;
+                return;
+            }
+        }
+    }
+}
+
 function reset_nav_bar() {
     $("#tab_list").removeClass("hidden");
     $(".navbar-search").removeClass("expanded");
+    set_redirect_slug();
     $("#search_exit").off();
-    $('#search_exit').on("click", exports.toggle_search_or_nav);
+    $('#search_exit').on("click", function (e) {
+        if (should_redirect) {
+            if (slug !== "") {
+                window.location.replace("/#narrow/" + slug);
+            } else {
+                // redirect to "all messages"
+                window.location.replace("#");
+            }
+        } else {
+            // just changing the ui (and not redirecting)
+            exports.toggle_search_or_nav();
+        }
+        e.preventDefault();
+        e.stopPropagation();
+    });
+    $(".search_icon").off();
+    $(".search_icon").on("click", function (e) {
+        search.initiate_search();
+        e.preventDefault();
+        e.stopPropagation();
+    });
     $("#searchbox_legacy .input-append .fa-search").removeClass('deactivated');
-}
-
-function lock_search_bar_as_open() {
-    const filter = narrow_state.filter();
-    if (filter === undefined) {
-        return;
-    }
-    const operator_terms = filter.operators();
-    if (filter.has_operator("search") ||
-        filter.has_operator("near") || filter.has_operator("ID") ||
-        filter.has_operator("is") && (filter.operands("is")[0] === "alerted" || filter.operands("is")[0] === "unread") ||
-        operator_terms.length > 1 &&  !(operator_terms.length === 2 && filter.has_operator("stream") && filter.has_operator("topic"))) {
-        // the next line acts as a call to open the search bar as it is intitially styled as hidden.
-        exports.toggle_search_or_nav();
-        // todo: replace next line with renarrowing logic.
-        $("#search_exit").off();
-        $("#searchbox_legacy .input-append .fa-search").addClass('deactivated');
-    }
-    return;
 }
 
 function display_tab_bar(tab_bar_data) {
@@ -201,12 +286,6 @@ function display_tab_bar(tab_bar_data) {
 function build_tab_bar() {
     display_tab_bar(make_tab_data());
     reset_nav_bar();
-    lock_search_bar_as_open();
-    $(".search_icon").on("click", function (e) {
-        search.initiate_search();
-        e.preventDefault();
-        e.stopPropagation();
-    });
 }
 
 exports.update_stream_name = function (new_name) {
