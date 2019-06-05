@@ -7,9 +7,30 @@ All notable changes to the Zulip server are documented in this file.
 This section lists notable unreleased changes; it is generally updated
 in bursts.
 
+**Highlights:**
+
+- Removed support for EOL Ubuntu Trusty.  This enables a number of
+  improvements that had previously been blocked because they weren't
+  worth shipping our own upgraded versions of dependencies.
+- Fixed numbered list handling of blank lines between blocks.
+- Significantly improved the email->Zulip gateway.  It now should
+  be possible to subscribe these to an email list and have a good
+  experience.
+- Added a beta option for hiding access to user email addresses from
+  other users.  While counterproductive for most corporate
+  communities, for open source projects and other volunteer
+  organizations, this can be a critical anti-spam feature.
+- The previews of linked webpages feature has moved from alpha to
+  beta.  See the upgrade notes below.
+- Added support for importing an organization from Mattermost (similar
+  to existing Slack/HipChat/Gitter import tools).
+- Changed the user-level stream notification settings model to be
+  defaults (for all streams where the user hasn't specifically changed
+  their settings) instead of a default for newly subscribed streams.
+
 **Upgrade notes:**
 
-- The defaults for Zulip's inline URL preview setting have changed.
+- The defaults for Zulip's now beta inline URL preview setting have changed.
 Previously, the server-level `INLINE_URL_EMBED_PREVIEW` setting was
 disabled, and organization-level setting was enabled.  Now, the
 server-level setting is enabled by default, and the organization-level
@@ -19,6 +40,64 @@ previously [enabled previews of linked
 websites](https://zulipchat.com/help/allow-image-link-previews) will
 lose the setting and need to re-enable it.
 
+**Full feature changelog:**
+- Added 'e' keyboard shortcut for editing currently selected message.
+- Added support for unstarring all starred messages.
+- Added support for using `|` as an OR operator in sidebar search features.
+- Added direct download links for Android APKs to our /apps page.
+- Added a responsive design for our /integrations/ pages.
+- Added typeahead for slash commands.
+- Added more expansive moderation settings for who can create streams
+  or invite other users to join streams.
+- Added new Bitbucket Server, Buildbot, and Redmine integrations.
+- Added proper open graph tags for linking to a Zulip organization.
+- Added organization setting to disable users uploading new avatars
+  (for use with LDAP synchronization).
+- Added support for completely disabling file upload feature.
+- Significantly improved the visual spacing around bulleted lists,
+  blockquotes, and code blocks in Zulip's message feed.
+- Adjusted the default streams in new realms to be easier to
+  understand for new users.
+- Extended several integrations to cover more events and fix bugs.
+- Rewrote formatting for many integrations to have cleaner English
+  punctuation.
+- The beta "weekly digest emails" feature is again available as an
+  organization-level configuration option, after several improvements.
+- Restructured "private messages" widget to have a cleaner design.
+- Significantly improved performance of the backend markdown processor.
+- Significantly improved our /help documentation for dozens of features.
+- Improved default nginx TLS settings for stronger security.
+- Improved UI of administrative user management UI.
+- Fixed buggy handling of LaTeX in quote-and-reply.
+- Fixed buggy rendering of bulleted lists inside blockquotes.
+- Fixed error message for GitHub login attempts with a deactivated account.
+- Fixed email gateway issues with non-latin characters in stream names.
+- Fixed performance issues that made users soft-deactivated for over a
+  year unable to return to the app.
+- Fixed missing -X GET/POST parameters in API docs curl examples.
+- Fixed copy/paste of blocks of messages in Firefox.
+- Fixed password reset page CSS for desktop app.
+- Fixed "more topics" appearing for new streams, where we can be
+  confident we already have all the topics cached in the browser.
+- Fixed real-time sync for reactions and message edits on a message
+  sent to a private stream with shared history before the current user
+  joined that stream.
+- Fixed several subtle real-time sync issues with "stream settings".
+- Fixed a few subtle markdown processor bugs involving emoji.
+- Fixed several issues where Linkifiers validation was overly restrictive.
+- Fixed several rare/minor UI consistency issues in the left sidebar.
+- Fixed issues involving saving a message edit before file upload completes.
+- Fixed issues with pasting images into the compose box from Safari.
+- Fixed guest users seeing UI widgets they can't use.
+- Fixed several issues with click handlers incorrectly closing compose.
+- Fixed several UI issues with the mobile webapp.
+- Fixed HTML styling when copy-pasting content out of Zulip's night theme.
+- Fixed obscure traceback with Virtualenv 16.0.0 unexpectedly installed.
+- Redesigned the in-app "keyboard shortcuts" popover to be more usable.
+- Rewrote HTML/CSS markup for various core components to be more
+  easily modified.
+- Switched our scrollbars to use simplebar for a much better experience.
+- Started migrating our frontend codebase to TypeScript.
 
 ### 2.0.4 -- 2019-06-29
 
