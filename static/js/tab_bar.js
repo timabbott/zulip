@@ -271,6 +271,11 @@ function reset_nav_bar() {
         e.stopPropagation();
     });
     $("#searchbox_legacy .input-append .fa-search").removeClass('deactivated');
+    if (should_redirect) {
+        // the next line acts as a call to open the search bar as it is intitially styled as hidden.
+        exports.toggle_search_or_nav();
+        $("#searchbox_legacy .input-append .fa-search").addClass('deactivated');
+    }
 }
 
 function display_tab_bar(tab_bar_data) {
