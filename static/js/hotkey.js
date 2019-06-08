@@ -261,9 +261,13 @@ exports.process_escape_key = function (e) {
             return true;
         }
 
-        if (page_params.search_pills_enabled && $('#searchbox').has(':focus')) {
-            $('#searchbox .pill').blur();
-            $('#searchbox #search_query').blur();
+        if ($('#searchbox').has(':focus')) {
+            if (page_params.search_pills_enabled) {
+                $('#searchbox .pill').blur();
+                $('#searchbox #search_query').blur();
+            } else {
+                tab_bar.exit_search();
+            }
             return true;
         }
 
