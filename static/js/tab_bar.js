@@ -244,9 +244,8 @@ function set_redirect_slug() {
     }
 }
 
-function reset_nav_bar() {
-    $("#tab_list").removeClass("hidden");
-    $(".navbar-search").removeClass("expanded");
+// this ensures we set_redirect_slug() before we set an exit handler that depends on the slug
+function securely_set_exit_handler() {
     set_redirect_slug();
     $("#search_exit").off();
     $('#search_exit').on("click", function (e) {
@@ -264,6 +263,12 @@ function reset_nav_bar() {
         e.preventDefault();
         e.stopPropagation();
     });
+}
+
+function reset_nav_bar() {
+    $("#tab_list").removeClass("hidden");
+    $(".navbar-search").removeClass("expanded");
+    securely_set_exit_handler();
     $(".search_icon").off();
     $(".search_icon").on("click", function (e) {
         search.initiate_search();
