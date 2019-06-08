@@ -244,22 +244,26 @@ function set_redirect_slug() {
     }
 }
 
+exports.exit_search = function () {
+    if (should_redirect) {
+        if (slug !== "") {
+            window.location.replace("/#narrow/" + slug);
+        } else {
+            // redirect to "all messages"
+            window.location.replace("#");
+        }
+    } else {
+        // just changing the ui (and not redirecting)
+        exports.toggle_search_or_nav();
+    }
+};
+
 // this ensures we set_redirect_slug() before we set an exit handler that depends on the slug
 function securely_set_exit_handler() {
     set_redirect_slug();
     $("#search_exit").off();
     $('#search_exit').on("click", function (e) {
-        if (should_redirect) {
-            if (slug !== "") {
-                window.location.replace("/#narrow/" + slug);
-            } else {
-                // redirect to "all messages"
-                window.location.replace("#");
-            }
-        } else {
-            // just changing the ui (and not redirecting)
-            exports.toggle_search_or_nav();
-        }
+        exports.exit_search();
         e.preventDefault();
         e.stopPropagation();
     });
