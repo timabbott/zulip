@@ -142,6 +142,18 @@ exports.set_max_width_of_descriptions = function ()  {
             // hide sub_count and vertical bars when they no longer fit
             sub_count.hide();
         }
+
+        const narrow_description_actual_width = $(".narrow_description").css("width").slice(0, -2);
+        if (narrow_description_actual_width > narrow_description_max_width) {
+            const sub = filter.operands("stream")[0];
+            const current_stream  = stream_data.get_sub_by_name(sub);
+            // when description is truncated, show full description on hover
+            $(".narrow_description").attr("title", current_stream.description);
+        } else {
+            // else disable tooltip
+            $(".narrow_description").attr("title", "");
+        }
+
         // set max width of narrow_description
         $(".narrow_description").css("max-width",
                                      narrow_description_max_width + "px");
