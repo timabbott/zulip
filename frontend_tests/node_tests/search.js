@@ -262,7 +262,7 @@ run_test('initizalize', () => {
             search_query_box.val("test string");
             narrow_state.search_string = () => 'ver';
             callback();
-            assert.equal(search_query_box.val(), 'ver');
+            assert.equal(search_query_box.val(), 'test string');
         }
     };
 
