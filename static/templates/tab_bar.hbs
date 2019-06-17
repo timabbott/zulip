@@ -6,7 +6,14 @@
         <span class="hash">#</span>
         {{/if}}
         {{! Most tabs are links, but some are not since we don't have a narrow for them (e.g. Search) }}
-        {{#if private_stream}}<i class="fa fa-lock navbar-lock"></i>{{/if}} {{title}}
+        {{#if private_stream}}<i class="fa fa-lock navbar-lock"></i>{{/if}}
+        {{#if settings_modal_link}}
+        <a class="settings_link" href="{{settings_modal_link}}">
+            {{title}}
+        </a>
+        {{else}}
+        {{title}}
+        {{/if}}
     </li>
     {{#if sub_count}}
     <li class="sub_count" data-toggle="tooltip" title="{{sub_count}} users are subscribed to #{{title}}"><i class="fa fa-user-o"></i>{{formated_sub_count}}</li>

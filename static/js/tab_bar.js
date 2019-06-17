@@ -9,7 +9,8 @@ function make_tab(title,
                   extra_class,
                   sub_count,
                   rendered_narrow_description,
-                  formated_sub_count) {
+                  formated_sub_count,
+                  settings_modal_link) {
     return {cls: extra_class || "",
             title: title,
             data: data,
@@ -19,6 +20,7 @@ function make_tab(title,
             rendered_narrow_description: rendered_narrow_description,
             left_side_userlist: page_params.left_side_userlist,
             formated_sub_count: formated_sub_count,
+            settings_modal_link: settings_modal_link,
     };
 }
 
@@ -46,7 +48,7 @@ function make_tab_data() {
                     formated_sub_count = parseInt(formated_sub_count / 1000, 10) + "k";
                 }
                 return make_tab(stream, icon, stream, 'stream',
-                                sub_count, current_stream.rendered_description, formated_sub_count);
+                                sub_count, current_stream.rendered_description, formated_sub_count, "#streams/" + current_stream.stream_id + "/" + stream);
             } else if (filter.has_operator("topic")) {
                 const topic = filter.operands("topic")[0];
                 return make_tab("Topic results for " + topic, undefined);
