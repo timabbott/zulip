@@ -327,10 +327,8 @@ def add_new_user_history(user_profile: UserProfile, streams: Iterable[Stream]) -
 # * Fills in some recent historical messages
 # * Notifies other users in realm and Zulip about the signup
 # * Deactivates PreregistrationUser objects
-# * subscribe the user to newsletter if newsletter_data is specified
 def process_new_human_user(user_profile: UserProfile,
                            prereg_user: Optional[PreregistrationUser]=None,
-                           newsletter_data: Optional[Dict[str, str]]=None,
                            default_stream_groups: List[DefaultStreamGroup]=[],
                            realm_creation: bool=False) -> None:
     mit_beta_user = user_profile.realm.is_zephyr_mirror_realm
@@ -388,23 +386,6 @@ def process_new_human_user(user_profile: UserProfile,
     # to keep all the onboarding code in zerver/lib/onboarding.py.
     from zerver.lib.onboarding import send_initial_pms
     send_initial_pms(user_profile)
-
-    if newsletter_data is not None:
-        # If the user was created automatically via the API, we may
-        # not want to register them for the newsletter
-        queue_json_publish(
-            "signups",
-            {
-                'email_address': user_profile.email,
-                'user_id': user_profile.id,
-                'merge_fields': {
-                    'NAME': user_profile.full_name,
-                    'REALM_ID': user_profile.realm_id,
-                    'OPTIN_IP': newsletter_data["IP"],
-                    'OPTIN_TIME': datetime.datetime.isoformat(timezone_now().replace(microsecond=0)),
-                },
-            },
-            lambda event: None)
 
 def notify_created_user(user_profile: UserProfile) -> None:
     person = dict(email=user_profile.email,
@@ -473,7 +454,6 @@ def do_create_user(email: str, password: Optional[str], realm: Realm, full_name:
                    default_events_register_stream: Optional[Stream]=None,
                    default_all_public_streams: Optional[bool]=None,
                    prereg_user: Optional[PreregistrationUser]=None,
-                   newsletter_data: Optional[Dict[str, str]]=None,
                    default_stream_groups: List[DefaultStreamGroup]=[],
                    source_profile: Optional[UserProfile]=None,
                    realm_creation: bool=False) -> UserProfile:
@@ -501,7 +481,6 @@ def do_create_user(email: str, password: Optional[str], realm: Realm, full_name:
         notify_created_bot(user_profile)
     else:
         process_new_human_user(user_profile, prereg_user=prereg_user,
-                               newsletter_data=newsletter_data,
                                default_stream_groups=default_stream_groups,
                                realm_creation=realm_creation)
     return user_profile
