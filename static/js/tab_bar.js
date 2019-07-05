@@ -145,6 +145,10 @@ exports.set_max_width_of_descriptions = function ()  {
             sub_count.hide();
         }
 
+        if ($(".narrow_description").css("width") === undefined) {
+            return;
+        }
+
         const narrow_description_actual_width = $(".narrow_description").css("width").slice(0, -2);
         if (narrow_description_actual_width > narrow_description_max_width) {
             const sub = filter.operands("stream")[0];
