@@ -262,6 +262,7 @@ exports.process_escape_key = function (e) {
         }
 
         if ($('#searchbox').has(':focus')) {
+            $("input:focus,textarea:focus").blur();
             if (page_params.search_pills_enabled) {
                 $('#searchbox .pill').blur();
                 $('#searchbox #search_query').blur();
