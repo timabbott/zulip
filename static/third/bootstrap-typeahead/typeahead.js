@@ -348,6 +348,10 @@
 
         case 27: // escape
           if (!this.shown) return
+          if ($("input:focus,textarea:focus")[0].className === "search-query input-block-level") {
+            tab_bar.exit_search();
+            $("input:focus,textarea:focus").blur();
+          }
           this.hide()
           break
 
