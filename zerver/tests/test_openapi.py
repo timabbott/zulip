@@ -237,8 +237,6 @@ class OpenAPIArgumentsTest(ZulipTestCase):
         '/realm/filters/{filter_id}',
         # Docs need update for subject -> topic migration
         '/messages/{message_id}',
-        # stream_id parameter incorrectly appears in both URL and endpoint parameters?
-        '/streams/{stream_id}',
         # pattern starts with /api/v1 and thus fails reverse mapping test.
         '/dev_fetch_api_key',
         '/server_settings',
@@ -499,7 +497,10 @@ so maybe we shouldn't include it in pending_endpoints.
                     continue
 
                 try:
-                    openapi_parameters = get_openapi_parameters(url_pattern, method)
+                    # Don't include OpenAPI parameters that live in
+                    # the path; these are not extracted by REQ.
+                    openapi_parameters = get_openapi_parameters(url_pattern, method,
+                                                                include_url_parameters=False)
                 except Exception:  # nocoverage
                     raise AssertionError("Could not find OpenAPI docs for %s %s" %
                                          (method, url_pattern))
