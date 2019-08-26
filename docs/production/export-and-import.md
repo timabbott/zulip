@@ -1,8 +1,9 @@
 # Export and import
 
-Zulip has high quality export and import tools that can be used to move data
-from one Zulip server to another, do backups or compliance work, or migrate
-from your own servers to the hosted Zulip Cloud service.
+Zulip has high quality export and import tools that can be used to
+move data from one Zulip server to another, do backups or
+[compliance](#compliance-exports) work, or migrate from your own
+servers to the hosted Zulip Cloud service.
 
 When using these tools, it's important to ensure that the Zulip server
 you're exporting from and the one you're exporting to are running the
@@ -201,3 +202,32 @@ rm -rf /home/zulip/uploads/*/2/
 ```
 
 Once that's done, you can simply re-run the import process.
+
+## Compliance exports
+
+If you'd like to export data from a single user or conversation on
+your Zulip server, there's a few options to consider depending on the
+use case:
+
+* For short conversations, just highlight the messages with the mouse
+  and copy/paste the message content.  Zulip's [markdown
+  source](https://zulipchat.com/help/view-the-markdown-source-of-a-message)
+  and [message edit
+  history](https://zulipchat.com/help/view-a-messages-edit-history)
+  features may also be helpful.
+* Fetch messages using the [Zulip
+  API](https://zulipchat.com/api/get-messages).  This requires the API
+  key of the user whose conversations you need.  With shell access,
+  you can obtain an API key of any user with: ``` from
+  zerver.lib.users import get_api_key
+  get_api_key(get_user_profile_by_email("username@example.com"))` ```
+  from a [manage.py shell][management].
+* With shell access, the `manage.py export_single_user` [management
+  command][management], exports all of a single user's message history
+  to a set of JSON files, in a format similar to the
+  whole-organization data exports described above.
+* We have ongoing work on integrations with Global Relay and similar
+  compliance tools; contact support@zulipchat.com for help getting
+  that setup.
+
+[management]: ../production/maintain-secure-upgrade.html#management-commands
