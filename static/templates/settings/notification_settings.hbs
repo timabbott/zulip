@@ -35,6 +35,20 @@
             {{/each}}
         </div>
 
+        <div id="wildcard-mention-notify-settings">
+            <h3 class="inline-block">{{t "Stream mentions (@all, @everyone)" }}</h3>
+            <div class="alert-notification" id="wildcard-mention-notify-settings-status"></div>
+
+            {{#each notification_settings.wildcard_mention_notification_settings}}
+            {{> settings_checkbox
+              setting_name=this
+              is_checked=(lookup ../page_params this)
+              label=(lookup ../settings_label this)
+              realm_push_notifications_enabled=(lookup ../page_params "realm_push_notifications_enabled")
+              push_notifications_tooltip=(lookup ../push_notification_tooltip this)}}
+            {{/each}}
+        </div>
+
         <div id="other_notifications" class="m-10 inline-block">
 
             <h3 class="inline-block">{{t "Other notification settings" }}</h3>

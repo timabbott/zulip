@@ -1025,6 +1025,8 @@ class RecipientInfoTest(ZulipTestCase):
             push_notify_user_ids=set(),
             stream_push_user_ids=set(),
             stream_email_user_ids=set(),
+            wildcard_mention_push_user_ids=set(),
+            wildcard_mention_email_user_ids=set(),
             um_eligible_user_ids=all_user_ids,
             long_term_idle_user_ids=set(),
             default_bot_user_ids=set(),
@@ -1032,6 +1034,9 @@ class RecipientInfoTest(ZulipTestCase):
         )
 
         self.assertEqual(info, expected_info)
+
+        # TODO: Extend this test with some cases involving
+        # wildcard_mention_push_user_ids.
 
         hamlet.enable_stream_push_notifications = True
         hamlet.save()

@@ -833,6 +833,12 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     enable_offline_push_notifications = models.BooleanField(default=True)  # type: bool
     enable_online_push_notifications = models.BooleanField(default=False)  # type: bool
 
+    # Wildcard mention notifications
+    wildcard_mention_desktop_notifications = models.BooleanField(default=True)  # type: bool
+    wildcard_mention_email_notifications = models.BooleanField(default=True)  # type: bool
+    wildcard_mention_push_notifications = models.BooleanField(default=True)  # type: bool
+    wildcard_mention_audible_notifications = models.BooleanField(default=True)  # type: bool
+
     DESKTOP_ICON_COUNT_DISPLAY_MESSAGES = 1
     DESKTOP_ICON_COUNT_DISPLAY_NOTIFIABLE = 2
     DESKTOP_ICON_COUNT_DISPLAY_NONE = 3
@@ -967,6 +973,10 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
         enable_stream_email_notifications=bool,
         enable_stream_push_notifications=bool,
         enable_stream_audible_notifications=bool,
+        wildcard_mention_desktop_notifications=bool,
+        wildcard_mention_email_notifications=bool,
+        wildcard_mention_push_notifications=bool,
+        wildcard_mention_audible_notifications=bool,
         message_content_in_email_notifications=bool,
         notification_sound=str,
         pm_content_in_desktop_notifications=bool,

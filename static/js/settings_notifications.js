@@ -16,6 +16,13 @@ var pm_mention_notification_settings = [
     "enable_offline_email_notifications",
 ];
 
+var wildcard_mention_notification_settings = [
+    "wildcard_mention_desktop_notifications",
+    "wildcard_mention_audible_notifications",
+    "wildcard_mention_push_notifications",
+    "wildcard_mention_email_notifications",
+];
+
 var desktop_notification_settings = [
     "pm_content_in_desktop_notifications",
 ];
@@ -39,6 +46,7 @@ var other_notification_settings = desktop_notification_settings.concat(
 );
 
 var notification_settings_status = [
+    {status_label: "wildcard-mention-notify-settings-status", settings: wildcard_mention_notification_settings},
     {status_label: "pm-mention-notify-settings-status", settings: pm_mention_notification_settings},
     {status_label: "other-notify-settings-status", settings: other_notification_settings},
     {status_label: "stream-notify-settings-status", settings: stream_notification_settings},
@@ -46,6 +54,7 @@ var notification_settings_status = [
 
 exports.all_notification_settings_labels = other_notification_settings.concat(
     pm_mention_notification_settings,
+    wildcard_mention_notification_settings,
     stream_notification_settings
 );
 
@@ -53,6 +62,7 @@ exports.all_notifications = {
     settings: {
         stream_notification_settings: stream_notification_settings,
         pm_mention_notification_settings: pm_mention_notification_settings,
+        wildcard_mention_notification_settings: wildcard_mention_notification_settings,
         desktop_notification_settings: desktop_notification_settings,
         mobile_notification_settings: mobile_notification_settings,
         email_notification_settings: email_notification_settings,

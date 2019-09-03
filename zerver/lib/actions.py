@@ -963,8 +963,10 @@ def get_typing_user_profiles(recipient: Recipient, sender_id: int) -> List[UserP
 RecipientInfoResult = TypedDict('RecipientInfoResult', {
     'active_user_ids': Set[int],
     'push_notify_user_ids': Set[int],
-    'stream_push_user_ids': Set[int],
     'stream_email_user_ids': Set[int],
+    'stream_push_user_ids': Set[int],
+    'wildcard_mention_email_user_ids': Set[int],
+    'wildcard_mention_push_user_ids': Set[int],
     'um_eligible_user_ids': Set[int],
     'long_term_idle_user_ids': Set[int],
     'default_bot_user_ids': Set[int],
@@ -977,6 +979,8 @@ def get_recipient_info(recipient: Recipient,
                        possibly_mentioned_user_ids: Optional[Set[int]]=None) -> RecipientInfoResult:
     stream_push_user_ids = set()  # type: Set[int]
     stream_email_user_ids = set()  # type: Set[int]
+    wildcard_mention_push_user_ids = set()  # type: Set[int]
+    wildcard_mention_email_user_ids = set()  # type: Set[int]
 
     if recipient.type == Recipient.PERSONAL:
         # The sender and recipient may be the same id, so
@@ -993,12 +997,18 @@ def get_recipient_info(recipient: Recipient,
         subscription_rows = stream_topic.get_active_subscriptions().annotate(
             user_profile_email_notifications=F('user_profile__enable_stream_email_notifications'),
             user_profile_push_notifications=F('user_profile__enable_stream_push_notifications'),
+            user_profile_wildcard_mention_email_notifications=F(
+                'user_profile__wildcard_mention_email_notifications'),
+            user_profile_wildcard_mention_push_notifications=F(
+                'user_profile__wildcard_mention_push_notifications'),
         ).values(
             'user_profile_id',
             'push_notifications',
             'email_notifications',
             'user_profile_email_notifications',
             'user_profile_push_notifications',
+            'user_profile_wildcard_mention_email_notifications',
+            'user_profile_wildcard_mention_push_notifications',
             'is_muted',
         ).order_by('user_profile_id')
 
@@ -1032,6 +1042,18 @@ def get_recipient_info(recipient: Recipient,
             # Note: muting a stream overrides stream_email_notify
             if should_send('email_notifications', row)
         } - user_ids_muting_topic
+
+        wildcard_mention_email_user_ids = {
+            row['user_profile_id']
+            for row in subscription_rows
+            if not row['is_muted'] and row['user_profile_wildcard_mention_email_notifications']
+        }
+
+        wildcard_mention_push_user_ids = {
+            row['user_profile_id']
+            for row in subscription_rows
+            if not row['is_muted'] and row['user_profile_wildcard_mention_push_notifications']
+        }
 
     elif recipient.type == Recipient.HUDDLE:
         message_to_user_ids = get_huddle_user_ids(recipient)
@@ -1131,6 +1153,8 @@ def get_recipient_info(recipient: Recipient,
         push_notify_user_ids=push_notify_user_ids,
         stream_push_user_ids=stream_push_user_ids,
         stream_email_user_ids=stream_email_user_ids,
+        wildcard_mention_push_user_ids=wildcard_mention_push_user_ids,
+        wildcard_mention_email_user_ids=wildcard_mention_email_user_ids,
         um_eligible_user_ids=um_eligible_user_ids,
         long_term_idle_user_ids=long_term_idle_user_ids,
         default_bot_user_ids=default_bot_user_ids,
@@ -1279,6 +1303,8 @@ def do_send_messages(messages_maybe_none: Sequence[Optional[MutableMapping[str, 
         message['push_notify_user_ids'] = info['push_notify_user_ids']
         message['stream_push_user_ids'] = info['stream_push_user_ids']
         message['stream_email_user_ids'] = info['stream_email_user_ids']
+        message['wildcard_mention_push_user_ids'] = info['wildcard_mention_push_user_ids']
+        message['wildcard_mention_email_user_ids'] = info['wildcard_mention_email_user_ids']
         message['um_eligible_user_ids'] = info['um_eligible_user_ids']
         message['long_term_idle_user_ids'] = info['long_term_idle_user_ids']
         message['default_bot_user_ids'] = info['default_bot_user_ids']
@@ -1406,6 +1432,8 @@ def do_send_messages(messages_maybe_none: Sequence[Optional[MutableMapping[str, 
                 always_push_notify=(user_id in message['push_notify_user_ids']),
                 stream_push_notify=(user_id in message['stream_push_user_ids']),
                 stream_email_notify=(user_id in message['stream_email_user_ids']),
+                wildcard_mention_email_notify=(user_id in message['wildcard_mention_email_user_ids']),
+                wildcard_mention_push_notify=(user_id in message['wildcard_mention_push_user_ids']),
             )
             for user_id in user_ids
         ]

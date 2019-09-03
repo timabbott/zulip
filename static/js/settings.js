@@ -81,6 +81,11 @@ function setup_settings_label() {
         pm_content_in_desktop_notifications: i18n.t("Include content of private messages in desktop notifications"),
         desktop_icon_count_display: i18n.t("Unread count summary (appears in desktop sidebar and browser tab)"),
 
+        wildcard_mention_desktop_notifications: i18n.t("Visual desktop notifications"),
+        wildcard_mention_email_notifications: i18n.t("Email notifications"),
+        wildcard_mention_push_notifications: i18n.t("Mobile notifications"),
+        wildcard_mention_audible_notifications: i18n.t("Audible desktop notifications"),
+
         // other_notification_settings
         enable_digest_emails: i18n.t("Send digest emails when I'm away"),
         enable_login_emails: i18n.t("Send email notifications for new logins to my account"),

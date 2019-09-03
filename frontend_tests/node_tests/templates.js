@@ -1100,19 +1100,31 @@ run_test('settings_tab', () => {
         realm_digest_emails_enabled: true,
         realm_name_in_notifications: true,
         realm_push_notifications_enabled: true,
+        wildcard_mention_audible_notifications: true,
+        wildcard_mention_desktop_notifications: true,
+        wildcard_mention_email_notifications: true,
+        wildcard_mention_push_notifications: true,
     };
     var page_params = $.extend(page_param_checkbox_options, {
         full_name: "Alyssa P. Hacker", password_auth_enabled: true,
         avatar_url: "https://google.com",
     });
 
-    var checkbox_ids = ["enable_stream_desktop_notifications",
-                        "enable_stream_push_notifications",
-                        "enable_stream_audible_notifications", "enable_desktop_notifications",
-                        "enable_sounds", "enable_offline_push_notifications",
-                        "enable_online_push_notifications",
-                        "enable_digest_emails",
-                        "realm_name_in_notifications"];
+    var checkbox_ids = [
+        "enable_stream_desktop_notifications",
+        "enable_stream_push_notifications",
+        "enable_stream_audible_notifications",
+        "enable_desktop_notifications",
+        "enable_sounds",
+        "enable_offline_push_notifications",
+        "enable_online_push_notifications",
+        "enable_digest_emails",
+        "realm_name_in_notifications",
+        "wildcard_mention_audible_notifications",
+        "wildcard_mention_desktop_notifications",
+        "wildcard_mention_email_notifications",
+        "wildcard_mention_push_notifications",
+    ];
 
     // Render with all booleans set to true.
     var html = render('settings_tab', {
