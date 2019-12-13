@@ -2,10 +2,12 @@
 
 All notable changes to the Zulip server are documented in this file.
 
-### 2.1.0-rc1 -- 2019-11-22
+### Unreleased
 
 This section lists notable unreleased changes; it is generally updated
 in bursts.
+
+### 2.1.0 -- 2019-12-12
 
 **Highlights:**
 
