@@ -1312,6 +1312,7 @@ def send_message_backend(request: HttpRequest, user_profile: UserProfile,
                          message_type_name: str=REQ('type'),
                          message_to: Union[Sequence[int], Sequence[str]]=REQ(
                              'to', type=Union[List[int], List[str]],
+                             previous_field_argument="type",
                              converter=extract_recipients, default=[]),
                          forged_str: Optional[str]=REQ("forged",
                                                        default=None,

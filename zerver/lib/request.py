@@ -73,6 +73,7 @@ class _REQ(Generic[ResultT]):
         intentionally_undocumented: bool=False,
         documentation_pending: bool=False,
         aliases: Optional[List[str]] = None,
+        previous_field_argument: Optional[str] = None,
         path_only: bool=False
     ) -> None:
         """whence: the name of the request variable that should be used
@@ -116,6 +117,7 @@ class _REQ(Generic[ResultT]):
         self.intentionally_undocumented = intentionally_undocumented
         self.documentation_pending = documentation_pending
         self.path_only = path_only
+        self.previous_field_argument = previous_field_argument
 
         if converter and (validator or str_validator):
             # Not user-facing, so shouldn't be tagged for translation
@@ -339,7 +341,10 @@ def has_request_variables(view_func: ViewFuncT) -> ViewFuncT:
 
             if param.converter is not None and not default_assigned:
                 try:
-                    val = param.converter(val)
+                    if param.previous_field_argument is not None:
+                        val = param.converter(val, kwargs[param.previous_field_argument])
+                    else:
+                        val = param.converter(val)
                 except JsonableError:
                     raise
                 except Exception:

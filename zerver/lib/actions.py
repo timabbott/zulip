@@ -2029,7 +2029,8 @@ def already_sent_mirrored_message_id(message: Message) -> Optional[int]:
     return None
 
 def extract_recipients(
-        s: Union[str, Iterable[str], Iterable[int]]
+        s: Union[str, Iterable[str], Iterable[int]],
+        message_type: Optional[str]
 ) -> Union[List[str], List[int]]:
     # We try to accept multiple incoming formats for recipients.
     # See test_extract_recipients() for examples of what we allow.
@@ -2042,7 +2043,7 @@ def extract_recipients(
     else:
         data = s
 
-    if isinstance(data, str):
+    if message_type == 'private' and isinstance(data, str):
         data = data.split(',')
 
     if not isinstance(data, list):
