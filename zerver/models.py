@@ -1494,6 +1494,7 @@ def get_client(name: str) -> Client:
     # because we need the updated value of the variable.
     cache_name = cache.KEY_PREFIX + name
     if cache_name not in get_client_cache:
+        print("Going to remote cache", settings.RUNNING_INSIDE_TORNADO)
         result = get_client_remote_cache(name)
         get_client_cache[cache_name] = result
     return get_client_cache[cache_name]

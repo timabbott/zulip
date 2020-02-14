@@ -34,7 +34,8 @@ def default_never_cache_responses(
 
 from zerver.lib.profile import profile
 
-@profile
+import time
+
 @default_never_cache_responses
 @csrf_exempt
 def rest_dispatch(request: HttpRequest, **kwargs: Any) -> HttpResponse:
@@ -62,6 +63,7 @@ def rest_dispatch(request: HttpRequest, **kwargs: Any) -> HttpResponse:
     """
     supported_methods = {}  # type: Dict[str, Any]
 
+    x = time.time()
     if hasattr(request, "saved_response"):
         # For completing long-polled Tornado requests, we skip the
         # view function logic and just return the response.
@@ -98,6 +100,7 @@ def rest_dispatch(request: HttpRequest, **kwargs: Any) -> HttpResponse:
         # Set request._query for update_activity_user(), which is called
         # by some of the later wrappers.
         request._query = target_function.__name__
+        print(1000000 * (time.time() - x))
 
         # We want to support authentication by both cookies (web client)
         # and API keys (API clients). In the former case, we want to

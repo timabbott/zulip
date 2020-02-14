@@ -17,6 +17,7 @@ from django.utils.decorators import available_attrs
 from django.utils.timezone import now as timezone_now
 from django.conf import settings
 
+from zerver.lib.profile import profile
 from zerver.lib.exceptions import UnexpectedWebhookEventType
 from zerver.lib.queue import queue_json_publish
 from zerver.lib.subdomains import get_subdomain, user_matches_subdomain
@@ -122,6 +123,7 @@ def require_billing_access(func: ViewFuncT) -> ViewFuncT:
 
 from zerver.lib.user_agent import parse_user_agent
 
+@profile
 def get_client_name(request: HttpRequest, is_browser_view: bool) -> str:
     # If the API request specified a client in the request content,
     # that has priority.  Otherwise, extract the client from the
@@ -160,7 +162,6 @@ def process_client(request: HttpRequest, user_profile: UserProfile,
                    query: Optional[str]=None) -> None:
     if client_name is None:
         client_name = get_client_name(request, is_browser_view)
-
     request.client = get_client(client_name)
     if not skip_update_user_activity:
         update_user_activity(request, user_profile, query)
@@ -625,7 +626,6 @@ def process_as_post(view_func: ViewFuncT) -> ViewFuncT:
 
     return _wrapped_view_func  # type: ignore # https://github.com/python/mypy/issues/1927
 
-from zerver.lib.profile import profile
 
 @profile
 def authenticate_log_and_execute_json(request: HttpRequest,
@@ -670,7 +670,6 @@ def authenticated_json_post_view(view_func: ViewFuncT) -> ViewFuncT:
         return authenticate_log_and_execute_json(request, view_func, *args, **kwargs)
     return _wrapped_view_func  # type: ignore # https://github.com/python/mypy/issues/1927
 
-@profile
 def authenticated_json_view(view_func: ViewFuncT, skip_rate_limiting: bool=False,
                             allow_unauthenticated: bool=False) -> ViewFuncT:
     @wraps(view_func)

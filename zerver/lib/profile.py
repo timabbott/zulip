@@ -12,6 +12,7 @@ import atexit
 def print_and_dump():
     profile.print_stats()
     profile.dump_stats('data.stats')
+    print("Yay", flush=True)
 
 from django.conf import settings
 if settings.RUNNING_INSIDE_TORNADO:
