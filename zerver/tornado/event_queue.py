@@ -511,6 +511,9 @@ def setup_event_queue(port: int) -> None:
 
     send_restart_events(immediate=settings.DEVELOPMENT)
 
+from zerver.lib.profile import profile
+
+@profile
 def fetch_events(query: Mapping[str, Any]) -> Dict[str, Any]:
     queue_id = query["queue_id"]  # type: str
     dont_block = query["dont_block"]  # type: bool

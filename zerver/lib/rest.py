@@ -32,6 +32,9 @@ def default_never_cache_responses(
         return response
     return _wrapped_view_func
 
+from zerver.lib.profile import profile
+
+@profile
 @default_never_cache_responses
 @csrf_exempt
 def rest_dispatch(request: HttpRequest, **kwargs: Any) -> HttpResponse:

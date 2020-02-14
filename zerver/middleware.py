@@ -105,6 +105,9 @@ statsd_blacklisted_requests = [
     'upload_file', 'realm_activity', 'user_activity'
 ]
 
+from zerver.lib.profile import profile
+
+@profile
 def write_log_line(log_data: MutableMapping[str, Any], path: str, method: str, remote_ip: str, email: str,
                    client_name: str, status_code: int=200, error_content: Optional[AnyStr]=None,
                    error_content_iter: Optional[Iterable[AnyStr]]=None) -> None:
@@ -139,6 +142,7 @@ def write_log_line(log_data: MutableMapping[str, Any], path: str, method: str, r
         time_delta = ((log_data['time_stopped'] - log_data['time_started']) +
                       (time.time() - log_data['time_restarted']))
         optional_orig_delta = " (lp: %s)" % (format_timedelta(orig_time_delta),)
+
     remote_cache_output = ""
     if 'remote_cache_time_start' in log_data:
         remote_cache_time_delta = get_remote_cache_time() - log_data['remote_cache_time_start']
@@ -150,7 +154,7 @@ def write_log_line(log_data: MutableMapping[str, Any], path: str, method: str, r
             remote_cache_count_delta += (log_data['remote_cache_requests_stopped'] -
                                          log_data['remote_cache_requests_restarted'])
 
-        if (remote_cache_time_delta > 0.005):
+        if (remote_cache_time_delta > 0):
             remote_cache_output = " (mem: %s/%s)" % (format_timedelta(remote_cache_time_delta),
                                                      remote_cache_count_delta)
 
@@ -159,7 +163,7 @@ def write_log_line(log_data: MutableMapping[str, Any], path: str, method: str, r
             statsd.incr("%s.remote_cache.querycount" % (statsd_path,), remote_cache_count_delta)
 
     startup_output = ""
-    if 'startup_time_delta' in log_data and log_data["startup_time_delta"] > 0.005:
+    if 'startup_time_delta' in log_data and log_data["startup_time_delta"] > 0:
         startup_output = " (+start: %s)" % (format_timedelta(log_data["startup_time_delta"]),)
 
     bugdown_output = ""
@@ -173,7 +177,7 @@ def write_log_line(log_data: MutableMapping[str, Any], path: str, method: str, r
             bugdown_count_delta += (log_data['bugdown_requests_stopped'] -
                                     log_data['bugdown_requests_restarted'])
 
-        if (bugdown_time_delta > 0.005):
+        if (bugdown_time_delta > 0):
             bugdown_output = " (md: %s/%s)" % (format_timedelta(bugdown_time_delta),
                                                bugdown_count_delta)
 

@@ -625,6 +625,9 @@ def process_as_post(view_func: ViewFuncT) -> ViewFuncT:
 
     return _wrapped_view_func  # type: ignore # https://github.com/python/mypy/issues/1927
 
+from zerver.lib.profile import profile
+
+@profile
 def authenticate_log_and_execute_json(request: HttpRequest,
                                       view_func: ViewFuncT,
                                       *args: Any, skip_rate_limiting: bool = False,
@@ -667,6 +670,7 @@ def authenticated_json_post_view(view_func: ViewFuncT) -> ViewFuncT:
         return authenticate_log_and_execute_json(request, view_func, *args, **kwargs)
     return _wrapped_view_func  # type: ignore # https://github.com/python/mypy/issues/1927
 
+@profile
 def authenticated_json_view(view_func: ViewFuncT, skip_rate_limiting: bool=False,
                             allow_unauthenticated: bool=False) -> ViewFuncT:
     @wraps(view_func)

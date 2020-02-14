@@ -15,6 +15,9 @@ from zerver.tornado.event_queue import fetch_events, \
 from zerver.tornado.handlers import AsyncDjangoHandler
 from zerver.tornado.exceptions import BadEventQueueIdError
 
+from zerver.lib.profile import profile
+
+
 @internal_notify_view(True)
 def notify(request: HttpRequest) -> HttpResponse:
     process_notification(ujson.loads(request.POST['data']))
@@ -44,6 +47,7 @@ def get_events_internal(request: HttpRequest,
 def get_events(request: HttpRequest, user_profile: UserProfile) -> HttpResponse:
     return get_events_backend(request, user_profile)
 
+@profile
 @has_request_variables
 def get_events_backend(request: HttpRequest, user_profile: UserProfile,
                        # user_client is intended only for internal Django=>Tornado requests

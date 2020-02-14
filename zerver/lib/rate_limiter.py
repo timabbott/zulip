@@ -9,6 +9,7 @@ from zerver.lib.exceptions import RateLimited
 from zerver.lib.redis_utils import get_redis_client
 from zerver.lib.utils import statsd
 
+from zerver.lib.profile import profile
 from zerver.models import UserProfile
 
 import logging
@@ -255,6 +256,7 @@ def incr_ratelimit(entity: RateLimitedObject) -> None:
 
                 continue
 
+@profile
 def rate_limit_entity(entity: RateLimitedObject) -> Tuple[bool, float]:
     # Returns (ratelimited, secs_to_freedom)
     ratelimited, time = is_ratelimited(entity)
@@ -273,6 +275,7 @@ def rate_limit_entity(entity: RateLimitedObject) -> Tuple[bool, float]:
 
     return ratelimited, time
 
+@profile
 def rate_limit_request_by_entity(request: HttpRequest, entity: RateLimitedObject) -> None:
     ratelimited, time = rate_limit_entity(entity)
 

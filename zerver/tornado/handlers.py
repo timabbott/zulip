@@ -37,6 +37,9 @@ def clear_handler_by_id(handler_id: int) -> None:
 def handler_stats_string() -> str:
     return "%s handlers, latest ID %s" % (len(handlers), current_handler_id)
 
+from zerver.lib.profile import profile
+
+@profile
 def finish_handler(handler_id: int, event_queue_id: str,
                    contents: List[Dict[str, Any]], apply_markdown: bool) -> None:
     err_msg = "Got error finishing handler for queue %s" % (event_queue_id,)
@@ -84,6 +87,7 @@ class AsyncDjangoHandler(tornado.web.RequestHandler, base.BaseHandler):
         descriptor = get_descriptor_by_handler_id(self.handler_id)
         return "AsyncDjangoHandler<%s, %s>" % (self.handler_id, descriptor)
 
+    @profile
     def convert_tornado_request_to_django_request(self) -> HttpRequest:
         # This takes the WSGI environment that Tornado received (which
         # fully describes the HTTP request that was sent to Tornado)
@@ -106,6 +110,7 @@ class AsyncDjangoHandler(tornado.web.RequestHandler, base.BaseHandler):
 
         return request
 
+    @profile
     def write_django_response_as_tornado_response(self, response: HttpResponse) -> None:
         # This takes a Django HttpResponse and copies its HTTP status
         # code, headers, cookies, and content onto this
@@ -131,6 +136,7 @@ class AsyncDjangoHandler(tornado.web.RequestHandler, base.BaseHandler):
         # Close the connection.
         self.finish()
 
+    @profile
     def get(self, *args: Any, **kwargs: Any) -> None:
         request = self.convert_tornado_request_to_django_request()
 
@@ -183,6 +189,7 @@ class AsyncDjangoHandler(tornado.web.RequestHandler, base.BaseHandler):
         if client_descriptor is not None:
             client_descriptor.disconnect_handler(client_closed=True)
 
+    @profile
     def zulip_finish(self, result_dict: Dict[str, Any], old_request: HttpRequest,
                      apply_markdown: bool) -> None:
         # Function called when we want to break a long-polled
