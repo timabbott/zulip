@@ -14,7 +14,6 @@ zrequire('message_list');
 zrequire('people');
 
 set_global('page_params', {
-    have_initial_messages: true,
     pointer: 444,
 });
 set_global('ui_report', {

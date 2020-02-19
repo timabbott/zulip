@@ -130,8 +130,17 @@ set_global('$', global.make_zjquery());
 
 const document_stub = $.create('document-stub');
 document.to_$ = () => document_stub;
+document.on_$ = () => document_stub;
 document_stub.on = () => {};
 document_stub.idle = () => {};
+
+zrequire('rows');
+zrequire('Filter', 'js/filter');
+zrequire('FetchStatus', 'js/fetch_status');
+zrequire('MessageListView', 'js/message_list_view');
+zrequire('MessageListData', 'js/message_list_data');
+zrequire('message_list');
+zrequire('zulip');
 
 const window_stub = $.create('window-stub');
 set_global('to_$', () => window_stub);

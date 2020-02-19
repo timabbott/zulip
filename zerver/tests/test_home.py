@@ -87,7 +87,6 @@ class HomeTest(ZulipTestCase):
             "full_name",
             "furthest_read_time",
             "has_mobile_devices",
-            "have_initial_messages",
             "high_contrast_mode",
             "hotspots",
             "initial_servertime",
@@ -632,7 +631,6 @@ class HomeTest(ZulipTestCase):
         self.assertEqual(page_params['narrow'], [dict(operator='stream', operand=stream_name)])
         self.assertEqual(page_params['pointer'], -1)
         self.assertEqual(page_params['max_message_id'], -1)
-        self.assertEqual(page_params['have_initial_messages'], False)
 
     def test_invites_by_admins_only(self) -> None:
         user_profile = self.example_user('hamlet')

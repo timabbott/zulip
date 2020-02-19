@@ -167,7 +167,6 @@ def home_real(request: HttpRequest) -> HttpResponse:
                                       slim_presence=True,
                                       notification_settings_null=True,
                                       narrow=narrow)
-    user_has_messages = (register_ret['max_message_id'] != -1)
     update_last_reminder(user_profile)
 
     if user_profile is not None:
@@ -188,15 +187,14 @@ def home_real(request: HttpRequest) -> HttpResponse:
     if user_profile is None:  # nocoverage
         furthest_read_time = time.time()  # type: Optional[float]
     elif user_profile.pointer == -1:
-        if user_has_messages:
-            # Put the new user's pointer at the bottom
-            #
-            # This improves performance, because we limit backfilling of messages
-            # before the pointer.  It's also likely that someone joining an
-            # organization is interested in recent messages more than the very
-            # first messages on the system.
+        # Put the new user's pointer at the bottom
+        #
+        # This improves performance, because we limit backfilling of messages
+        # before the pointer.  It's also likely that someone joining an
+        # organization is interested in recent messages more than the very
+        # first messages on the system.
 
-            register_ret['pointer'] = register_ret['max_message_id']
+        register_ret['pointer'] = register_ret['max_message_id']
         furthest_read_time = None
     else:
         latest_read = get_usermessage_by_message_id(user_profile, user_profile.pointer)
@@ -243,7 +241,6 @@ def home_real(request: HttpRequest) -> HttpResponse:
         server_name_changes_disabled = settings.NAME_CHANGES_DISABLED,
 
         # Misc. extra data.
-        have_initial_messages = user_has_messages,
         initial_servertime    = time.time(),  # Used for calculating relative presence age
         default_language_name = get_language_name(register_ret['default_language']),
         language_list_dbl_col = get_language_list_for_templates(register_ret['default_language']),
@@ -279,7 +276,6 @@ def home_real(request: HttpRequest) -> HttpResponse:
         page_params["narrow"] = [dict(operator=term[0], operand=term[1]) for term in narrow]
         page_params["max_message_id"] = initial_pointer
         page_params["pointer"] = initial_pointer
-        page_params["have_initial_messages"] = (initial_pointer != -1)
         page_params["enable_desktop_notifications"] = False
 
     statsd.incr('views.home')
