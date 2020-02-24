@@ -14,9 +14,9 @@ import scripts.lib.setup_path_on_import
 from scripts.lib.zulip_tools import assert_not_running_as_root
 
 # pyliveupdate integration
-from pyliveupdate import *
+from pyliveupdate import UpdateStub
 UpdateStub().start()
-from pyliveupdatescripts import *
+from pyliveupdatescripts import FP
 
 if __name__ == "__main__":
     assert_not_running_as_root()
