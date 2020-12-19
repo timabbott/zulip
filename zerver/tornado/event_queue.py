@@ -672,7 +672,7 @@ def missedmessage_hook(user_profile_id: int, client: ClientDescriptor, last_for_
 
 def receiver_is_off_zulip(user_profile_id: int) -> bool:
     # If a user has no message-receiving event queues, they've got no open zulip
-    # session so we notify them
+    # session so we notify them.
     all_client_descriptors = get_client_descriptors_for_user(user_profile_id)
     message_event_queues = [client for client in all_client_descriptors if client.accepts_messages()]
     off_zulip = len(message_event_queues) == 0
@@ -687,7 +687,11 @@ def maybe_enqueue_notifications(user_profile_id: int, message_id: int, private_m
                                 already_notified: Dict[str, bool]) -> Dict[str, bool]:
     """This function has a complete unit test suite in
     `test_enqueue_notifications` that should be expanded as we add
-    more features here."""
+    more features here.
+
+    See https://zulip.readthedocs.io/en/latest/subsystems/notifications.html
+    for high-level design documentation.
+    """
     notified: Dict[str, bool] = {}
 
     if (idle or always_push_notify) and (private_message or mentioned or
