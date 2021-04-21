@@ -6,14 +6,13 @@
     </div>
     <div class="modal-body">
         <p>
-            The following is a few of the languages we have started to
-            support or are hoping to support in the near future. We would
-            love help translating; if you're interested in helping, make an
-            account at <a href='https://www.transifex.com/zulip/zulip/'>
-            https://www.transifex.com/zulip/zulip/</a>, and sign up for a
-            language! You can also request any language we don't currently
-            have. It only takes a few hours to translate the most important
-            parts of the app.
+            {{#tr}}
+                Your configured language is used to translate the Zulip UI in web, mobile,
+                and desktop apps, including email notifications. Zulip's translations are
+                contributed by our amazing volunteer translators. Read our
+                <z-link>translation guidelines</z-link> if you'd like to join them.
+                {{#*inline "z-link"}}<a href="https://zulip.readthedocs.io/en/latest/translating/translating.html" target="_blank" rel="noopener noreferrer">{{> @partial-block}}</a>{{/inline}}
+            {{/tr}}
         </p>
         <div>
             <table>
