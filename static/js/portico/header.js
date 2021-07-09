@@ -18,4 +18,9 @@ $(() => {
             $(".dropdown").removeClass("show");
         }
     });
+
+    // Scroll to anchor link when clicked
+    $(document).on("click", ".markdown h1, .markdown h2, .markdown h3", function () {
+        window.location.hash = $(this).attr("id");
+    });
 });
