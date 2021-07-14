@@ -625,6 +625,7 @@ i18n_urls = [
     path("history/", landing_view, {"template_name": "zerver/history.html"}),
     path("why-zulip/", landing_view, {"template_name": "zerver/why-zulip.html"}),
     path("for/education/", landing_view, {"template_name": "zerver/for-education.html"}),
+    path("developer-community/", landing_view, {"template_name": "zerver/developer-community.html"}),
     path("for/open-source/", landing_view, {"template_name": "zerver/for-open-source.html"}),
     path("for/research/", landing_view, {"template_name": "zerver/for-research.html"}),
     path("for/companies/", landing_view, {"template_name": "zerver/for-companies.html"}),
