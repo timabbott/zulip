@@ -3971,6 +3971,15 @@ nav {
         justify-content: center;
     }
 
+    .md-hide {
+        display: none;
+    }
+
+    .md-display {
+        display: block;
+    }
+
+
     @media (width >= 768px) {
         display: grid;
         grid-column-gap: 2%;
@@ -3981,6 +3990,10 @@ nav {
         .feature-half {
             display: block;
         }
+
+        .md-display {
+            display: none !important;
+        }
     }
 
     .feature-text {
@@ -3989,17 +4002,26 @@ nav {
         }
 
         ul {
-            margin-left: 10px;
+            list-style: none;
+            margin-left: 0;
         }
 
         ul li {
-            padding-left: 6px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
 
-            &::marker {
-                content: "•";
-                font-size: 20px;
-                font-weight: 600;
+            &::before {
+                float: left;
+                background-repeat: no-repeat;
+                content: "";
+                width: 18px;
+                height: 18px;
+                margin-right: 5px;
+                margin-top: 2px;
+                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.25 17.292l-4.5-4.364 1.857-1.858 2.643 2.506 5.643-5.784 1.857 1.857-7.5 7.643z"/></svg>');
+            }
+
+            .list-content {
+                margin-left: 22px;
             }
         }
     }
@@ -4013,6 +4035,11 @@ nav {
     .feature-buttons {
         margin: 0 auto;
     }
+}
+
+.twitter-tweet {
+    width: 60% !important;
+    margin: auto;
 }
 
 /* Common button styles */
@@ -4084,26 +4111,26 @@ nav {
 }
 
 figure.quote {
-    background: hsl(0, 0%, 93.3%);
+    background: hsl(218, 70%, 63%);
     padding: 1em;
     border-radius: 1em;
     font-weight: 500;
-    margin: 5px;
+    margin: 40px 5px;
 
     figcaption,
     blockquote {
+        color: hsl(0, 0%, 100%);
         margin: 20px;
     }
 
     blockquote {
-        text-indent: -15px;
         font-style: italic;
-        font-weight: bold;
+        font-weight: 600;
     }
 
     blockquote::before {
-        content: open-quote;
         font-size: 20px;
         font-weight: 800;
     }
 }
+
