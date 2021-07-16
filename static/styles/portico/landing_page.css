@@ -3982,10 +3982,12 @@ nav {
 
     @media (width >= 768px) {
         display: grid;
-        grid-column-gap: 2%;
+        grid-column-gap: 5%;
         grid-template-columns: 43% 55%;
+        max-width: 1300px;
         align-items: center;
         justify-items: center;
+        margin: auto;
 
         .feature-half {
             display: block;
@@ -3998,7 +4000,8 @@ nav {
 
     .feature-text {
         h1 {
-            font-weight: 700;
+            font-weight: 600;
+            font-size: 18px;
         }
 
         ul {
@@ -4038,7 +4041,7 @@ nav {
 }
 
 .twitter-tweet {
-    width: 60% !important;
+    width: 70% !important;
     margin: auto;
 }
 
@@ -4111,10 +4114,10 @@ nav {
 }
 
 figure.quote {
-    background: hsl(218, 70%, 63%);
+    background: hsl(218, 46%, 43%);
     padding: 1em;
     border-radius: 1em;
-    font-weight: 500;
+    font-weight: 400;
     margin: 40px 5px;
 
     figcaption,
@@ -4124,8 +4127,7 @@ figure.quote {
     }
 
     blockquote {
-        font-style: italic;
-        font-weight: 600;
+        font-size: 18px;
     }
 
     blockquote::before {
