@@ -4045,15 +4045,19 @@ nav {
     margin: auto;
 }
 
+.register-buttons {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
 /* Common button styles */
 .register-now {
+    margin: 10px 20px;
     float: left;
-    min-width: 150px;
-    max-width: 250px;
+    width: 200px;
     display: block;
-    margin: 1em;
-    border: 3px solid;
-    border-radius: 40px;
+    border: 2px solid;
     background: none;
     color: inherit;
     vertical-align: middle;
@@ -4085,8 +4089,8 @@ nav {
         position: absolute;
         width: 100%;
         height: 100%;
-        top: 12px;
-        left: 0;
+        top: 15px;
+        left: 5px;
         opacity: 0;
         color: hsl(230.8, 48.4%, 47.8%);
         transform: translate3d(0, 25%, 0);
@@ -4098,8 +4102,8 @@ nav {
         transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
     }
     &:hover {
-        border-color: hsl(185, 26%, 50%);
-        background-color: hsl(185, 26%, 50%);
+        border-color: hsl(169, 45%, 43%);
+        background-color: hsl(170, 47%, 53%);
     }
     &:hover::after {
         font-weight: 600;
@@ -4119,6 +4123,12 @@ figure.quote {
     border-radius: 1em;
     font-weight: 400;
     margin: 40px 5px;
+
+    a {
+        color: hsl(0, 0%, 100%);
+        margin-left: 20px;
+        text-decoration: underline;
+    }
 
     figcaption,
     blockquote {
