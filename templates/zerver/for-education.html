@@ -22,11 +22,18 @@
         <div class="bg-dimmer"></div>
         <div class="content">
             <h1 class="center">{% trans %}Teach a course with Zulip.{% endtrans %}</h1>
-            <p>Online, offline, and anything in between</p>
+            <p>Online, offline, and anything in between.</p>
+     <div class="main">
+        <div class="padded-content">
+            <div class="inner-content markdown">
+                {{ render_markdown_path('zerver/for/hack.md') }}
+            </div>
+        </div>
+    </div>
         </div>
     </div>
 
-    <div class="feature-container">
+   <div class="feature-container">
         <div class="feature-half">
             <div class="feature-text">
                 <h1>
