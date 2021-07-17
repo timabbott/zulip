@@ -145,7 +145,6 @@ button {
     padding: 5px 12px;
 
     font-family: inherit;
-    font-size: 0.7em;
     background-color: hsl(0, 0%, 100%);
     color: hsl(0, 0%, 27%);
 
@@ -2242,6 +2241,16 @@ nav {
 
 .portico-landing.why-page .hero {
     padding: 200px 50px 100px 50px;
+
+    .hero-buttons {
+        margin-top: 40px;
+        text-align: center;
+
+        .button {
+            font-weight: 600;
+            margin: 20px;
+        }
+    }
 
     &.empty-hero {
         padding: 50px 50px 70px 50px;

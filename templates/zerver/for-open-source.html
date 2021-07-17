@@ -21,7 +21,19 @@
         <div class="bg-dimmer"></div>
         <div class="content">
             <h1 class="center">{% trans %}Zulip for open source.{% endtrans %}</h1>
-            <p>Grow your community with fun, thoughtful, and inclusive discussion.</p>
+            <p>Grow your community with fun, thoughtful, and inclusive
+              discussion.</p>
+            <div class="hero-buttons">
+              <a href="{{ url('register') }}" class="button purple">
+                {{ _('Create organization') }}
+              </a>
+              <a href="{{ url('register') }}" class="button purple">
+                {{ _('Education pricing') }}
+              </a>
+              <a href="{{ url('register') }}" class="button purple">
+                {{ _('Self-host Zulip') }}
+              </a>
+            </div>
         </div>
     </div>
     <div class="main">
