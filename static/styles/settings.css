@@ -869,7 +869,7 @@ input[type="checkbox"] {
 }
 
 .bot_edit_errors {
-    margin: 20px 20px 0 20px;
+    margin: 0;
 }
 
 #bots_lists_navbar .active a {
@@ -880,14 +880,14 @@ input[type="checkbox"] {
     margin-top: 5px;
 }
 
-.edit_bot_form_container {
-    padding: 15px;
-}
-
 .edit_bot_form {
     font-size: 100%;
     margin: 0;
     padding: 0;
+
+    form {
+        margin: 0;
+    }
 
     label {
         text-transform: uppercase;
