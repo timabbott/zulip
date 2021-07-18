@@ -662,10 +662,12 @@ ul {
 }
 
 #move_topic_modal {
+    form,
+    .stream_header_colorblock {
+        margin: 0;
+    }
     /* Ensure that the dropdown can overflow the modal. */
-    overflow: visible;
-
-    .modal-body {
+    .modal__content {
         overflow: visible;
     }
 
@@ -673,10 +675,6 @@ ul {
        the button corners with `stream_header_colorblock`. */
     .dropdown-toggle {
         border-radius: 1px 4px 4px 1px !important;
-    }
-
-    .stream_header_colorblock {
-        margin-bottom: 20px;
     }
 
     #topic_stream_edit_form_error {
