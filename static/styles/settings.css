@@ -979,8 +979,15 @@ input[type="checkbox"] {
     }
 }
 
+#api_key_form,
+#api_key_status,
 #realm_domains_table {
     margin: 0;
+}
+
+#download_zuliprc {
+    color: hsl(0, 0%, 100%);
+    text-decoration: none;
 }
 
 #api_key_form,
@@ -1554,9 +1561,8 @@ input[type="checkbox"] {
     }
 
     #change_email_modal .change_email_info,
-    #change_password_modal .change_password_info,
-    #api_key_modal #api_key_status {
-        margin-top: 3px;
+    #change_password_modal .change_password_info {
+        margin: 0;
     }
 }
 
