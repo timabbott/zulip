@@ -1,5 +1,6 @@
 import $ from "jquery";
 
+import render_change_email_modal from "../templates/change_email_modal.hbs";
 import render_confirm_deactivate_own_user from "../templates/confirm_dialog/confirm_deactivate_own_user.hbs";
 import render_settings_api_key_modal from "../templates/settings/api_key_modal.hbs";
 import render_settings_custom_user_profile_field from "../templates/settings/custom_user_profile_field.hbs";
@@ -505,7 +506,7 @@ export function set_up() {
         );
     });
 
-    $("#change_email_button").on("click", (e) => {
+    function do_change_email(e) {
         e.preventDefault();
         e.stopPropagation();
         const change_email_error = $("#change_email_modal").find(".change_email_info").expectOne();
@@ -522,7 +523,10 @@ export function set_up() {
                         4000,
                     );
                 }
-                overlays.close_modal("#change_email_modal");
+                dialog_widget.close_modal();
+            },
+            error_continuation() {
+                change_email_error.show();
             },
             error_msg_element: change_email_error,
             success_msg_html: $t_html(
@@ -537,15 +541,32 @@ export function set_up() {
             $("#account-settings-status").expectOne(),
             opts,
         );
-    });
+    }
+
+    function change_email_post_render() {
+        $("#change_email_modal").find(".change_email_info").hide();
+        const input_elem = $(".email_change_container").find("input[name='email']");
+        input_elem.on("keydown", (e) => {
+            if (e.key === "Enter") {
+                do_change_email();
+            }
+        });
+        const email = $("#change_email").text().trim();
+        input_elem.val(email);
+    }
 
     $("#change_email").on("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
         if (!page_params.realm_email_changes_disabled || page_params.is_admin) {
-            overlays.open_modal("#change_email_modal");
-            const email = $("#change_email").text().trim();
-            $(".email_change_container").find("input[name='email']").val(email);
+            dialog_widget.launch({
+                html_heading: $t_html({defaultMessage: "Change email"}),
+                html_body: render_change_email_modal(),
+                html_submit_button: $t_html({defaultMessage: "Change"}),
+                id: "change_email_modal",
+                on_click: do_change_email,
+                post_render: change_email_post_render,
+            });
         }
     });
 

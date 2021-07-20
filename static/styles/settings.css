@@ -125,6 +125,22 @@ h3 .fa-question-circle-o {
     max-width: 480px;
 }
 
+#change_email_modal {
+    .change_email_info,
+    .email_change_container input {
+        margin: 0;
+    }
+
+    input {
+        display: block;
+    }
+
+    /* Required for the input element box-shadow to be visible */
+    .email_change_container input {
+        margin-bottom: 6px;
+    }
+}
+
 .admin-realm-description {
     height: 16em;
     width: 100%;
@@ -1560,7 +1576,6 @@ input[type="checkbox"] {
         width: 245px;
     }
 
-    #change_email_modal .change_email_info,
     #change_password_modal .change_password_info {
         margin: 0;
     }
