@@ -995,6 +995,7 @@ input[type="checkbox"] {
     }
 }
 
+#change_password_modal .change_password_info,
 #api_key_form,
 #api_key_status,
 #realm_domains_table {
@@ -1574,10 +1575,6 @@ input[type="checkbox"] {
 
     .display-settings-form select {
         width: 245px;
-    }
-
-    #change_password_modal .change_password_info {
-        margin: 0;
     }
 }
 
