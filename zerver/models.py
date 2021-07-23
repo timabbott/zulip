@@ -2312,6 +2312,12 @@ def bulk_get_huddle_user_ids(recipients: List[Recipient]) -> Dict[int, List[int]
 class AbstractMessage(models.Model):
     sender: UserProfile = models.ForeignKey(UserProfile, on_delete=CASCADE)
     recipient: Recipient = models.ForeignKey(Recipient, on_delete=CASCADE)
+
+    class MessageType(models.IntegerChoices):
+        NORMAL = 1
+
+    type = models.PositiveSmallIntegerField(choices=MessageType.choices, null=True)
+
     # The message's topic.
     #
     # Early versions of Zulip called this concept a "subject", as in an email
