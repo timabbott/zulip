@@ -163,6 +163,7 @@ class MessagePOSTTest(ZulipTestCase):
         self.assert_json_success(result)
         sent_message = self.get_last_message()
         self.assertEqual(sent_message.content, "Stream message by ID.")
+        self.assertEqual(sent_message.type, Message.MessageType.NORMAL)
 
     def test_sending_message_as_stream_post_policy_admins(self) -> None:
         """

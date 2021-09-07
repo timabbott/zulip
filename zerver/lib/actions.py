@@ -3308,6 +3308,7 @@ def check_message(
     message.sender = sender
     message.content = message_content
     message.recipient = recipient
+    message.type = Message.MessageType.NORMAL
     if addressee.is_stream():
         message.set_topic_name(topic_name)
     if forged and forged_timestamp is not None:
