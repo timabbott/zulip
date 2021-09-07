@@ -2316,7 +2316,7 @@ class AbstractMessage(models.Model):
     class MessageType(models.IntegerChoices):
         NORMAL = 1
 
-    type = models.PositiveSmallIntegerField(choices=MessageType.choices, null=True)
+    type = models.PositiveSmallIntegerField(choices=MessageType.choices, default=MessageType.NORMAL)
 
     # The message's topic.
     #
