@@ -8,7 +8,7 @@ import sys
 def setup_path() -> None:
     if os.path.basename(sys.prefix) != "zulip-py3-venv":
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        venv = os.path.join(BASE_DIR, "zulip-py3-venv")
+        venv = os.path.realpath(os.path.join(BASE_DIR, "zulip-py3-venv"))
         activate_this = os.path.join(venv, "bin", "activate_this.py")
         activate_locals = dict(__file__=activate_this)
         with open(activate_this) as f:

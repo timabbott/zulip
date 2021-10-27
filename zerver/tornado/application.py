@@ -4,7 +4,6 @@ import tornado.web
 from django.conf import settings
 
 from zerver.lib.queue import get_queue_client
-from zerver.tornado import autoreload
 from zerver.tornado.handlers import AsyncDjangoHandler
 
 
@@ -13,7 +12,6 @@ def setup_tornado_rabbitmq() -> None:  # nocoverage
     if settings.USING_RABBITMQ:
         queue_client = get_queue_client()
         atexit.register(lambda: queue_client.close())
-        autoreload.add_reload_hook(lambda: queue_client.close())
 
 
 def create_tornado_application() -> tornado.web.Application:

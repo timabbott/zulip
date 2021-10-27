@@ -9,7 +9,7 @@ if sys.version_info <= (3, 0):
     print("Use e.g. `/path/to/manage.py` not `python /path/to/manage.py`.")
     sys.exit(1)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.realpath(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 from scripts.lib.setup_path import setup_path
 
