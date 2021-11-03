@@ -134,6 +134,13 @@ class MarkdownDirectoryView(ApiURLView):
             sidebar_article = self.get_path("include/sidebar_index")
             sidebar_index = sidebar_article.article_path
             title_base = "Zulip Help Center"
+        elif self.path_template == f"{settings.POLICIES_DIRECTORY}/%s.md":
+            context["page_is_policy_center"] = True
+            context["doc_root"] = "/policies/"
+            context["doc_root_title"] = "Terms and policies"
+            sidebar_article = self.get_path("sidebar_index")
+            sidebar_index = sidebar_article.article_path
+            title_base = "Zulip terms and policies"
         else:
             context["page_is_api_center"] = True
             context["doc_root"] = "/api/"
@@ -145,6 +152,7 @@ class MarkdownDirectoryView(ApiURLView):
         # The following is a somewhat hacky approach to extract titles from articles.
         # Hack: `context["article"] has a leading `/`, so we use + to add directories.
         article_path = os.path.join(settings.DEPLOY_ROOT, "templates") + context["article"]
+        print(article_path)
         if os.path.exists(article_path):
             with open(article_path) as article_file:
                 first_line = article_file.readlines()[0]

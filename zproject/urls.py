@@ -83,9 +83,7 @@ from zerver.views.portico import (
     hello_view,
     landing_view,
     plans_view,
-    privacy_view,
     team_view,
-    terms_view,
 )
 from zerver.views.presence import (
     get_presence_backend,
@@ -632,9 +630,6 @@ i18n_urls = [
         RedirectView.as_view(url="/for/communities/", permanent=True),
     ),
     path("security/", landing_view, {"template_name": "zerver/security.html"}),
-    # Terms of Service and privacy pages.
-    path("terms/", terms_view),
-    path("privacy/", privacy_view),
 ]
 
 # Make a copy of i18n_urls so that they appear without prefix for english
@@ -796,6 +791,10 @@ help_documentation_view = MarkdownDirectoryView.as_view(
 api_documentation_view = MarkdownDirectoryView.as_view(
     template_name="zerver/documentation_main.html", path_template="/zerver/api/%s.md"
 )
+policy_documentation_view = MarkdownDirectoryView.as_view(
+    template_name="zerver/documentation_main.html",
+    path_template=f"{settings.POLICIES_DIRECTORY}/%s.md",
+)
 urls += [
     # Redirects due to us having moved the docs:
     path(
@@ -870,6 +869,16 @@ urls += [
     path("help/<path:article>", help_documentation_view),
     path("api/", api_documentation_view),
     path("api/<slug:article>", api_documentation_view),
+    path("policies/", policy_documentation_view),
+    path("policies/<slug:article>", policy_documentation_view),
+    path(
+        "privacy",
+        RedirectView.as_view(url="/policies/privacy"),
+    ),
+    path(
+        "terms",
+        RedirectView.as_view(url="/policies/terms"),
+    ),
 ]
 
 # Two-factor URLs

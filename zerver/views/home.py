@@ -26,9 +26,6 @@ def need_accept_tos(user_profile: Optional[UserProfile]) -> bool:
     if user_profile is None:
         return False
 
-    if settings.TERMS_OF_SERVICE is None:  # nocoverage
-        return False
-
     if settings.TOS_VERSION is None:
         return False
 

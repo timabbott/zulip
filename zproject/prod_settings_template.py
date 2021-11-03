@@ -758,7 +758,9 @@ CAMO_URI = "/external_content/"
 
 ## If you want to set a Terms of Service for your server, set the path
 ## to your Markdown file, and uncomment the following line.
-# TERMS_OF_SERVICE = '/etc/zulip/terms.md'
+# POLICIES_DIRECTORY = "/etc/zulip/policies/"
 
-## Similarly if you want to set a Privacy Policy.
-# PRIVACY_POLICY = '/etc/zulip/privacy.md'
+## Whenever this value is changed, users will be prompted to re-accept
+## the configured policies on login. The default value of None means
+## configures Zulip to never prompt about Terms of Service.
+# TOS_VERSION = "1.0"
