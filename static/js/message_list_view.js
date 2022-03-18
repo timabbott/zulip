@@ -408,6 +408,14 @@ export class MessageListView {
             message_container.include_recipient = false;
             message_container.include_footer = false;
 
+            if (this.table_name !== "zhome") {
+                console.log(
+                    message_container.msg.id,
+                    same_recipient(prev, message_container),
+                    this.collapse_messages,
+                    prev !== undefined && prev.msg.historical === message_container.msg.historical,
+                );
+            }
             if (
                 same_recipient(prev, message_container) &&
                 this.collapse_messages &&
