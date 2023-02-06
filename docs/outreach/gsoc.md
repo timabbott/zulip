@@ -26,11 +26,11 @@ skills with particular tools are likely to be important for a given project.
 
 ## Focus areas
 
-For 2022, we are particularly interested in GSoC contributors who have
-strong skills at visual design, HTML/CSS, mobile development, full
-stack feature development, performance optimization, or Electron. So
-if you're an applicant with those skills and are looking for an
-organization to join, we'd love to talk to you!
+For 2023, we are particularly interested in GSoC contributors who have
+strong skills at stack feature development, Typescript, visual design,
+HTML/CSS, or performance optimization. So if you're an applicant with
+those skills and are looking for an organization to join, we'd love to
+talk to you!
 
 The Zulip project has a huge surface area, so even when we're focused
 on something, a large amount of essential work goes into other parts of
@@ -40,22 +40,97 @@ the areas mentioned above are not your main strength.
 
 ## Project ideas by area
 
-This section contains the seeds of project ideas; you will need to do research
-on the Zulip codebase, read issues on GitHub, and talk with developers to put
-together a complete project proposal. It's also fine to come up with your own
-project ideas. As you'll see below, you can put together a great project around
-one of the [area labels](https://github.com/zulip/zulip/labels) on GitHub; each
-has a cluster of problems in one part of the Zulip project that we'd love to
-improve.
-
-**Note: The project ideas on this page are from summer 2022.** In the future, we
-will update them with details for 2023. You can expect the updated list to look
-similar to what you'll find below.
+This section contains the seeds of project ideas; you will need to do
+research on the Zulip codebase, read issues on GitHub, read
+documentation, and talk with developers to put together a complete
+project proposal. It's also fine to come up with your own project
+ideas. As you'll see below, you can put together a great project
+around one of the [area labels](https://github.com/zulip/zulip/labels)
+on GitHub; each has a cluster of problems in one part of the Zulip
+project that we'd love to improve.
 
 ### Full stack and web frontend focused projects
 
 Code: [github.com/zulip/zulip -- Python, Django, JavaScript, and
 CSS](https://github.com/zulip/zulip/).
+
+- Help migrate our JavaScript codebase to Typescript. Zulip is in the
+  process of porting the main web app JavaScript codebase to
+  TypeScript; at present we've done much of the necessary tooling
+  setup, and about 8% of lines have been migrated (mostly in libraries
+  used widely); the goal for this project will be to get that to more
+  like 75%. [This topic on chat.zulip.org][typescript-migration] is a
+  good place to coordinate work on this project. Multiple students are
+  possible; 175 and 350 hours; difficult. **Skills required**:
+  TypeScript and refactoring expertise; we're specifically interested
+  in students who are a type theory nerd and are invested in writing
+  types precisely and checking their work carefully. Experts: Zixuan
+  James Li, Priyank Patel, Anders Kaseorg.
+
+[typescript-migration]: https://chat.zulip.org/#narrow/stream/6-frontend/topic/typescript.20migration
+
+- Contribute to Zulip's [migration to user groups for
+  permissions][user-group-permissions]. This migration, which is
+  intended to replace every permission setting in Zulip that currently
+  allows users to select which roles (admin, moderator, etc.) have
+  permission to do something with Zulip's "user groups", making it
+  much more customizable. This is very important for large
+  organizations using Zulip, both businesses and open source
+  projects. Much of the basic design, API structure, and scaffolding
+  is complete, but there is a lot of work that remains to complete
+  this vision. The project can likely support a couple students; there
+  is considerable work to be done on the settings UI, both for user
+  groups and for stream and organization-level settings, dozens of
+  existing settings to migrate and many new settings that users have
+  long requested that we've delayed adding in order to avoid having to
+  migrate them. 175 or 350 hours; moderate difficulty. **Skills
+  required**: Python, JavaScript, and CSS. Attention to detail around
+  code reuse/duplication, thoughtful testing, and splitting large
+  migrations into reviewable chunks.
+
+  Experts: Purushottam Tiwari, Sahil Batra
+
+[user-group-permissions]: https://github.com/zulip/zulip/issues/19525
+
+- **Add an inbox view** to the web app. We intend to add a new
+  optional home screen for the Zulip web application that works like
+  the mobile app's home screen -- showing just topics containing
+  unread messages, in an organized fashion, in the web app's center
+  pane. Details are available in the
+  [issue](https://github.com/zulip/zulip/issues/22189) and [draft pull
+  request](https://github.com/zulip/zulip/pull/22408) with prototyping
+  towards this done in GSoC 2022; the goal for this project would be
+  to extract preparatory refactoring changes to make it nicely
+  parallel to the similar Recent Conversations panel so that it can be
+  merged in a maintainable fashion, work with the community to
+  integrate those changes, complete the inbox feature through being
+  merged, and then spend the remainder of the summer polishing it. 175
+  or 350 hours; moderate difficulty. **Skills required**: JavaScript,
+  CSS, and reading and understanding a complex code path.
+
+  Experts: Aman Agrawal, Shlok Patel
+
+- **Extended notification settings**. Extend Zulip's powerful
+  notification settings model to support additional configuration
+  options. The top priorities in this area are [unmuting topics in
+  muted streams](https://github.com/zulip/zulip/issues/2517) and
+  [Following a topic](https://github.com/zulip/zulip/issues/6027);
+  these are two of the 5 most requested features for the Zulip project
+  overall. For this project, one will likely want to start with some
+  simpler issues in the [notifications(messages)
+  area][notifications-messages] in order to get familiary with the
+  code paths in question. There is enough to do in this project that
+  we could have two students working in this area. 175 or 350 hours;
+  moderate difficulty. **Skills required**: Python and JavaScript,
+  with a bit of CSS, database design, and other aspects of full-stack
+  feature development. Attention to detail, thinking through subtle
+  corner cases, designing good abstractions to help ensure
+  correctness, and writing tests to verify correct behavior in them
+  will be an important part of this work.
+
+  Experts: Abhijeet Bodas, Ryan Rehman.
+
+[notifications-messages]: https://github.com/zulip/zulip/labels/area%3A%20notifications%20%28messages%29
 
 - **Cluster of priority features**. Implement a cluster of new full
   stack features for Zulip. The [high priority
@@ -65,28 +140,34 @@ CSS](https://github.com/zulip/zulip/).
   a theme (often, but not necessarily, an [area
   label](https://github.com/zulip/zulip/labels); the goal will be to
   implement and get fully merged a cluster of features with a
-  meaningful impact on the project. 175 or 350 hours; difficulty will
-  vary. Experts and skills depend on the features; Tim Abbott will
-  help you select an appropriate cluster once we've gotten to know you
-  and your strengths through getting involved in the project.
+  meaningful impact on the project. Zulip has a lot of half-finished
+  PRs; so some features might be completed by reading, understanding,
+  rebasing, and reviving an old/existing pull request. 175 or 350
+  hours; difficulty will vary. Experts and skills depend on the
+  features; Tim Abbott will help you select an appropriate cluster
+  once we've gotten to know you and your strengths through getting
+  involved in the project.
 
 - Zulip's [REST API documentation](https://zulip.com/api), which is an
-  important resource for any organization integrating with Zulip.
-  Zulip has a [nice framework](../documentation/api.md) for writing
-  API documentation built by past GSoC students based on the OpenAPI
-  standard with built-in automated tests of the data both the Python
-  and curl examples. However, the documentation isn't yet what we're
-  hoping for: there are a few dozen endpoints that are missing,
-  several of which are quite important, the visual design isn't
-  perfect (especially for e.g. `GET /events`), many template could be
-  deleted with a bit of framework effort, etc. See the [API docs area
-  label][api-docs-area] for many specific projects in the area. Our
-  goal for the summer is for 1-2 students to resolve all open issues
-  related to the REST API documentation. 175 or 350 hours; difficulty
-  easy or medium. **Skill required**: Python programming. Expertise
-  with reading documentation and English writing are valuable, and
-  product thinking about the experience of using third-party APIs is
-  very helpful. Expert: Lauryn Menard.
+  important resource for any organization integrating with Zulip as
+  well as the developers of our API clients. Zulip has a [nice
+  framework](../documentation/api.md) for writing API documentation
+  built by past GSoC students based on the OpenAPI standard with
+  built-in automated tests of the data both the Python and curl
+  examples. However, the documentation isn't yet what we're hoping
+  for: there are a few dozen endpoints that are missing, several of
+  which are quite important, the visual design isn't perfect
+  (especially for e.g. `GET /events`), many template could be deleted
+  with a bit of framework effort, etc. See the [API docs area
+  label][api-docs-area] for some specific projects in the area; and
+  `git grep pending_endpoints` to find the list of endpoints that need
+  documentation and their priorities. Our goal for the summer is for
+  1-2 students to resolve all open issues related to the REST API
+  documentation. 175 or 350 hours; difficulty easy or medium. **Skill
+  required**: Python programming. Expertise with reading documentation
+  and English writing are valuable, and product thinking about the
+  experience of using third-party APIs is very helpful. Expert: Lauryn
+  Menard.
 
 [api-docs-area]: https://github.com/zulip/zulip/issues?q=is%3Aopen+is%3Aissue+label%3A%22area%3A+documentation+%28api+and+integrations%29%22
 
@@ -126,25 +207,13 @@ CSS](https://github.com/zulip/zulip/).
   Strong debugging, communication, and code reading skills are most
   important here. JavaScript experience; some Python/Django
   experience, some skill with CSS, ideally experience using the Chrome
-  Timeline profiling tools (but you can pick this up as you go) can be
-  useful depending on what profiling shows. Our [backend scalability
-  design doc](../subsystems/performance.md) and the [production issue
-  label][prod-label] (where performance/scalability issues tend to be
-  filed) may be helpful reading for the backend part of this. Experts:
-  Steve Howell, Tim Abbott, Yash RE.
+  Performance profiling tools (but you can pick this up as you go) can
+  be useful depending on what profiling shows. Our [backend
+  scalability design doc](../subsystems/performance.md) and the
+  [performance label][perf-label] may be helpful reading for the
+  backend part of this. Experts: Tim Abbott, Yash RE.
 
-[prod-label]: https://github.com/zulip/zulip/issues?q=is%3Aopen+is%3Aissue+label%3A%22area%3A+production%22
-
-- Extract JavaScript logic modules from the Zulip web app that we'd
-  like to be able to share with the Zulip mobile app. This work can have
-  big benefits it terms of avoiding code duplication for complex
-  logic. We have prototyped for a few modules by migrating them to
-  `static/shared/`; this project will involve closely collaborating
-  with the mobile team to prioritize the modules to migrate. 175 or
-  350 hours; difficult. **Skills recommended**: JavaScript experience,
-  careful refactoring, API design, React.
-
-  Experts: Greg Price, Austin Riba, Steve Howell.
+[perf-label]: https://github.com/zulip/zulip/labels/area%3A%20performance
 
 - Make Zulip integrations easier for nontechnical users to set up.
   This includes adding a backend permissions system for managing bot
@@ -164,19 +233,7 @@ CSS](https://github.com/zulip/zulip/).
   [the integrations label on
   GitHub](https://github.com/zulip/zulip/labels/area%3A%20integrations)
   has a bunch of good starter issues to demonstrate your skills if
-  you're interested in this area. Expert: Eeshan Garg.
-
-- Extend Zulip's meta-integration that converts the Slack incoming
-  webhook API to post messages into Zulip. Zulip has several dozen
-  native integrations (https://zulip.com/integrations/), but Slack has
-  a ton more. We should build an interface to make all of Slack’s
-  numerous third-party integrations work with Zulip as well, by
-  basically building a Zulip incoming webhook interface that accepts
-  the Slack API (if you just put in a Zulip server URL as your "Slack
-  server"). **Skills required**: Strong Python experience; experience
-  with the Slack API a plus. Work should include documenting the
-  system and advertising it. 175 or 350 hours; medium to
-  difficult. Expert: Tim Abbott.
+  you're interested in this area. Expert: Zixuan James Li.
 
 - Visual and user experience design work on the core Zulip web UI.
   We're particularly excited about students who are interested in
@@ -192,33 +249,6 @@ CSS](https://github.com/zulip/zulip/).
   reviewability for one's work. A great application would include PRs
   making small, clean improvements to the Zulip UI (whether logged-in
   or logged-out pages). Experts: Aman Agrawal, Alya Abbott.
-
-- Build support for outgoing webhooks and slash commands into Zulip to
-  improve its chat-ops capabilities. There's an [old pull
-  request](https://github.com/zulip/zulip/pull/1393) with a lot of
-  work on the outgoing webhooks piece of this feature that would need
-  to be cleaned up and finished, and then we need to build support for
-  slash commands, some example integrations, and a full set of
-  documentation and tests. Recommended reading includes Slack's
-  documentation for these features, the Zulip message sending code
-  path, and the linked pull request. 175 or 350 hours; easy to
-  medium. **Skills required**: Strong Python/Django skills. Expert:
-  Steve Howell.
-
-- Build a system for managing Zulip bots entirely on the web.
-  Right now, there's a somewhat cumbersome process where you download
-  the API bindings, create a bot with an API key, put it in
-  configuration files, etc. We'd like to move to a model where a bot
-  could easily progress from being a quick prototype to being a third-party extension to
-  being built into Zulip. And then for built-in bots, one should be able to click a few
-  buttons of configuration on the web to set them up and include them in
-  your organization. We've developed a number of example bots
-  in the [`zulip_bots`](https://github.com/zulip/python-zulip-api/tree/main/zulip_bots)
-  PyPI package. 175 or 350 hours; medium difficulty.
-  **Skills recommended**: Python and JavaScript/CSS, plus devops
-  skills (Linux deployment, Docker, Puppet etc.) are all useful here.
-  Experience writing tools using various popular APIs is helpful for
-  being able to make good choices. Expert: Steve Howell.
 
 - Improve the UI and visual design of the existing Zulip settings and
   administration pages while fixing bugs and adding new settings. The
@@ -276,32 +306,13 @@ CSS](https://github.com/zulip/zulip/).
   Abbott spends more time on the development experience than any other
   single area).
 
-  A possible specific larger project in this space is working on
-  adding [mypy](../testing/mypy.md) stubs
-  for Django in mypy to make our type checking more powerful. Read
-  [our mypy blog post](https://blog.zulip.org/2016/10/13/static-types-in-python-oh-mypy/)
-  for details on how mypy works and is integrated into Zulip. This
-  specific project is ideal for a strong contributor interested in
-  type systems. See [this
-  issue](https://github.com/zulip/zulip/pull/18777) for details on the
-  current state of this work. 175 or 350 hours; difficult.
+  175 or 350 hours; difficult.
 
   **Skills required**: Python, some DevOps, and a passion for checking
   your work carefully. A strong applicant for this will have
   completed several projects in these areas.
 
-  Experts: Anders Kaseorg (provision, testing), Steve Howell (tooling, testing).
-
-- Port our JavaScript codebase to Typescript. Zulip is in the process
-  of porting the main web app JavaScript codebase to TypeScript; at
-  present we've done much of the necessary tooling setup, and about 5%
-  of lines have been migrated (mostly in libraries used widely); the
-  goal for this project will be to get that to more like 75%. Multiple
-  students are possible; 175 and 350 hours; difficult. **Skills
-  required**: TypeScript and refactoring expertise; we're specifically
-  interested in students who are a type theory nerd and are invested
-  in writing types precisely and checking their work
-  carefully. Experts: Priyank Patel, Anders Kaseorg.
+  Experts: Tim Abbott
 
 - Write more API client libraries in more languages, or improve the
   ones that already exist (in
@@ -316,53 +327,39 @@ CSS](https://github.com/zulip/zulip/).
   required**: Experience with the target language and API
   design. Expert: Depends on language.
 
-### React Native mobile app
+### Mobile apps
 
 Code:
 [React Native mobile app](https://github.com/zulip/zulip-mobile).
 Experts: Greg Price, Chris Bobbe.
 
-The highest priority for the Zulip project overall is improving the
-Zulip React Native mobile app.
+We're currently exploring rewriting Zulip's mobile apps, which are
+currently implemented using React Native, using Flutter. See [this
+thread][flutter-thread] for details.
 
-- Work on issues and polish for the app. You can see the open issues
-  [here](https://github.com/zulip/zulip-mobile/issues). There are a
-  few hundred open issues across the project, and likely many more
-  problems that nobody has found yet; in the short term, it needs
-  polish, bug finding/squashing, and debugging. So browse the open
-  issues, play with the app, and get involved! Goals include parity
-  with the web app (in terms of what you can do), parity with Slack (in
-  terms of the visuals), world-class scrolling and narrowing
-  performance, and a great codebase.
+If you are a Flutter expert and excited about getting involved, feel
+free to introduce yourself in #mobile. But because we are still
+getting that project and its development processes organized, we
+expect we will not be accepting any GSoC students to contribute to the
+Zulip mobile apps for GSoC 2023.
 
-A good project proposal here will bundle together a few focus areas
-that you want to make really great (e.g. the message composing,
-editing, and reacting experience), that you can work on over the
-summer. We'd love to have multiple students working on this area if we
-have enough strong applicants. 175 or 350 hours; medium to difficult.
-
-**Skills required**: Strong programming experience, especially in
-reading the documentation of unfamiliar projects and communicating
-what you learned. JavaScript and React experience are great pluses,
-as are iOS or Android development/design experience is useful as
-well. You'll need to learn React Native as part of getting
-involved. There's tons of good online tutorials, courses, etc.
+[flutter-thread]: https://chat.zulip.org/#narrow/stream/2-general/topic/Flutter
 
 ### Electron desktop app
 
 Code:
 [Our cross-platform desktop app written in JavaScript on Electron](https://github.com/zulip/zulip-desktop).
-Experts: Anders Kaseorg, Akash Nimare, Abhighyan Khaund.
+Experts: Anders Kaseorg
 
 - Contribute to our [Electron-based desktop client
-  application](https://github.com/zulip/zulip-desktop). There's
-  plenty of feature/UI work to do, but focus areas for us include
-  things to (1) improve the release process for the app, using
-  automated testing, TypeScript, etc. and (2) polish the UI. Browse
-  the open issues and get involved! 175 or 350 hours. This is a
-  difficult project because it is important user-facing code with good
-  automated testing, so the bar for convincing others your work is
-  correct is high.
+  application](https://github.com/zulip/zulip-desktop). There's plenty
+  of feature/UI work to do, but focus areas for us include things to
+  (1) improve the release process for the app, using automated
+  testing, TypeScript, etc. and (2) polish the UI. Browse the open
+  issues and get involved! 175 or 350 hours. This is a difficult
+  project because it is important user-facing code without good
+  automated testing, so the bar for writing high quality, revieable
+  PRs that convince others your work is correct is high.
 
 **Skills required**: JavaScript experience, Electron experience. You
 can learn electron as part of your application!
