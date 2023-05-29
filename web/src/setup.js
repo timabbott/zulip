@@ -31,10 +31,6 @@ $(() => {
         return this.outerHeight(...args) || 0;
     };
 
-    $.fn.get_offset_to_window = function () {
-        return this[0].getBoundingClientRect();
-    };
-
     $.fn.safeOuterWidth = function (...args) {
         return this.outerWidth(...args) || 0;
     };
