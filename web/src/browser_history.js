@@ -1,9 +1,6 @@
-// TODO: Rewrite this module to use history.pushState.
-
 import * as blueslip from "./blueslip";
 import * as hash_util from "./hash_util";
 import * as ui_util from "./ui_util";
-import {user_settings} from "./user_settings";
 
 export const state = {
     is_internal_change: false,
@@ -16,7 +13,7 @@ export const state = {
     // hashes are changed without calling `hashchanged` in many ways.
     spectator_old_hash: hash_util.is_spectator_compatible(window.location.hash)
         ? window.location.hash
-        : `#${user_settings.default_view}`,
+        : "#",
 };
 
 export function clear_for_testing() {
@@ -76,7 +73,7 @@ export function update(new_hash) {
 export function exit_overlay() {
     if (hash_util.is_overlay_hash(window.location.hash) && !state.changing_hash) {
         ui_util.blur_active_element();
-        const new_hash = state.hash_before_overlay || `#${user_settings.default_view}`;
+        const new_hash = state.hash_before_overlay || "#";
         update(new_hash);
     }
 }

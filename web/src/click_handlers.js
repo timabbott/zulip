@@ -18,7 +18,6 @@ import {media_breakpoints_num} from "./css_variables";
 import * as dark_theme from "./dark_theme";
 import * as emoji_picker from "./emoji_picker";
 import * as hash_util from "./hash_util";
-import * as hashchange from "./hashchange";
 import * as message_edit from "./message_edit";
 import * as message_flags from "./message_flags";
 import * as message_lists from "./message_lists";
@@ -858,13 +857,6 @@ export function initialize() {
         e.preventDefault();
         dark_theme.disable();
         message_lists.update_recipient_bar_background_color();
-    });
-
-    $("body").on("click", "#header-container .brand", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        hashchange.set_hash_to_default_view();
     });
 
     // MAIN CLICK HANDLER

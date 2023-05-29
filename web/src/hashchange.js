@@ -35,7 +35,7 @@ import {user_settings} from "./user_settings";
 function get_full_url(hash) {
     const location = window.location;
 
-    if (hash.charAt(0) !== "#" && hash !== "") {
+    if (hash === "" || hash.charAt(0) !== "#") {
         hash = "#" + hash;
     }
 
@@ -71,14 +71,7 @@ function set_hash(hash) {
             }
         }
     } else {
-        // pushState has 97% global support according to caniuse. So, we will ideally never reach here.
-        // TODO: Delete this case if we don't see any error reports in a while.
-        if (hash === "" || hash === "#") {
-            // Setting empty hash here would scroll to the top.
-            hash = user_settings.default_view;
-        }
-
-        blueslip.error("browser does not support pushState");
+        blueslip.warn("browser does not support pushState");
         window.location.hash = hash;
     }
 }
@@ -119,20 +112,7 @@ function show_all_message_view() {
 }
 
 export function set_hash_to_default_view() {
-    let default_view_hash = `#${user_settings.default_view}`;
-    if (default_view_hash === "#recent_topics") {
-        default_view_hash = "#recent";
-    }
-
-    if (window.location.hash !== default_view_hash) {
-        // We want to set URL with no hash here. It is not possible
-        // to do so with `window.location.hash` since it will set an empty
-        // hash. So, we use `pushState` which simply updates the current URL
-        // but doesn't trigger `hashchange`. So, we trigger hashchange directly
-        // here to let it handle the whole rendering process for us.
-        set_hash("");
-        hashchanged(false);
-    }
+    window.location.hash = "";
 }
 
 function show_default_view() {
@@ -259,7 +239,7 @@ function do_hashchange_overlay(old_hash) {
         return;
     }
 
-    const coming_from_overlay = hash_util.is_overlay_hash(old_hash);
+    const coming_from_overlay = hash_util.is_overlay_hash(old_hash || "#");
 
     if ((base === "settings" || base === "organization") && !section) {
         let settings_panel_object = settings_panel_menu.normal_settings;
