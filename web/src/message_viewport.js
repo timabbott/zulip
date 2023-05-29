@@ -9,7 +9,7 @@ import * as popovers from "./popovers";
 import * as rows from "./rows";
 import * as util from "./util";
 
-export let $scroll_container;
+export let $message_pane;
 
 let $jwindow;
 const dimensions = {};
@@ -18,13 +18,13 @@ let in_stoppable_autoscroll = false;
 function make_dimen_wrapper(dimen_name, dimen_func) {
     dimensions[dimen_name] = new util.CachedValue({
         compute_value() {
-            return dimen_func.call($scroll_container);
+            return dimen_func.call($message_pane);
         },
     });
     return function viewport_dimension_wrapper(...args) {
         if (args.length !== 0) {
             dimensions[dimen_name].reset();
-            return dimen_func.apply($scroll_container, args);
+            return dimen_func.apply($message_pane, args);
         }
         return dimensions[dimen_name].get();
     };
@@ -75,7 +75,7 @@ export function message_viewport_info() {
 
 export function at_bottom() {
     const bottom = scrollTop() + height();
-    const full_height = $scroll_container.prop("scrollHeight");
+    const full_height = $message_pane.prop("scrollHeight");
 
     // We only know within a pixel or two if we're
     // exactly at the bottom, due to browser quirkiness,
@@ -283,12 +283,12 @@ export function visible_messages(require_fully_visible) {
 }
 
 export function scrollTop(target_scrollTop) {
-    const orig_scrollTop = $scroll_container.scrollTop();
+    const orig_scrollTop = $message_pane.scrollTop();
     if (target_scrollTop === undefined) {
         return orig_scrollTop;
     }
-    let $ret = $scroll_container.scrollTop(target_scrollTop);
-    const new_scrollTop = $scroll_container.scrollTop();
+    let $ret = $message_pane.scrollTop(target_scrollTop);
+    const new_scrollTop = $message_pane.scrollTop();
     const space_to_scroll = $("#bottom_whitespace").get_offset_to_window().top - height();
 
     // Check whether our scrollTop didn't move even though one could have scrolled down
@@ -307,10 +307,10 @@ export function scrollTop(target_scrollTop) {
             "ScrollTop did nothing when scrolling to " + target_scrollTop + ", fixing...",
         );
         // First scroll to 1 in order to clear the stuck state
-        $scroll_container.scrollTop(1);
+        $message_pane.scrollTop(1);
         // And then scroll where we intended to scroll to
-        $ret = $scroll_container.scrollTop(target_scrollTop);
-        if ($scroll_container.scrollTop() === 0) {
+        $ret = $message_pane.scrollTop(target_scrollTop);
+        if ($message_pane.scrollTop() === 0) {
             blueslip.info(
                 "ScrollTop fix did not work when scrolling to " +
                     target_scrollTop +
@@ -324,7 +324,7 @@ export function scrollTop(target_scrollTop) {
 
 export function stop_auto_scrolling() {
     if (in_stoppable_autoscroll) {
-        $scroll_container.stop();
+        $message_pane.stop();
     }
 }
 
@@ -332,7 +332,7 @@ export function system_initiated_animate_scroll(scroll_amount) {
     message_scroll.suppress_selection_update_on_next_scroll();
     const viewport_offset = scrollTop();
     in_stoppable_autoscroll = true;
-    $scroll_container.animate({
+    $message_pane.animate({
         scrollTop: viewport_offset + scroll_amount,
         always() {
             in_stoppable_autoscroll = false;
@@ -346,7 +346,7 @@ export function user_initiated_animate_scroll(scroll_amount) {
 
     const viewport_offset = scrollTop();
 
-    $scroll_container.animate({
+    $message_pane.animate({
         scrollTop: viewport_offset + scroll_amount,
     });
 }
@@ -480,7 +480,7 @@ export function keep_pointer_in_view() {
 
 export function initialize() {
     $jwindow = $(window);
-    $scroll_container = $("html");
+    $message_pane = $("html");
     // This handler must be placed before all resize handlers in our application
     $jwindow.on("resize", () => {
         dimensions.height.reset();
