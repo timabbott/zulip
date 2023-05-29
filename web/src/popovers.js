@@ -1025,7 +1025,7 @@ export function register_click_handlers() {
     {
         let last_scroll = 0;
 
-        $(document).on("scroll", () => {
+        $(".app").on("scroll", () => {
             if (suppress_scroll_hide) {
                 suppress_scroll_hide = false;
                 return;
