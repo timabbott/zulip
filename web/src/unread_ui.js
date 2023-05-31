@@ -10,7 +10,6 @@ import * as notifications from "./notifications";
 import {page_params} from "./page_params";
 import {web_mark_read_on_scroll_policy_values} from "./settings_config";
 import * as unread from "./unread";
-import {notify_server_messages_read} from "./unread_ops";
 import {user_settings} from "./user_settings";
 
 let user_closed_unread_banner = false;
@@ -119,7 +118,7 @@ export function should_display_bankruptcy_banner() {
     return false;
 }
 
-export function initialize() {
+export function initialize({notify_server_messages_read}) {
     const skip_animations = true;
     update_unread_counts(skip_animations);
     $("body").on("click", "#mark_view_read", () => {
