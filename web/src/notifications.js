@@ -14,7 +14,6 @@ import * as message_lists from "./message_lists";
 import * as message_parser from "./message_parser";
 import * as message_store from "./message_store";
 import * as narrow_state from "./narrow_state";
-import * as navigate from "./navigate";
 import {page_params} from "./page_params";
 import * as people from "./people";
 import {realm_user_settings_defaults} from "./realm_user_settings_defaults";
@@ -66,7 +65,7 @@ export function get_notifications() {
     return notice_memory;
 }
 
-export function initialize() {
+export function initialize({on_click_scroll_to_selected}) {
     $(window).on("focus", () => {
         for (const notice_mem_entry of notice_memory.values()) {
             notice_mem_entry.obj.close();
@@ -79,6 +78,8 @@ export function initialize() {
         $("#realm-default-notification-sound-audio"),
         realm_user_settings_defaults,
     );
+
+    register_click_handlers({on_click_scroll_to_selected});
 }
 
 export function update_notification_sound_source(container_elem, settings_object) {
@@ -727,7 +728,7 @@ export function reify_message_id(opts) {
     }
 }
 
-export function register_click_handlers() {
+function register_click_handlers({on_click_scroll_to_selected}) {
     $("#compose_banners").on(
         "click",
         ".narrow_to_recipient .above_compose_banner_action_link",
@@ -744,7 +745,7 @@ export function register_click_handlers() {
         (e) => {
             const message_id = $(e.currentTarget).data("message-id");
             message_lists.current.select_id(message_id);
-            navigate.scroll_to_selected();
+            on_click_scroll_to_selected();
             compose_banner.clear_message_sent_banners(false);
             e.stopPropagation();
             e.preventDefault();
