@@ -378,7 +378,7 @@ test_ui("zoom_in_and_zoom_out", ({mock_template}) => {
     $("#stream-filters-container")[0] = {
         dataset: {},
     };
-    stream_list.set_event_handlers();
+    stream_list.initialize_stream_cursor();
 
     mock_template("filter_topics", false, () => "filter-topics-stub");
     let filter_topics_appended = false;
@@ -430,8 +430,6 @@ test_ui("narrowing", ({mock_template}) => {
 
     assert.ok(!$("<devel-sidebar-row-stub>").hasClass("active-filter"));
 
-    stream_list.set_event_handlers();
-
     let filter;
 
     filter = new Filter([{operator: "stream", operand: "devel"}]);
@@ -464,26 +462,6 @@ test_ui("narrowing", ({mock_template}) => {
     stream_list.handle_narrow_deactivated();
     assert.equal(removed_classes, "active-filter");
     assert.ok(topics_closed);
-});
-
-test_ui("focusout_user_filter", () => {
-    stream_list.set_event_handlers();
-    const e = {};
-    const click_handler = $(".stream-list-filter").get_on_handler("focusout");
-    click_handler(e);
-});
-
-test_ui("focus_user_filter", () => {
-    stream_list.set_event_handlers();
-
-    initialize_stream_data();
-    stream_list.build_stream_list();
-
-    const e = {
-        stopPropagation() {},
-    };
-    const click_handler = $(".stream-list-filter").get_on_handler("click");
-    click_handler(e);
 });
 
 test_ui("sort_streams", ({override_rewire, mock_template}) => {
