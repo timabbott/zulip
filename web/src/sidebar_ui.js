@@ -78,12 +78,15 @@ export function initialize() {
                 return;
             }
 
-            // Keep sidebar visible for click on these elements even if they are outside.
-            if ($elt.closest(".keep-sidebar-visible").length) {
+            // Overrides for certain elements that should not close the sidebars.
+            if ($elt.closest(".no-auto-hide-sidebar-overlays").length) {
                 return;
             }
 
-            if (left_sidebar_expanded_as_overlay) {
+            if (
+                left_sidebar_expanded_as_overlay &&
+                !$elt.closest(".no-auto-hide-left-sidebar-overlay").length
+            ) {
                 const $left_column = $(".app-main .column-left");
                 const click_outside_left_sidebar = !$elt.closest($left_column).length;
                 if (click_outside_left_sidebar) {
@@ -91,7 +94,10 @@ export function initialize() {
                 }
             }
 
-            if (right_sidebar_expanded_as_overlay) {
+            if (
+                right_sidebar_expanded_as_overlay &&
+                $elt.closest(".no-auto-hide-right-sidebar-overlay").length
+            ) {
                 const $right_column = $(".app-main .column-right");
                 const click_outside_right_sidebar = !$elt.closest($right_column).length;
 

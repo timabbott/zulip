@@ -1,6 +1,6 @@
 {{! Contents of the user card popover }}
-<div class="popover-title"></div>
-<div class="popover-content">
+<div class="popover-title no-auto-hide-right-sidebar-overlay"></div>
+<div class="popover-content no-auto-hide-right-sidebar-overlay">
     <ul class="nav nav-list user-card-popover-actions" id="user_card_popover" data-user-id="{{user_id}}">
         <li class="popover_user_name_row">
             <b class="user_full_name" data-tippy-content="{{user_full_name}}">{{user_full_name}}</b>
@@ -12,7 +12,7 @@
                 {{/if}}
             {{/if}}
             {{#if show_manage_menu }}
-            <span class="user-card-popover-action-buttons keep-sidebar-visible">
+            <span class="user-card-popover-action-buttons">
                 <a class="user-card-popover-manage-menu-btn" role="button" tabindex="0" aria-haspopup="true">
                     <i class="popover_action_icon zulip-icon zulip-icon-more-vertical" aria-hidden="true"></i>
                 </a>
