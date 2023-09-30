@@ -1,7 +1,6 @@
 import $ from "jquery";
 
 import * as hash_util from "./hash_util";
-import * as popovers from "./popovers";
 import * as resize from "./resize";
 
 export let left_sidebar_expanded_as_overlay = false;
@@ -44,19 +43,63 @@ export function initialize() {
         e.preventDefault();
         e.stopPropagation();
 
-        popovers.hide_all();
-        if (!right_sidebar_expanded_as_overlay) {
-            show_userlist_sidebar();
+        if (right_sidebar_expanded_as_overlay) {
+            hide_userlist_sidebar();
+            return;
         }
+        show_userlist_sidebar();
     });
 
     $("#streamlist-toggle-button").on("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
 
-        popovers.hide_all();
-        if (!left_sidebar_expanded_as_overlay) {
-            show_streamlist_sidebar();
+        if (left_sidebar_expanded_as_overlay) {
+            hide_streamlist_sidebar();
+            return;
         }
+        show_streamlist_sidebar();
     });
+
+    // Hide left / right sidebar on click outside.
+    document.addEventListener(
+        "click",
+        (e) => {
+            if (!(left_sidebar_expanded_as_overlay || right_sidebar_expanded_as_overlay)) {
+                return;
+            }
+
+            const $elt = $(e.target);
+            // Since sidebar toggle buttons have their own click handlers, don't handle them here.
+            if (
+                $elt.closest("#streamlist-toggle-button").length ||
+                $elt.closest("#userlist-toggle-button").length
+            ) {
+                return;
+            }
+
+            // Keep sidebar visible for click on these elements even if they are outside.
+            if ($elt.closest(".keep-sidebar-visible").length) {
+                return;
+            }
+
+            if (left_sidebar_expanded_as_overlay) {
+                const $left_column = $(".app-main .column-left");
+                const click_outside_left_sidebar = !$elt.closest($left_column).length;
+                if (click_outside_left_sidebar) {
+                    hide_streamlist_sidebar();
+                }
+            }
+
+            if (right_sidebar_expanded_as_overlay) {
+                const $right_column = $(".app-main .column-right");
+                const click_outside_right_sidebar = !$elt.closest($right_column).length;
+
+                if (click_outside_right_sidebar) {
+                    hide_userlist_sidebar();
+                }
+            }
+        },
+        {capture: true},
+    );
 }
