@@ -38,7 +38,11 @@ from zerver.lib.emoji_utils import hex_codepoint_to_emoji
 from zerver.lib.exceptions import ErrorCode, JsonableError
 from zerver.lib.message import access_message, huddle_users
 from zerver.lib.outgoing_http import OutgoingSession
-from zerver.lib.remote_server import send_json_to_push_bouncer, send_to_push_bouncer
+from zerver.lib.remote_server import (
+    send_json_to_push_bouncer,
+    send_realms_only_to_push_bouncer,
+    send_to_push_bouncer,
+)
 from zerver.lib.soft_deactivation import soft_reactivate_if_personal_notification
 from zerver.lib.timestamp import datetime_to_timestamp
 from zerver.models import (
@@ -47,6 +51,7 @@ from zerver.models import (
     Message,
     NotificationTriggers,
     PushDeviceToken,
+    Realm,
     Recipient,
     Stream,
     UserGroup,
@@ -734,15 +739,49 @@ def push_notifications_configured() -> bool:
 
 
 def initialize_push_notifications() -> None:
+    # TODO: This whole workflow does not handle cache updates properly.
+
+    sends_notifications_directly = (
+        has_apns_credentials() and has_gcm_credentials() and not uses_notification_bouncer()
+    )
+    if sends_notifications_directly:  # nocoverage
+        # This server sends push notifications directly. Make sure we
+        # are set to report to clients that push notifications are
+        # enabled.
+        Realm.objects.filter(push_notifications_enabled=False).update(
+            push_notifications_enabled=True
+        )
+        return
+
     if not push_notifications_configured():
+        Realm.objects.all().update(push_notifications_enabled=False)
         if settings.DEVELOPMENT and not settings.TEST_SUITE:  # nocoverage
             # Avoid unnecessary spam on development environment startup
+            logger.warning(
+                "Mobile push notifications are not configured.\n  "
+                "See https://zulip.readthedocs.io/en/latest/production/mobile-push-notifications.html"
+            )
+        return
+
+    if uses_notification_bouncer():
+        # If we're using the notification bouncer, check if we can
+        # actually send push notifications.
+
+        try:
+            send_realms_only_to_push_bouncer()
+        except Exception:
+            Realm.objects.all().update(push_notifications_enabled=False)
             return
-        logger.warning(
-            "Mobile push notifications are not configured.\n  "
-            "See https://zulip.readthedocs.io/en/latest/"
-            "production/mobile-push-notifications.html"
-        )
+
+        # TODO: For now, we interpret a 200 as meaning it's good for
+        # every realm, without actually inspecting any data.
+        Realm.objects.all().update(push_notifications_enabled=True)
+
+    logger.warning(
+        "Mobile push notifications are not fully configured.\n  "
+        "See https://zulip.readthedocs.io/en/latest/production/mobile-push-notifications.html"
+    )
+    Realm.objects.all().update(push_notifications_enabled=False)
 
 
 def get_mobile_push_content(rendered_content: str) -> str:

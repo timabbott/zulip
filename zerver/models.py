@@ -319,6 +319,11 @@ class Realm(models.Model):  # type: ignore[django-manager-missing] # django-stub
     # bouncer.
     uuid = models.UUIDField(default=uuid4, unique=True)
     uuid_owner_secret = models.TextField(default=generate_realm_uuid_owner_secret)
+    # Whether push notifications are working for this realm, and
+    # whether there is a specific date at which we expect that to
+    # cease to be the case.
+    push_notifications_enabled = models.BooleanField(default=False)
+    push_notifications_enabled_end_date = models.DateTimeField(default=None, null=True)
 
     date_created = models.DateTimeField(default=timezone_now)
     demo_organization_scheduled_deletion_date = models.DateTimeField(default=None, null=True)
