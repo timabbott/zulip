@@ -176,7 +176,7 @@ class HomeTest(ZulipTestCase):
         "realm_playgrounds",
         "realm_presence_disabled",
         "realm_private_message_policy",
-        "realm_push_notifications_enabled",
+        "realm_push_notifications_configured",
         "realm_send_welcome_emails",
         "realm_signup_notifications_stream_id",
         "realm_upload_quota_mib",
