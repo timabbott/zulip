@@ -3,7 +3,7 @@ import re
 import urllib
 from datetime import timedelta
 from typing import Any, Dict, List, Optional
-from unittest import mock, skipUnless
+from unittest import mock
 from unittest.mock import MagicMock, call, patch
 
 from django.apps import apps
@@ -376,7 +376,6 @@ class TestGenerateRealmCreationLink(ZulipTestCase):
         self.assert_in_success_response(["Organization creation link expired or invalid"], result)
 
 
-@skipUnless(settings.ZILENCER_ENABLED, "requires zilencer")
 class TestCalculateFirstVisibleMessageID(ZulipTestCase):
     COMMAND_NAME = "calculate_first_visible_message_id"
 
@@ -494,7 +493,6 @@ class TestConvertMattermostData(ZulipTestCase):
         self.assertEqual(mock_print.mock_calls, [call("Converting data ...")])
 
 
-@skipUnless(settings.ZILENCER_ENABLED, "requires zilencer")
 class TestInvoicePlans(ZulipTestCase):
     COMMAND_NAME = "invoice_plans"
 
@@ -505,7 +503,6 @@ class TestInvoicePlans(ZulipTestCase):
         m.assert_called_once()
 
 
-@skipUnless(settings.ZILENCER_ENABLED, "requires zilencer")
 class TestDowngradeSmallRealmsBehindOnPayments(ZulipTestCase):
     COMMAND_NAME = "downgrade_small_realms_behind_on_payments"
 

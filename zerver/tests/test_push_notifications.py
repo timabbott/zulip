@@ -4,7 +4,7 @@ import datetime
 import uuid
 from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Mapping, Optional, Tuple, Union
-from unittest import mock, skipUnless
+from unittest import mock
 
 import aioapns
 import orjson
@@ -87,18 +87,16 @@ from zerver.models import (
     get_realm,
     get_stream,
 )
-from zilencer.models import RemoteZulipServerAuditLog
-
-if settings.ZILENCER_ENABLED:
-    from zilencer.models import (
-        RemoteInstallationCount,
-        RemotePushDeviceToken,
-        RemoteRealm,
-        RemoteRealmAuditLog,
-        RemoteRealmCount,
-        RemoteZulipServer,
-    )
-    from zilencer.views import update_remote_realm_data_for_server
+from zilencer.models import (
+    RemoteInstallationCount,
+    RemotePushDeviceToken,
+    RemoteRealm,
+    RemoteRealmAuditLog,
+    RemoteRealmCount,
+    RemoteZulipServer,
+    RemoteZulipServerAuditLog,
+)
+from zilencer.views import update_remote_realm_data_for_server
 
 
 class SendTestPushNotificationEndpointTest(BouncerTestCase):
@@ -3590,7 +3588,6 @@ class TestPushNotificationsContent(ZulipTestCase):
             self.assertEqual(actual_output, test["expected_output"])
 
 
-@skipUnless(settings.ZILENCER_ENABLED, "requires zilencer")
 class PushBouncerSignupTest(ZulipTestCase):
     def test_deactivate_remote_server(self) -> None:
         zulip_org_id = str(uuid.uuid4())

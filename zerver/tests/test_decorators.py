@@ -4,7 +4,7 @@ import re
 import uuid
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Tuple, Union
-from unittest import mock, skipUnless
+from unittest import mock
 
 import orjson
 from django.conf import settings
@@ -53,9 +53,7 @@ from zerver.lib.users import get_api_key
 from zerver.lib.utils import generate_api_key, has_api_key_format
 from zerver.middleware import LogRequests, parse_client
 from zerver.models import Client, Realm, UserProfile, clear_client_cache, get_realm, get_user
-
-if settings.ZILENCER_ENABLED:
-    from zilencer.models import RemoteZulipServer
+from zilencer.models import RemoteZulipServer
 
 if TYPE_CHECKING:
     from django.test.client import _MonkeyPatchedWSGIResponse as TestHttpResponse
@@ -547,7 +545,6 @@ class RateLimitTestCase(ZulipTestCase):
                 check_web_view=True,
             )
 
-    @skipUnless(settings.ZILENCER_ENABLED, "requires zilencer")
     def test_rate_limiting_happens_if_remote_server(self) -> None:
         user = self.example_user("hamlet")
         server_uuid = str(uuid.uuid4())

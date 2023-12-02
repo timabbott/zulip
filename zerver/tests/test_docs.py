@@ -1,7 +1,7 @@
 import os
 import re
 from typing import TYPE_CHECKING, Any, Dict, Sequence
-from unittest import mock, skipUnless
+from unittest import mock
 from urllib.parse import urlsplit
 
 import orjson
@@ -465,7 +465,6 @@ class IntegrationTest(ZulipTestCase):
 
 
 class AboutPageTest(ZulipTestCase):
-    @skipUnless(settings.ZILENCER_ENABLED, "requires zilencer")
     def test_endpoint(self) -> None:
         with self.settings(CONTRIBUTOR_DATA_FILE_PATH="zerver/tests/fixtures/authors.json"):
             result = self.client_get("/team/")

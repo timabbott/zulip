@@ -2,7 +2,7 @@ import time
 import uuid
 from contextlib import contextmanager
 from typing import IO, TYPE_CHECKING, Any, Callable, Iterator, Optional, Sequence
-from unittest import mock, skipUnless
+from unittest import mock
 
 import DNS
 import orjson
@@ -25,9 +25,7 @@ from zerver.lib.test_classes import ZulipTestCase
 from zerver.lib.test_helpers import ratelimit_rule
 from zerver.lib.zephyr import compute_mit_user_fullname
 from zerver.models import PushDeviceToken, UserProfile
-
-if settings.ZILENCER_ENABLED:
-    from zilencer.models import RateLimitedRemoteZulipServer, RemoteZulipServer
+from zilencer.models import RateLimitedRemoteZulipServer, RemoteZulipServer
 
 if TYPE_CHECKING:
     from django.test.client import _MonkeyPatchedWSGIResponse as TestHttpResponse
@@ -404,7 +402,6 @@ class RateLimitTests(ZulipTestCase):
             log_mock.output[3],
         )
 
-    @skipUnless(settings.ZILENCER_ENABLED, "requires zilencer")
     @ratelimit_rule(1, 5, domain="api_by_remote_server")
     def test_hit_ratelimits_as_remote_server(self) -> None:
         server_uuid = str(uuid.uuid4())

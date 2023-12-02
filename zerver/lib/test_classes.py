@@ -24,7 +24,7 @@ from typing import (
     Union,
     cast,
 )
-from unittest import TestResult, mock, skipUnless
+from unittest import TestResult, mock
 
 import lxml.html
 import orjson
@@ -118,9 +118,7 @@ from zerver.models import (
 )
 from zerver.openapi.openapi import validate_against_openapi_schema, validate_request
 from zerver.tornado.event_queue import clear_client_event_queues_for_testing
-
-if settings.ZILENCER_ENABLED:
-    from zilencer.models import RemoteZulipServer, get_remote_server_by_uuid
+from zilencer.models import RemoteZulipServer, get_remote_server_by_uuid
 
 if TYPE_CHECKING:
     from django.test.client import _MonkeyPatchedWSGIResponse as TestHttpResponse
@@ -2381,7 +2379,6 @@ def get_topic_messages(user_profile: UserProfile, stream: Stream, topic_name: st
     return [um.message for um in filter_by_topic_name_via_message(query, topic_name)]
 
 
-@skipUnless(settings.ZILENCER_ENABLED, "requires zilencer")
 class BouncerTestCase(ZulipTestCase):
     @override
     def setUp(self) -> None:

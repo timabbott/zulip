@@ -1,7 +1,6 @@
 import re
-from typing import TYPE_CHECKING, Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 
 from zerver.lib.exceptions import InvalidJSONError
@@ -30,12 +29,6 @@ from zerver.lib.validator import (
     to_non_negative_int,
     to_wild_value,
 )
-
-if settings.ZILENCER_ENABLED:
-    pass
-
-if TYPE_CHECKING:
-    pass
 
 
 class ValidatorTestCase(ZulipTestCase):
