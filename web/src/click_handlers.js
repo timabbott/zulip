@@ -514,6 +514,7 @@ export function initialize() {
 
     // BUDDY LIST TOOLTIPS (not displayed on touch devices)
     $(".buddy-list-section").on("mouseenter", ".selectable_sidebar_block", (e) => {
+        return;
         e.stopPropagation();
         const $elem = $(e.currentTarget).closest(".user_sidebar_entry").find(".user-presence-link");
         const user_id_string = $elem.attr("data-user-id");
@@ -562,6 +563,7 @@ export function initialize() {
 
     // DIRECT MESSAGE LIST TOOLTIPS (not displayed on touch devices)
     $("body").on("mouseenter", ".dm-user-status", (e) => {
+        return;
         e.stopPropagation();
         const $elem = $(e.currentTarget);
         const user_ids_string = $elem.attr("data-user-ids-string");

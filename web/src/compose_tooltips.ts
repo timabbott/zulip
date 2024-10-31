@@ -18,6 +18,8 @@ import {parse_html} from "./ui_util";
 import {user_settings} from "./user_settings";
 
 export function initialize(): void {
+    return;
+
     tippy.delegate("body", {
         target: [
             // Ideally this would be `#compose_buttons .button`, but the

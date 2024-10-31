@@ -115,6 +115,7 @@ export const topic_visibility_policy_tooltip_props = {
 
 export function initialize(): void {
     $("#tooltip-templates-container").html(render_tooltip_templates());
+    return;
 
     // Our default tooltip configuration. For this, one simply needs to:
     // * Set `class="tippy-zulip-tooltip"` on an element for enable this.

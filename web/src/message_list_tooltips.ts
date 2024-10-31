@@ -147,6 +147,8 @@ function get_last_edit_timestr(message: Message): string {
 }
 
 export function initialize(): void {
+    return;
+
     message_list_tooltip(".tippy-narrow-tooltip", {
         delay: LONG_HOVER_DELAY,
         onCreate(instance) {

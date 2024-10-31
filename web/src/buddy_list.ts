@@ -167,6 +167,7 @@ export class BuddyList extends BuddyListConf {
     current_filter: Filter | undefined | "unset" = "unset";
 
     initialize_tooltips(): void {
+        return;
         $("#right-sidebar").on(
             "mouseenter",
             ".buddy-list-heading",
