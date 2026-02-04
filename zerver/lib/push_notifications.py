@@ -1374,7 +1374,9 @@ def send_push_notifications_legacy(
     assert len(android_devices) + len(apple_devices) != 0
     # While sending push notifications for new messages to older clients
     # (which don't support E2EE), if `require_e2ee_push_notifications`
-    # realm setting is set to `true`, we redact the content.
+    # realm setting is set to `true`, we redact the message content only.
+    # Metadata (sender, channel, topic, etc.) remains unredacted per the
+    # spec in docs/production/mobile-push-notifications.md.
     if user_profile.realm.require_e2ee_push_notifications:
         # Make deep copies so redaction doesn't affect the original dicts
         placeholder_content = _("New message")
