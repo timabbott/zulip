@@ -897,6 +897,24 @@ class Realm(models.Model):
         ),
     )
 
+    # Settings that can only be changed by organization owners.
+    # Note: authentication_methods, message_retention_days, and
+    # string_id are also owner-only but are handled separately in
+    # update_realm due to additional validation logic.
+    OWNER_ONLY_PROPERTIES: frozenset[str] = frozenset(
+        [
+            "invite_required",
+            "emails_restricted_to_domains",
+            "disallow_disposable_email_addresses",
+            "waiting_period_threshold",
+            "create_multiuse_invite_group",
+            "can_create_groups",
+            "can_invite_users_group",
+            "can_manage_all_groups",
+            "can_manage_billing_group",
+        ]
+    )
+
     DIGEST_WEEKDAY_VALUES = [0, 1, 2, 3, 4, 5, 6]
 
     # Icon is the square mobile icon.

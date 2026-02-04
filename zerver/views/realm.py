@@ -268,23 +268,11 @@ def update_realm(
     if can_create_groups is not None:
         realm.ensure_not_on_limited_plan()
 
-    if (
-        invite_required is not None
-        or create_multiuse_invite_group is not None
-        or can_create_groups is not None
-        or can_invite_users_group is not None
-        or can_manage_all_groups is not None
-        or can_manage_billing_group is not None
-    ) and not user_profile.is_realm_owner:
-        raise OrganizationOwnerRequiredError
-
-    if (
-        emails_restricted_to_domains is not None or disallow_disposable_email_addresses is not None
-    ) and not user_profile.is_realm_owner:
-        raise OrganizationOwnerRequiredError
-
-    if waiting_period_threshold is not None and not user_profile.is_realm_owner:
-        raise OrganizationOwnerRequiredError
+    # Owner-only settings: verify the requesting user is an owner for
+    # any setting in Realm.OWNER_ONLY_PROPERTIES that is being changed.
+    for setting_name in Realm.OWNER_ONLY_PROPERTIES:
+        if locals().get(setting_name) is not None and not user_profile.is_realm_owner:
+            raise OrganizationOwnerRequiredError
 
     if realm.demo_organization_scheduled_deletion_date is not None and invite_required is not None:
         check_demo_organization_has_set_email(realm)
