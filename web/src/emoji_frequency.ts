@@ -87,11 +87,16 @@ export function update_emoji_frequency_on_remove_reaction_event(
 
     const emoji_id = reactions.get_local_reaction_id(event);
     const is_me = event.user_id === current_user.user_id;
+    // reactions.remove_reaction has already run and updated
+    // clean_reactions before this handler is called, so we can
+    // check whether any users still have this reaction.
+    const emoji_still_on_message = message.clean_reactions.has(emoji_id);
 
     emoji_frequency_data.handle_reaction_removal_on_message({
         emoji_id,
         message_id,
         is_me,
+        emoji_still_on_message,
     });
 
     update_frequently_used_emojis_list();

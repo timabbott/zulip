@@ -10,7 +10,6 @@ const CURRENT_USER_REACTION_WEIGHT = 5;
 const POPULAR_EMOJIS_BONUS_WEIGHT = 12;
 
 type ReactionUsage = {
-    score: number;
     emoji_code: string;
     emoji_type: string;
     message_ids: Set<number>;
@@ -19,21 +18,31 @@ type ReactionUsage = {
 
 // Exported for testing.
 export const reaction_data = new Map<string, ReactionUsage>();
+export const popular_emoji_ids = new Set<string>();
+
+function compute_score(emoji_id: string, reaction_usage: ReactionUsage): number {
+    const your_messages = reaction_usage.current_user_reacted_message_ids.size;
+    const others_messages = reaction_usage.message_ids.size - your_messages;
+    const popular_bonus = popular_emoji_ids.has(emoji_id) ? POPULAR_EMOJIS_BONUS_WEIGHT : 0;
+    return CURRENT_USER_REACTION_WEIGHT * your_messages + others_messages + popular_bonus;
+}
 
 export function preferred_emoji_list(): typeahead.EmojiItem[] {
-    const frequently_used_emojis = [...reaction_data.values()].toSorted(
-        (a, b) => b.score - a.score,
-    );
+    const scored_emojis = [...reaction_data.entries()].map(([emoji_id, usage]) => ({
+        emoji_id,
+        usage,
+        score: compute_score(emoji_id, usage),
+    }));
+    scored_emojis.sort((a, b) => b.score - a.score);
 
     const top_frequently_used_emojis = [];
-    for (const emoji of frequently_used_emojis) {
-        if (top_frequently_used_emojis.length === MAX_FREQUENTLY_USED_EMOJIS || emoji.score < 10) {
+    for (const {usage, score} of scored_emojis) {
+        if (top_frequently_used_emojis.length === MAX_FREQUENTLY_USED_EMOJIS || score < 10) {
             break;
         }
-        assert(emoji !== undefined);
         top_frequently_used_emojis.push({
-            emoji_type: emoji.emoji_type,
-            emoji_code: emoji.emoji_code,
+            emoji_type: usage.emoji_type,
+            emoji_code: usage.emoji_code,
         });
     }
 
@@ -55,7 +64,6 @@ export function handle_reaction_addition_on_message(info: {
 
     if (!reaction_data.has(emoji_id)) {
         reaction_data.set(emoji_id, {
-            score: 0,
             emoji_code,
             emoji_type,
             message_ids: new Set(),
@@ -66,16 +74,9 @@ export function handle_reaction_addition_on_message(info: {
     const reaction_usage = reaction_data.get(emoji_id);
     assert(reaction_usage !== undefined);
 
-    if (reaction_usage.message_ids.has(message_id)) {
-        return;
-    }
     reaction_usage.message_ids.add(message_id);
-
     if (is_me) {
-        reaction_usage.score += CURRENT_USER_REACTION_WEIGHT;
         reaction_usage.current_user_reacted_message_ids.add(message_id);
-    } else {
-        reaction_usage.score += 1;
     }
 }
 
@@ -83,24 +84,20 @@ export function handle_reaction_removal_on_message(info: {
     emoji_id: string;
     message_id: number;
     is_me: boolean;
+    emoji_still_on_message: boolean;
 }): void {
-    const {emoji_id, message_id, is_me} = info;
+    const {emoji_id, message_id, is_me, emoji_still_on_message} = info;
 
     const reaction_usage = reaction_data.get(emoji_id);
     if (reaction_usage === undefined) {
         return;
     }
 
-    if (!reaction_usage.message_ids.has(message_id)) {
-        return;
-    }
-    reaction_usage.message_ids.delete(message_id);
-
     if (is_me) {
-        reaction_usage.score -= CURRENT_USER_REACTION_WEIGHT;
         reaction_usage.current_user_reacted_message_ids.delete(message_id);
-    } else {
-        reaction_usage.score -= 1;
+    }
+    if (!emoji_still_on_message) {
+        reaction_usage.message_ids.delete(message_id);
     }
 }
 
@@ -112,12 +109,8 @@ export function remove_message_reactions(info: {message_id: number; emoji_ids: s
         if (reaction_usage === undefined) {
             continue;
         }
-        if (reaction_usage.message_ids.delete(message_id)) {
-            reaction_usage.score -= 1;
-        }
-        if (reaction_usage.current_user_reacted_message_ids.delete(message_id)) {
-            reaction_usage.score -= CURRENT_USER_REACTION_WEIGHT - 1;
-        }
+        reaction_usage.message_ids.delete(message_id);
+        reaction_usage.current_user_reacted_message_ids.delete(message_id);
     }
 }
 
@@ -129,18 +122,15 @@ export function initialize_data(info: {
 
     for (const {emoji_code, emoji_type} of popular_emojis) {
         const emoji_id = [emoji_type, emoji_code].join(",");
+        popular_emoji_ids.add(emoji_id);
         if (!reaction_data.has(emoji_id)) {
             reaction_data.set(emoji_id, {
-                score: POPULAR_EMOJIS_BONUS_WEIGHT,
                 emoji_code,
                 emoji_type,
                 message_ids: new Set(),
                 current_user_reacted_message_ids: new Set(),
             });
         }
-        const reaction = reaction_data.get(emoji_id);
-        assert(reaction !== undefined);
-        reaction.score += POPULAR_EMOJIS_BONUS_WEIGHT;
     }
 
     for (let i = messages.length - 1; i >= 0; i -= 1) {
@@ -151,7 +141,6 @@ export function initialize_data(info: {
             const emoji_id = emoji.local_id;
             if (!reaction_data.has(emoji_id)) {
                 reaction_data.set(emoji_id, {
-                    score: 0,
                     emoji_code: emoji.emoji_code,
                     emoji_type: emoji.reaction_type,
                     message_ids: new Set(),
@@ -160,11 +149,9 @@ export function initialize_data(info: {
             }
             const reaction = reaction_data.get(emoji_id);
             assert(reaction !== undefined);
-            reaction.score += 1;
             reaction.message_ids.add(message.id);
 
             if (emoji.user_ids.includes(current_user.user_id)) {
-                reaction.score += CURRENT_USER_REACTION_WEIGHT - 1;
                 reaction.current_user_reacted_message_ids.add(message.id);
             }
         }
