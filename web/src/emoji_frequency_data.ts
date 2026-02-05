@@ -110,10 +110,7 @@ export function remove_message_reactions(info: {message_id: number; emoji_ids: s
     for (const emoji_id of emoji_ids) {
         const reaction_usage = reaction_data.get(emoji_id);
         if (reaction_usage === undefined) {
-            // This seems like it should be a continue, but I only
-            // am moving the code for now.  We may end up with a
-            // completely different algorithm here anyway.
-            return;
+            continue;
         }
         if (reaction_usage.message_ids.delete(message_id)) {
             reaction_usage.score -= 1;
