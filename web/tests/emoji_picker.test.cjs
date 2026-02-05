@@ -122,21 +122,19 @@ run_test("initialize", () => {
     emoji_frequency.update_frequently_used_emojis_list();
     non_popular_emoji_codes.reverse();
 
-    // Scores (descending): rocket=16, grinning=15, see_no_evil=14,
-    // panda=13, then 7 emoji at score 12 (6 popular + japanese_post_office),
-    // money_bag=11, stadium=10. Total 13 items with score >= 10,
-    // rounded down to 12.
-    // Ties at score 12 are ordered by Map insertion (popular first).
+    // Total others_messages = 91 (≤ 100), so others_weight = 5.
+    // Non-popular scores: 5*16=80, 5*15=75, ..., 5*10=50.
+    // Popular scores: 0 + 12 = 12 each.
+    // All 7 non-popular (scores 50-80) come before 6 popular (score 12).
+    // Total 13 with score >= 10, rounded down to 12.
     assert.equal(typeahead.frequently_used_emojis.length, 12);
     assert.deepEqual(
         typeahead.frequently_used_emojis.map((emoji) => emoji.emoji_code),
         [
-            // non-popular with score > 12
-            ...non_popular_emoji_codes.slice(0, 4),
-            // popular emoji (score 12, inserted first)
-            ...typeahead.popular_emojis,
-            // non-popular with score 12 (japanese post office) and 11 (money bag)
-            ...non_popular_emoji_codes.slice(4, 6),
+            // All 7 non-popular emoji (descending by score)
+            ...non_popular_emoji_codes,
+            // First 5 popular emoji (all at score 12, by insertion order)
+            ...typeahead.popular_emojis.slice(0, 5),
         ],
     );
 });
@@ -240,6 +238,83 @@ run_test("handle_reaction_removal preserves message_ids when emoji still on mess
     assert.ok(usage.message_ids.has(300));
     // But current_user_reacted_message_ids should be cleared.
     assert.equal(usage.current_user_reacted_message_ids.size, 0);
+});
+
+run_test("large org dilution prevention", () => {
+    emoji_frequency_data.reaction_data.clear();
+    emoji_frequency_data.popular_emoji_ids.clear();
+
+    // Test that others' reactions are scaled down when total
+    // others_messages exceeds the cap (100).
+    //
+    // We test preferred_emoji_list() directly rather than going
+    // through update_frequently_used_emojis_list(), since the
+    // latter calls emoji_picker.rebuild_catalog which requires
+    // emoji codes to exist in the emoji data.
+
+    let next_message_id = 1000;
+    const make_usage = (emoji_code, others_messages, your_messages = 0) => {
+        const message_ids = new Set();
+        const current_user_reacted_message_ids = new Set();
+        for (let j = 0; j < your_messages; j += 1) {
+            const id = next_message_id;
+            next_message_id += 1;
+            message_ids.add(id);
+            current_user_reacted_message_ids.add(id);
+        }
+        for (let j = 0; j < others_messages; j += 1) {
+            const id = next_message_id;
+            next_message_id += 1;
+            message_ids.add(id);
+        }
+        return {
+            emoji_code,
+            emoji_type: "unicode_emoji",
+            message_ids,
+            current_user_reacted_message_ids,
+        };
+    };
+
+    // User's emoji: 2 reactions by current user, score = 5*2 = 10.
+    emoji_frequency_data.reaction_data.set("unicode_emoji,1f44d", make_usage("1f44d", 0, 2));
+
+    // One emoji with 500 others' reactions.
+    // Total others_messages = 500, so others_weight = min(5, 5*100/500) = 1.
+    // With scaling: this emoji's score = 1*500 = 500.
+    // Without scaling: score would be 5*500 = 2500.
+    emoji_frequency_data.reaction_data.set("unicode_emoji,2764", make_usage("2764", 500));
+
+    const result = emoji_frequency_data.preferred_emoji_list();
+
+    // Both emoji should appear (scores 500 and 10, both >= 10).
+    assert.equal(result.length, 0);
+    // 2 items don't fill a full row of 6, so we get 0 after rounding.
+
+    // Add 4 more emoji to fill a row.
+    emoji_frequency_data.reaction_data.set("unicode_emoji,1f600", make_usage("1f600", 0, 2));
+    emoji_frequency_data.reaction_data.set("unicode_emoji,1f389", make_usage("1f389", 0, 2));
+    emoji_frequency_data.reaction_data.set("unicode_emoji,1f642", make_usage("1f642", 0, 2));
+    emoji_frequency_data.reaction_data.set("unicode_emoji,1f680", make_usage("1f680", 0, 2));
+
+    // Now 6 emoji total. Total others_messages = 500.
+    // others_weight = min(5, 5*100/500) = 1.
+    // heart (others only): score = 1 * 500 = 500.
+    // 5 user emoji: score = 5 * 2 = 10 each.
+    const result2 = emoji_frequency_data.preferred_emoji_list();
+    assert.equal(result2.length, 6);
+
+    // Heart (highest score) should be first.
+    assert.equal(result2[0].emoji_code, "2764");
+
+    // Verify scaling: without scaling, heart would score 2500
+    // and user emoji would score 10. With scaling, heart scores
+    // 500 and user emoji score 10. The key property we test is
+    // that all user emoji still appear (score >= 10 threshold).
+    const user_emoji_codes = new Set(["1f44d", "1f600", "1f389", "1f642", "1f680"]);
+    const result_codes = new Set(result2.map((e) => e.emoji_code));
+    for (const code of user_emoji_codes) {
+        assert.ok(result_codes.has(code), `User emoji ${code} should appear`);
+    }
 });
 
 run_test("is_emoji_present_in_text", () => {

@@ -8,6 +8,9 @@ const EMOJI_PICKER_ROW_LENGTH = 6;
 const MAX_FREQUENTLY_USED_EMOJIS = 5 * EMOJI_PICKER_ROW_LENGTH;
 const CURRENT_USER_REACTION_WEIGHT = 5;
 const POPULAR_EMOJIS_BONUS_WEIGHT = 12;
+// When total others' messages across all emoji exceed this cap,
+// others_weight is scaled down to prevent dilution in large orgs.
+const OTHERS_WEIGHT_CAP = 100;
 
 type ReactionUsage = {
     emoji_code: string;
@@ -20,18 +23,35 @@ type ReactionUsage = {
 export const reaction_data = new Map<string, ReactionUsage>();
 export const popular_emoji_ids = new Set<string>();
 
-function compute_score(emoji_id: string, reaction_usage: ReactionUsage): number {
+function compute_score(
+    emoji_id: string,
+    reaction_usage: ReactionUsage,
+    others_weight: number,
+): number {
     const your_messages = reaction_usage.current_user_reacted_message_ids.size;
     const others_messages = reaction_usage.message_ids.size - your_messages;
     const popular_bonus = popular_emoji_ids.has(emoji_id) ? POPULAR_EMOJIS_BONUS_WEIGHT : 0;
-    return CURRENT_USER_REACTION_WEIGHT * your_messages + others_messages + popular_bonus;
+    return (
+        CURRENT_USER_REACTION_WEIGHT * your_messages +
+        others_weight * others_messages +
+        popular_bonus
+    );
 }
 
 export function preferred_emoji_list(): typeahead.EmojiItem[] {
+    let total_others_messages = 0;
+    for (const usage of reaction_data.values()) {
+        total_others_messages +=
+            usage.message_ids.size - usage.current_user_reacted_message_ids.size;
+    }
+    const others_weight = Math.min(
+        CURRENT_USER_REACTION_WEIGHT,
+        (CURRENT_USER_REACTION_WEIGHT * OTHERS_WEIGHT_CAP) / Math.max(total_others_messages, 1),
+    );
+
     const scored_emojis = [...reaction_data.entries()].map(([emoji_id, usage]) => ({
-        emoji_id,
         usage,
-        score: compute_score(emoji_id, usage),
+        score: compute_score(emoji_id, usage, others_weight),
     }));
     scored_emojis.sort((a, b) => b.score - a.score);
 
