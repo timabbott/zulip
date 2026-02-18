@@ -1775,6 +1775,61 @@ class EditMessageTest(ZulipTestCase):
             message_id, user_ids=[cordelia.id], flag="topic_wildcard_mentioned", check_present=False
         )
 
+    def test_topic_wildcard_mention_preserved_by_embedded_data_update(self) -> None:
+        from zerver.actions.message_edit import do_update_embedded_data
+        from zerver.actions.message_send import render_incoming_message
+        from zerver.lib.mention import MentionBackend, MentionData
+
+        stream_name = "Macbeth"
+        hamlet = self.example_user("hamlet")
+        cordelia = self.example_user("cordelia")
+        self.make_stream(stream_name, history_public_to_subscribers=True)
+        self.subscribe(hamlet, stream_name)
+        self.subscribe(cordelia, stream_name)
+        self.login_user(hamlet)
+
+        # Send a message with @topic mention. Hamlet is the sender and
+        # thus a topic participant, so he should get the flag.
+        message_id = self.send_stream_message(hamlet, stream_name, "Hello @**topic**")
+        self.check_message_flags(
+            message_id, user_ids=[hamlet.id], flag="topic_wildcard_mentioned", check_present=True
+        )
+        self.check_message_flags(
+            message_id,
+            user_ids=[cordelia.id],
+            flag="topic_wildcard_mentioned",
+            check_present=False,
+        )
+
+        # Now simulate an embedded data update (e.g. link preview
+        # fetch) by re-rendering the content via do_update_embedded_data.
+        message = Message.objects.get(id=message_id)
+        content = message.content
+        mention_data = MentionData(
+            mention_backend=MentionBackend(message.realm_id),
+            content=content,
+            message_sender=message.sender,
+        )
+        rendering_result = render_incoming_message(
+            message,
+            content,
+            message.realm,
+            mention_data=mention_data,
+        )
+        do_update_embedded_data(message.sender, message, rendering_result, mention_data)
+
+        # The topic_wildcard_mentioned flag must still be set for
+        # hamlet after the embedded data update.
+        self.check_message_flags(
+            message_id, user_ids=[hamlet.id], flag="topic_wildcard_mentioned", check_present=True
+        )
+        self.check_message_flags(
+            message_id,
+            user_ids=[cordelia.id],
+            flag="topic_wildcard_mentioned",
+            check_present=False,
+        )
+
     @mock.patch("zerver.actions.message_edit.send_event_on_commit")
     def test_remove_topic_wildcard_mention(self, mock_send_event: mock.MagicMock) -> None:
         stream_name = "Macbeth"
