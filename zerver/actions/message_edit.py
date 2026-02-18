@@ -1499,7 +1499,7 @@ def build_message_edit_request(
         topic_unresolved = (
             old_topic_name.startswith(RESOLVED_TOPIC_PREFIX)
             and not target_topic_name.startswith(RESOLVED_TOPIC_PREFIX)
-            and old_topic_name.lstrip(RESOLVED_TOPIC_PREFIX) == target_topic_name
+            and old_topic_name.removeprefix(RESOLVED_TOPIC_PREFIX) == target_topic_name
         )
 
     orig_stream_id = message.recipient.type_id
