@@ -99,12 +99,16 @@ page can be easily identified in it's respective JavaScript file -->
         <form name="change_realm" action="{{ url('login_page') }}" method="post">
             {{ csrf_input }}
             <h2>Realm</h2>
-            <select class="bootstrap-focus-style" name="new_realm" onchange="this.form.submit()">
+            <select class="bootstrap-focus-style" name="new_realm">
                 <option value="all_realms" {% if not current_realm %}selected="selected"{% endif %}>All realms</option>
                 {% for realm in all_realms %}
                 <option value="{{realm.string_id}}" {% if current_realm == realm %}selected="selected"{% endif %}>{{realm.name}}</option>
                 {% endfor %}
             </select>
+            <script nonce="{{ csp_nonce }}">
+                document.querySelector('select[name="new_realm"]')
+                    .addEventListener("change", function () { this.form.submit(); });
+            </script>
         </form>
         <div id="devtools-wrapper">
             <div id="devtools-registration">
