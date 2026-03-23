@@ -25,7 +25,7 @@ https://bugzilla.mozilla.org/show_bug.cgi?id=1943053 -->
 {% endif -%}
 <meta name="mobile-web-app-capable" content="yes" />
 <link href="{{ static('images/logo/apple-touch-icon-precomposed.png') }}" rel="apple-touch-icon-precomposed" />
-<style>
+<style nonce="{{ csp_nonce }}">
     #app-loading {
     font-size: 16px;
     background-color: hsl(0, 0%, 94%);
