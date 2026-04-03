@@ -589,16 +589,10 @@ export function left_sidebar_scroll_zoomed_in_topic_into_view(): void {
 
 // For zooming, we only do topic-list stuff here...let stream_list
 // handle hiding/showing the non-narrowed streams
-export function zoom_in($stream_li: JQuery): void {
+export function zoom_in($stream_li: JQuery, stream_id: number): void {
     previous_search_term = "";
     pre_search_scroll_position = 0;
     ui_util.disable_left_sidebar_search();
-
-    const stream_id = active_stream_id();
-    if (stream_id === undefined) {
-        blueslip.error("Cannot find widget for topic history zooming.");
-        return;
-    }
 
     zoomed = true;
     zoomed_in_widget = new LeftSidebarTopicListWidget($stream_li, stream_id, true);
@@ -607,7 +601,7 @@ export function zoom_in($stream_li: JQuery): void {
     reset_topic_list_cursor({show_highlight: false});
 
     function on_success(): void {
-        if (!active_widgets.has(stream_id!)) {
+        if (!active_widgets.has(stream_id)) {
             blueslip.warn("User re-narrowed before topic history was returned.");
             return;
         }
@@ -621,7 +615,7 @@ export function zoom_in($stream_li: JQuery): void {
             return;
         }
 
-        rebuild_left_sidebar($stream_li, stream_id!);
+        rebuild_left_sidebar($stream_li, stream_id);
         // It is fine to force scroll here even if user has scrolled to a different
         // position since we just added some topics to the list which moved user
         // to a different position anyway.
