@@ -545,12 +545,19 @@ function all_rows(): JQuery {
         "#streams_list.is_searching .stream-list-toggle-inactive-or-muted-channels.bottom_left_row",
     );
 
+    // Exclude the topic-search hint row when it's hidden; when shown,
+    // it should be a navigable row.
+    const $hidden_topic_search_hint_row = $(
+        "#left-sidebar-topic-search-hint.hidden .left-sidebar-topic-search-hint-link",
+    );
+
     const $filtered_rows = $all_rows
         .not($inactive_or_muted_rows)
         .not($collapsed_views)
         .not($collapsed_channels)
         .not($hidden_topic_rows)
-        .not($toggle_inactive_or_muted_channels_row);
+        .not($toggle_inactive_or_muted_channels_row)
+        .not($hidden_topic_search_hint_row);
 
     // With a "topic:" prefix search, keyboard navigation only lands on
     // topic rows, not channel header rows.
@@ -559,6 +566,28 @@ function all_rows(): JQuery {
     }
 
     return $filtered_rows;
+}
+
+const TOPIC_SEARCH_PREFIX = "topic:";
+
+function is_topic_search_hint_prefix(search_term: string): boolean {
+    // Show the "Search all topics" hint when the user has typed a
+    // strict prefix of "topic:" at least two characters long.
+    // Once the user has typed the full "topic:" they're already
+    // in topic-search mode and the hint is no longer useful.
+    return (
+        search_term.length >= 2 &&
+        search_term.length < TOPIC_SEARCH_PREFIX.length &&
+        TOPIC_SEARCH_PREFIX.startsWith(search_term.toLowerCase())
+    );
+}
+
+function initiate_topic_search(): void {
+    const $search_input = $<HTMLInputElement>("input.left-sidebar-search-input").expectOne();
+    const new_value = TOPIC_SEARCH_PREFIX + " ";
+    $search_input.val(new_value);
+    util.the($search_input).setSelectionRange(new_value.length, new_value.length);
+    $search_input.trigger("focus").trigger("input");
 }
 
 class LeftSidebarListCursor extends ListCursor<JQuery> {
@@ -642,6 +671,10 @@ function actually_update_left_sidebar_for_search(): void {
     stream_list.update_streams_sidebar();
 
     resize.resize_page_components();
+    $("#left-sidebar-topic-search-hint").toggleClass(
+        "hidden",
+        !is_topic_search_hint_prefix(search_value),
+    );
     left_sidebar_cursor.reset();
     $("#left-sidebar-empty-list-message").toggleClass(
         "hidden",
@@ -806,6 +839,11 @@ export function set_event_handlers(): void {
             return;
         }
 
+        if ($row.hasClass("left-sidebar-topic-search-hint-link")) {
+            initiate_topic_search();
+            return;
+        }
+
         if ($row[0]!.id === "views-label-container") {
             $row.find("#toggle-top-left-navigation-area-icon").trigger("click");
             return;
@@ -874,6 +912,12 @@ export function set_event_handlers(): void {
     // Handle arrow key navigation when a sidebar element has Tab
     // focus, so that Tab and arrow key navigation stay in sync.
     $("#left-sidebar").on("keydown", handle_left_sidebar_arrow_navigation);
+
+    $("body").on("click", ".left-sidebar-topic-search-hint-link", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        initiate_topic_search();
+    });
 }
 
 export function initiate_search(): void {
